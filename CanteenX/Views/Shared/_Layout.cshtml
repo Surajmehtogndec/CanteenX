@@ -1,0 +1,348 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CanteenX</title>
+    <link href="~/lib/boostrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/boostrap/css/aos.css" rel="stylesheet" asp-append-version="true" />
+   
+    <link href="~/lib/boostrap/css/swiper-bundle.min.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="~/lib/boostrap/css/magnific-popup.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/CanteenX.styles.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+    <header>
+        <!-- ============================================================
+         NAVBAR
+         ============================================================ -->
+        <nav class="navbar navbar-expand-lg" id="nav">
+            <div class="container">
+
+                <!-- Logo -->
+                <a class="navbar-brand" href="#">
+                    <div class="blogo">
+                        <div class="bico">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+
+                        <div>
+                            <div class="bname">
+                                Canteen<span>X</span>
+                            </div>
+
+                            <div class="bsub">
+                                Tap. Order. Eat.
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler border-0"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navmenu">
+                    <i class="fas fa-bars"
+                       style="color:var(--primary);font-size:1.35rem;">
+                    </i>
+                </button>
+                <div class="collapse navbar-collapse" id="navmenu">
+
+                    <!-- Navigation -->
+                    <ul class="navbar-nav mx-auto">
+
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#hero">
+                                Home
+                            </a>
+                        </li>
+
+               
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#menu">
+                                Menu
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#offers">
+                                Offers
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#orders">
+                                My Orders
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                    <!-- Right Side -->
+                    <div class="d-flex align-items-center gap-2">
+
+                        <!-- Search -->
+                        <button id="navSearchBtn"
+                                class="nav-icon-btn"
+                                title="Search">
+
+                            <i class="fas fa-search"></i>
+
+                        </button>
+
+
+                        <!-- Cart -->
+                        <a href="#cart"
+                           class="nav-icon-btn cart-btn"
+                           title="Shopping Cart">
+
+                            <i class="fas fa-shopping-cart"></i>
+
+                            <!-- Cart Count -->
+                            <span class="cart-count">0</span>
+
+                        </a>
+
+
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown user-profile-dropdown">
+
+                                <button class="user-profile-btn"
+                                        type="button"
+                                        data-bs-toggle="dropdown">
+
+                                    <div class="user-avatar">
+                                        @User.Identity.Name?.Substring(0, 1).ToUpper()
+                                    </div>
+
+                                    <div class="user-info">
+                                        <span class="user-name">
+                                            @User.Identity.Name
+                                        </span>
+
+                                        <small>
+                                            @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                                        </small>
+                                    </div>
+
+                                    <i class="fas fa-chevron-down"></i>
+
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="/Profile">
+
+                                            <i class="fas fa-user"></i>
+                                            My Profile
+
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="/Orders">
+
+                                            <i class="fas fa-shopping-bag"></i>
+                                            My Orders
+
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        <form asp-controller="Account"
+                                              asp-action="Logout"
+                                              method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="dropdown-item logout-btn">
+
+                                                <i class="fas fa-sign-out-alt"></i>
+                                                Logout
+
+                                            </button>
+
+                                        </form>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <a href="/Account/Login"
+                               class="login-btn">
+
+                                <i class="fas fa-user me-2"></i>
+                                Login / Sign Up
+
+                            </a>
+                        }
+
+
+                        <!-- Order Now -->
+                        <a href="#menu"
+                           class="nav-link nav-cta">
+
+                            <i class="fas fa-shopping-bag me-1"></i>
+                            Order Now
+
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+
+        <!-- ============================================================
+         FIX 1 � SEARCH OVERLAY POPUP
+         ============================================================ -->
+        <div id="searchOv">
+            <button class="sovclose" id="searchClose"><i class="fas fa-times"></i></button>
+            <div class="sovbox">
+                <h4>What are you craving today?</h4>
+                <div class="sovinput">
+                    <input type="text" id="searchInput" placeholder="Search burgers, pizza, chicken..." autocomplete="off" />
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <!-- Categories inside search box -->
+                <div class="sovcats">
+                    <div class="sovcat active" data-cat="all">
+                        <img src="img/menu/1.jpg" alt="" />All Items
+                    </div>
+                    <div class="sovcat" data-cat="burgers">
+                        <img src="img/menu/1.jpg" alt="" />Burgers
+                    </div>
+                    <div class="sovcat" data-cat="pizza">
+                        <img src="img/menu/2.jpg" alt="" />Pizza
+                    </div>
+                    <div class="sovcat" data-cat="chicken">
+                        <img src="img/menu/3.jpg" alt="" />Chicken
+                    </div>
+                    <div class="sovcat" data-cat="wraps">
+                        <img src="img/menu/4.jpg" alt="" />Wraps
+                    </div>
+                    <div class="sovcat" data-cat="pasta">
+                        <img src="img/menu/5.jpg" alt="" />Pasta
+                    </div>
+                    <div class="sovcat" data-cat="desserts">
+                        <img src="img/menu/6.jpg" alt="" />Desserts
+                    </div>
+                </div>
+                <div class="sovtrend">
+                    <p><i class="fas fa-fire me-1" style="color:var(--secondary);"></i>Trending Searches</p>
+                    <span class="ttag">Smash Burger</span>
+                    <span class="ttag">Nashville Chicken</span>
+                    <span class="ttag">Truffle Pizza</span>
+                    <span class="ttag">Lava Cake</span>
+                    <span class="ttag">Loaded Fries</span>
+                    <span class="ttag">Mango Shake</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <div class="fnm">Canteen<span>X</span></div>
+                    <p class="fdesc">Your campus food, simplified. Discover menus from all campus canteens, order online, pay securely, and skip the queue.</p>
+                    <div class="fsoc">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="ftit">Quick Links</div>
+                    <ul class="flinks ps-0">
+                        <li><a href="#hero"><i class="fas fa-chevron-right"></i>Home</a></li>
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Our Menu</a></li>
+                        <li><a href="#offers"><i class="fas fa-chevron-right"></i>Offers</a></li>
+                        <li><a href="#orders"><i class="fas fa-chevron-right"></i>Orders</a></li>
+
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="ftit">Our Menu</div>
+                    <ul class="flinks ps-0">
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Burgers</a></li>
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Pizza</a></li>
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Fried Chicken</a></li>
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Wraps &amp; Rolls</a></li>
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Pasta</a></li>
+                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Desserts</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ftit">Get In Touch</div>
+                    <div class="fci">
+                        <div class="fciico"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="fciinfo">
+                            <strong>Address</strong>GNDEC Campus, Ludhiana, Punjab
+                        </div>
+                    </div>
+                    <div class="fci">
+                        <div class="fciico"><i class="fas fa-phone-alt"></i></div>
+                        <div class="fciinfo"><strong>Phone</strong>91+ 0161 5064501</div>
+                    </div>
+                    <div class="fci">
+                        <div class="fciico"><i class="fas fa-envelope"></i></div>
+                        <div class="fciinfo"><strong>Email</strong>principal@gndec.ac.in</div>
+                    </div>
+                    <div class="fci">
+                        <div class="fciico"><i class="fas fa-clock"></i></div>
+                        <div class="fciinfo"><strong>Hours</strong>Mon - Fri: 10 AM - 5 PM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fbot">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <p>&copy;2026 All Rights Reserved.<span>CanteenX</span>. Developed with ❤️ by CanteenX Team  </p>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Floating cart -->
+    <div class="cartfl"><i class="fas fa-shopping-cart"></i><span>My Cart</span><div class="ccount" id="cartCount">0</div></div>
+    <!-- Back to top -->
+    <button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+
+    <script src="~/lib/boostrap/js/jquery-3.7.1.min.js" asp-append-version="true"></script>
+    <script src="~/lib/boostrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/lib/boostrap/js/aos.js" asp-append-version="true"></script>
+    <script src="~/lib/boostrap/js/swiper-bundle.min.js" asp-append-version="true"></script>
+
+    <script src="~/lib/boostrap/js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
