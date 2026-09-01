@@ -138,25 +138,9 @@
 
                                 <ul class="dropdown-menu dropdown-menu-end">
 
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="/Profile">
+                                  
 
-                                            <i class="fas fa-user"></i>
-                                            My Profile
-
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a class="dropdown-item"
-                                           href="/Orders">
-
-                                            <i class="fas fa-shopping-bag"></i>
-                                            My Orders
-
-                                        </a>
-                                    </li>
+                                   
 
                                     <li>
                                         <hr class="dropdown-divider">
@@ -170,7 +154,7 @@
                                             @Html.AntiForgeryToken()
 
                                             <button type="submit"
-                                                    class="dropdown-item logout-btn">
+                                                    class="dropdown-item logout-btn" asp-for="Account.Logout">
 
                                                 <i class="fas fa-sign-out-alt"></i>
                                                 Logout

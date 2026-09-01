@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add Google authentication
+builder.Services.AddAuthentication();
 
 // http for CanteenXApi 
 
@@ -16,15 +20,48 @@ builder.Services.AddHttpClient("CanteenX.Api", client =>
 
 
 builder.Services
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login";
+    .AddAuthentication(
+        CookieAuthenticationDefaults.AuthenticationScheme
+    )
+    .AddCookie(
+        CookieAuthenticationDefaults.AuthenticationScheme,
+        options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.AccessDeniedPath = "/Account/AccessDenied";
+            options.Cookie.Name = "CanteenX.Auth";
+        }
+    )
 
-        options.AccessDeniedPath = "/Account/AccessDenied";
+    // Temporary cookie for Google authentication
+    .AddCookie("GoogleExternal")
 
-        options.Cookie.Name = "CanteenX.Auth";
-    });
+    .AddGoogle(
+        GoogleDefaults.AuthenticationScheme,
+        options =>
+        {
+            options.ClientId =
+                builder.Configuration[
+                    "Authentication:Google:ClientId"
+                ]!;
+
+            options.ClientSecret =
+                builder.Configuration[
+                    "Authentication:Google:ClientSecret"
+                ]!;
+
+            options.SignInScheme =
+                "GoogleExternal";
+
+            options.SaveTokens = true;
+
+            options.Scope.Add("openid");
+            options.Scope.Add("profile");
+            options.Scope.Add("email");
+        }
+    );
+
+
 
 // ========================================
 // SESSION

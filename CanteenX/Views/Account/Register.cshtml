@@ -1,0 +1,152 @@
+﻿@model CanteenX.Models.Auth.RegisterDto;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Register";
+}
+
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="max-width: 950px; width: 100%;">
+        <div class="row g-0">
+
+            <!-- Left Side (Brand Panel) -->
+            <div class="col-md-5 p-5 d-flex flex-column justify-content-between" style="background-color: #0e754a;">
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <span class="bg-white text-danger rounded p-1 me-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-utensils"></i>
+                        </span>
+                        <h4 class="mb-0 fw-bold text-dark" style="font-family: serif;">Canteen<span class="text-warning">X</span></h4>
+                    </div>
+                    <small class="text-light opacity-75">Smart Campus Food Platform</small>
+                </div>
+
+                <div class="my-5">
+                    <h1 class="fw-bold mb-0 text-dark" style="font-family: serif; font-size: 3rem;">Join Us.</h1>
+                    <h1 class="fw-bold text-warning mb-3" style="font-family: serif; font-size: 2.8rem;">Skip the Queue.</h1>
+                    <p class="text-light" style="font-size: 1.1rem; line-height: 1.6;">
+                        Register today to order your favorite meals from campus canteens quickly and easily.
+                    </p>
+                </div>
+
+                <small class="text-light opacity-75">&copy; 2026 CanteenX</small>
+            </div>
+
+            <!-- Right Side (Form Panel) -->
+            <div class="col-md-7 p-5 bg-white">
+                <h2 class="fw-bold" style="font-family: serif;">Create an account ✨</h2>
+                <p class="text-muted mb-4">Sign up to get started with CanteenX.</p>
+
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                    <!-- Full Name -->
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label fw-bold small text-dark">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="far fa-user"></i></span>
+                            <input asp-for="FullName" class="form-control bg-light border-start-0" placeholder="John Doe" required />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-bold small text-dark">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="far fa-envelope"></i></span>
+                            <input asp-for="Email" type="email" class="form-control bg-light border-start-0" placeholder="student@example.com" required />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                 <!-- PhoneNumber-->
+                    <!-- Phone Number -->
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-bold small text-dark">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-phone"></i></span>
+                            <input asp-for="PhoneNumber" class="form-control bg-light border-start-0" placeholder="9876543210" required />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label fw-bold small text-dark">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+                            <input asp-for="Password" type="password" id="regPassword" class="form-control bg-light border-start-0 border-end-0" placeholder="••••••••" required />
+                            <button class="input-group-text bg-light border-start-0 text-muted" type="button" onclick="togglePassword('regPassword')">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label fw-bold small text-dark">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+                            <input asp-for="ConfirmPassword" type="password" id="regConfirmPassword" class="form-control bg-light border-start-0 border-end-0" placeholder="••••••••" required />
+                            <button class="input-group-text bg-light border-start-0 text-muted" type="button" onclick="togglePassword('regConfirmPassword')">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn w-100 py-2 fw-bold text-white mb-4" style="background-color: #da291c; border-radius: 6px;">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="d-flex align-items-center mb-4">
+                    <hr class="flex-grow-1 text-muted">
+                    <span class="mx-3 text-muted small" style="font-size: 0.8rem;">or continue with</span>
+                    <hr class="flex-grow-1 text-muted">
+                </div>
+
+                <!-- Google Button -->
+                <button class="btn btn-outline-dark w-100 py-2 mb-4 fw-bold rounded-2 d-flex justify-content-center align-items-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="18" class="me-2" />
+                    Continue with Google
+                </button>
+
+                <!-- Footer Links -->
+                <div class="text-center mt-2">
+                    <small class="text-muted d-block mb-2" style="font-size: 0.75rem;">
+                        <i class="fas fa-lock me-1"></i>Your information is securely protected.
+                    </small>
+                    <p class="mb-0" style="font-size: 0.9rem;">
+                        Already have an account? <a asp-action="Login" class="fw-bold text-decoration-none" style="color: #da291c;">Login</a>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Password Show/Hide Toggle
+        function togglePassword(inputId) {
+            var input = document.getElementById(inputId);
+            var icon = input.nextElementSibling.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+}

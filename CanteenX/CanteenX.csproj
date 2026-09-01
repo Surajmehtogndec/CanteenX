@@ -5,10 +5,15 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>WinExe</OutputType>
+    <UserSecretsId>43d00981-f144-4cb1-9c50-f6b0aa53b320</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="DTOs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.30" />
   </ItemGroup>
 
 </Project>
