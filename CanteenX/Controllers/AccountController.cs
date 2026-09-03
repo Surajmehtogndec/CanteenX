@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -47,12 +48,12 @@ namespace CanteenX.Controllers
                 await response.Content
                     .ReadFromJsonAsync<AuthResponseDto>();
 
+
             if (result == null || !result.Success)
             {
-                ModelState.AddModelError(
-                    "",
-                    result?.Message ?? "Login failed."
-                );
+                TempData["LoginError"] =
+             result?.Message ??
+             "Invalid email/phone number or password.";
 
                 return View(model);
             }
@@ -173,8 +174,10 @@ namespace CanteenX.Controllers
                 RedirectUri = Url.Action(nameof(GoogleLoginCallback), "Account")
 
             };
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+            return Challenge(properties,"Google");
         }
+
+
         [HttpGet]
         public async Task<IActionResult> GoogleLoginCallback()
         {
@@ -182,45 +185,85 @@ namespace CanteenX.Controllers
                 "GoogleExternal"
             );
 
+
             if (!googleResult.Succeeded)
             {
-                 TempData["Error"] = "Google authentication failed.";
-                return RedirectToAction("Login", "Account");
+                TempData["Error"] =
+                    "Google authentication failed.";
+
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
             }
 
+            // Get ID Token
+            var idToken =
+                googleResult.Properties?
+                    .GetTokenValue("id_token");
 
-            var idToken = googleResult.Properties?.GetTokenValue("id_token");
             if (string.IsNullOrEmpty(idToken))
             {
                 TempData["Error"] =
-            "Google ID Token was not received.";
-                return RedirectToAction("Login", "Account");
+                    "Google ID Token was not received.";
+
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
             }
 
-            var client = _httpClientFactory.CreateClient("CanteenX.Api");
+            // Create API client
+            var client =
+                _httpClientFactory.CreateClient(
+                    "CanteenX.Api"
+                );
 
-            var response = await client.PostAsJsonAsync(
-                "api/Auth/google/Login",
-                new { IdToken = idToken }
+            // Send ID Token to API
+            var response =
+                await client.PostAsJsonAsync(
+                    "api/Auth/google/login",
+                    new
+                    {
+                        IdToken = idToken
+                    }
+                );
+
+            // Read API response
+            var apiResult =
+                await response.Content
+                    .ReadFromJsonAsync<AuthResponseDto>();
+
+
+            // API login failed
+            if (!response.IsSuccessStatusCode ||
+                apiResult == null ||
+                !apiResult.Success)
+            {
+                TempData["LoginError"] =
+            apiResult?.Message ??
+            "Invalid email/phone number or password.";
+
+                return RedirectToAction(
+                    "Login",
+                    "Account"
+                );
+            }
+            // Create CanteenX MVC session
+            await CreateUserSessionAsync(apiResult);
+
+            // Remove temporary Google cookie
+            await HttpContext.SignOutAsync(
+                "GoogleExternal"
+            );
+
+            // Login successful
+            return RedirectToAction(
+                "Index",
+                "Home"
             );
 
 
-            var apiResult = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-
-
-            if (!response.IsSuccessStatusCode || apiResult == null || !apiResult.Success)
-            {
-                TempData["Error"] = apiResult?.Message ?? "Google login failed.";
-                return RedirectToAction("Login", "Account");
-            }
-
-            await CreateUserSessionAsync(apiResult);
-
-            await HttpContext.SignOutAsync(
-       "GoogleExternal"
-   );
-
-            return RedirectToAction("Index", "Home");
         }
 
         private async Task CreateUserSessionAsync(
@@ -242,7 +285,19 @@ namespace CanteenX.Controllers
             ClaimTypes.Email,
             result.User.Email ?? string.Empty
         ),
+          new Claim(
+            ClaimTypes.MobilePhone,
+            result.User.PhoneNumber ?? ""
+        ),
 
+        new Claim(
+            ClaimTypes.Role,
+            result.User.Role
+        ),
+           new Claim(
+            "AccessToken",
+            result.AccessToken
+        ),
         new Claim(
             ClaimTypes.Role,
             result.User.Role
@@ -280,12 +335,108 @@ namespace CanteenX.Controllers
 
             // JWT Access Token Session mein store
             HttpContext.Session.SetString(
-                "AccessToken",
-                result.AccessToken
-            );
+                  "AccessToken",
+                  result.AccessToken
+              );
         }
 
+
+
+        //[HttpGet]
+        //public IActionResult GoogleRegister()
+        //{
+        //    var properties = new AuthenticationProperties
+        //    {
+        //        RedirectUri = Url.Action(nameof(GoogleRegisterCallback), "Account")
+
+        //    };
+        //    return Challenge(properties, "Google");
+
+        //}
+
+
+
+    //    [HttpGet]
+    //    public async Task<IActionResult> GoogleRegisterCallback()
+    //    {
+    //        var googleResult = await HttpContext.AuthenticateAsync(
+    //               "GoogleExternal"
+    //           );
+
+    //        if (!googleResult.Succeeded)
+    //        {
+    //            TempData["Error"] = "Google authentication failed.";
+
+    //            return RedirectToAction(
+    //                "Register",
+    //                "Account"
+    //            );
+    //        }
+
+    //        // ab hum google id token ko retrieve karenge
+    //        var idToken = googleResult.Properties?.GetTokenValue("id_token");
+    //        if (string.IsNullOrEmpty(idToken))
+    //        {
+    //            TempData["Error"] =
+    //                "Google ID Token was not received.";
+
+    //            return RedirectToAction(
+    //                "Register",
+    //                "Account"
+    //            );
+    //        }
+
+
+    //        // CanteenX API client
+    //        var client = _httpClientFactory
+    //            .CreateClient("CanteenX.Api");
+
+
+
+    //        // API ko Google ID Token send karo
+    //        var response = await client.PostAsJsonAsync(
+    //            "api/Auth/google/register",
+    //            new
+    //            {
+    //                IdToken = idToken
+    //            }
+    //        );
+
+
+    //        // API response ko read karo
+
+    //        var apiResult =
+    //            await response.Content
+    //       .ReadFromJsonAsync<AuthResponseDto>();
+
+
+    //        if (!response.IsSuccessStatusCode ||
+    //                apiResult == null ||
+    //                !apiResult.Success)
+    //        {
+    //            TempData["Error"] =
+    //                apiResult?.Message ??
+    //                "Google registration failed.";
+
+    //            return RedirectToAction(
+    //                "Register",
+    //                "Account"
+    //            );
+    //        }
+
+    //        // MVC authentication cookie create
+    //        await CreateUserSessionAsync(apiResult);
+    //        // Google temporary authentication cookie remove
+    //        await HttpContext.SignOutAsync(
+    //            "GoogleExternal"
+    //        );
+
+    //        return RedirectToAction(
+    //    "Index",
+    //    "Home"
+    //);
+
+    //    }
+
     }
-
-
 }

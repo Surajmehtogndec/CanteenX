@@ -112,16 +112,14 @@
                 </div>
 
                 <!-- Google Button -->
-                <button class="btn btn-outline-dark w-100 py-2 mb-4 fw-bold rounded-2 d-flex justify-content-center align-items-center">
+                <a class="btn btn-outline-dark w-100 py-2 mb-4 fw-bold rounded-2 d-flex justify-content-center align-items-center" asp-controller="Account" asp-action="GoogleLogin">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="18" class="me-2" />
                     Continue with Google
-                </button>
+                </a>
 
                 <!-- Footer Links -->
                 <div class="text-center mt-2">
-                    <small class="text-muted d-block mb-2" style="font-size: 0.75rem;">
-                        <i class="fas fa-lock me-1"></i>Your information is securely protected.
-                    </small>
+                   
                     <p class="mb-0" style="font-size: 0.9rem;">
                         Already have an account? <a asp-action="Login" class="fw-bold text-decoration-none" style="color: #da291c;">Login</a>
                     </p>
