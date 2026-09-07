@@ -174,7 +174,7 @@ namespace CanteenX.Controllers
                 RedirectUri = Url.Action(nameof(GoogleLoginCallback), "Account")
 
             };
-            return Challenge(properties,"Google");
+            return Challenge(properties, "Google");
         }
 
 
@@ -356,87 +356,245 @@ namespace CanteenX.Controllers
 
 
 
-    //    [HttpGet]
-    //    public async Task<IActionResult> GoogleRegisterCallback()
-    //    {
-    //        var googleResult = await HttpContext.AuthenticateAsync(
-    //               "GoogleExternal"
-    //           );
+        //    [HttpGet]
+        //    public async Task<IActionResult> GoogleRegisterCallback()
+        //    {
+        //        var googleResult = await HttpContext.AuthenticateAsync(
+        //               "GoogleExternal"
+        //           );
 
-    //        if (!googleResult.Succeeded)
-    //        {
-    //            TempData["Error"] = "Google authentication failed.";
+        //        if (!googleResult.Succeeded)
+        //        {
+        //            TempData["Error"] = "Google authentication failed.";
 
-    //            return RedirectToAction(
-    //                "Register",
-    //                "Account"
-    //            );
-    //        }
+        //            return RedirectToAction(
+        //                "Register",
+        //                "Account"
+        //            );
+        //        }
 
-    //        // ab hum google id token ko retrieve karenge
-    //        var idToken = googleResult.Properties?.GetTokenValue("id_token");
-    //        if (string.IsNullOrEmpty(idToken))
-    //        {
-    //            TempData["Error"] =
-    //                "Google ID Token was not received.";
+        //        // ab hum google id token ko retrieve karenge
+        //        var idToken = googleResult.Properties?.GetTokenValue("id_token");
+        //        if (string.IsNullOrEmpty(idToken))
+        //        {
+        //            TempData["Error"] =
+        //                "Google ID Token was not received.";
 
-    //            return RedirectToAction(
-    //                "Register",
-    //                "Account"
-    //            );
-    //        }
-
-
-    //        // CanteenX API client
-    //        var client = _httpClientFactory
-    //            .CreateClient("CanteenX.Api");
+        //            return RedirectToAction(
+        //                "Register",
+        //                "Account"
+        //            );
+        //        }
 
 
-
-    //        // API ko Google ID Token send karo
-    //        var response = await client.PostAsJsonAsync(
-    //            "api/Auth/google/register",
-    //            new
-    //            {
-    //                IdToken = idToken
-    //            }
-    //        );
+        //        // CanteenX API client
+        //        var client = _httpClientFactory
+        //            .CreateClient("CanteenX.Api");
 
 
-    //        // API response ko read karo
 
-    //        var apiResult =
-    //            await response.Content
-    //       .ReadFromJsonAsync<AuthResponseDto>();
+        //        // API ko Google ID Token send karo
+        //        var response = await client.PostAsJsonAsync(
+        //            "api/Auth/google/register",
+        //            new
+        //            {
+        //                IdToken = idToken
+        //            }
+        //        );
 
 
-    //        if (!response.IsSuccessStatusCode ||
-    //                apiResult == null ||
-    //                !apiResult.Success)
-    //        {
-    //            TempData["Error"] =
-    //                apiResult?.Message ??
-    //                "Google registration failed.";
+        //        // API response ko read karo
 
-    //            return RedirectToAction(
-    //                "Register",
-    //                "Account"
-    //            );
-    //        }
+        //        var apiResult =
+        //            await response.Content
+        //       .ReadFromJsonAsync<AuthResponseDto>();
 
-    //        // MVC authentication cookie create
-    //        await CreateUserSessionAsync(apiResult);
-    //        // Google temporary authentication cookie remove
-    //        await HttpContext.SignOutAsync(
-    //            "GoogleExternal"
-    //        );
 
-    //        return RedirectToAction(
-    //    "Index",
-    //    "Home"
-    //);
+        //        if (!response.IsSuccessStatusCode ||
+        //                apiResult == null ||
+        //                !apiResult.Success)
+        //        {
+        //            TempData["Error"] =
+        //                apiResult?.Message ??
+        //                "Google registration failed.";
 
-    //    }
+        //            return RedirectToAction(
+        //                "Register",
+        //                "Account"
+        //            );
+        //        }
 
+        //        // MVC authentication cookie create
+        //        await CreateUserSessionAsync(apiResult);
+        //        // Google temporary authentication cookie remove
+        //        await HttpContext.SignOutAsync(
+        //            "GoogleExternal"
+        //        );
+
+        //        return RedirectToAction(
+        //    "Index",
+        //    "Home"
+        //);
+
+        //    }
+
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var client = _httpClientFactory.CreateClient("CanteenX.Api");
+            var response = await client.PostAsJsonAsync(
+                "api/Auth/forgot-password",
+                new
+                {
+                    Email = model.Email
+                });
+
+            if(!response.IsSuccessStatusCode)
+            {
+                var errorResult = await response.Content.ReadFromJsonAsync<ApiResponseDto>();
+                ViewBag.ErrorMessage = errorResult?.Message ?? "Failed to send password reset email.";
+                return View(model);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto>();
+            if (result == null || !result.Success)
+            {
+                ModelState.AddModelError(
+                    "",
+                    result?.Message ?? "Failed to send password reset email."
+                );
+                return View(model);
+            }
+            ViewBag.SuccessMessage = "Password reset email sent successfully. Please check your email.";
+            ModelState.Clear(); // Clear the model state to reset the form
+
+            return View();
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(
+    string? email,
+    string? token)
+        {
+            // First request from email link
+            if (!string.IsNullOrWhiteSpace(email) &&
+                !string.IsNullOrWhiteSpace(token))
+            {
+                var client =
+                    _httpClientFactory.CreateClient("CanteenX.Api");
+
+                var url =
+                    $"api/Auth/validate-reset-token" +
+                    $"?email={Uri.EscapeDataString(email)}" +
+                    $"&token={Uri.EscapeDataString(token)}";
+
+                var response =
+                    await client.GetAsync(url);
+
+                // Token invalid / expired
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["Error"] =
+                        "This password reset link has expired or is invalid.";
+
+                    return RedirectToAction("ForgotPassword");
+                }
+
+                // Save temporarily in server-side session
+                HttpContext.Session.SetString(
+                    "ResetPasswordEmail",
+                    email);
+
+                HttpContext.Session.SetString(
+                    "ResetPasswordToken",
+                    token);
+
+                // Redirect to clean URL
+                return RedirectToAction(
+                    nameof(ResetPassword));
+            }
+
+            // Clean URL request
+            var sessionEmail =
+                HttpContext.Session.GetString(
+                    "ResetPasswordEmail");
+
+            var sessionToken =
+                HttpContext.Session.GetString(
+                    "ResetPasswordToken");
+
+            if (string.IsNullOrWhiteSpace(sessionEmail) ||
+                string.IsNullOrWhiteSpace(sessionToken))
+            {
+                TempData["Error"] =
+                    "Invalid or expired password reset session.";
+
+                return RedirectToAction("ForgotPassword");
+            }
+
+            var model = new ResetPasswordDto
+            {
+                Email = sessionEmail,
+                Token = sessionToken
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+
+
+
+            var client = _httpClientFactory.CreateClient("CanteenX.Api");
+
+            var response = await client.PostAsJsonAsync(
+                "api/Auth/reset-password", model
+
+            );
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto>();
+        
+
+           
+
+
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ViewBag.ErrorMessage =
+                    result?.Message ??
+                    "Unable to reset password.";
+
+                return View(model);
+               
+            }
+            ViewBag.SuccessMessage = "Password has been reset successfully. You can now login with your new password.";
+
+
+
+            return RedirectToAction("Login", "Account");
+        }
     }
 }

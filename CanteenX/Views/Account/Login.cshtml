@@ -3,7 +3,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-   ViewData["Title"] = "Login ";
+   ViewData["Title"] = "Login";
 }
 
 
@@ -75,7 +75,7 @@
                                     <input class="form-check-input shadow-none" type="checkbox" id="RememberMe" style="cursor:pointer;">
                                     <label class="form-check-label text-muted small user-select-none" for="RememberMe" style="cursor:pointer;">Remember me</label>
                                 </div>
-                                <a href="#" class="text-decoration-none small fw-semibold" style="color: #e8281a;">Forgot password?</a>
+                                <a  class="text-decoration-none small fw-semibold" style="color: #e8281a;" asp-controller="Account" asp-action="ForgotPassword">Forgot password?</a>
                             </div>
 
                             <!-- Submit Button -->
