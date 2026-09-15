@@ -24,6 +24,11 @@ namespace CanteenX.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDto model)
@@ -96,6 +101,8 @@ namespace CanteenX.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme
             );
 
+            //create principle
+
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(
@@ -103,11 +110,42 @@ namespace CanteenX.Controllers
                 principal
             );
 
-            return RedirectToAction(
-                "Index",
-                "Home"
-            );
+            switch (result.User.Role)
+            {
+                case "Admin":
+                    return RedirectToAction(
+                        "Index",
+                        "Admin"
+                    );
+
+                case "CanteenStaff":
+                    return RedirectToAction(
+                        "Index",
+                        "CanteenOwner"
+                    );
+
+                case "Student":
+                    return RedirectToAction(
+                        "Index",
+                        "Home"
+                    );
+
+
+
+
+
+                default:
+                    await HttpContext.SignOutAsync(
+                   CookieAuthenticationDefaults.AuthenticationScheme
+               );
+
+                    TempData["LoginError"] =
+                       "Invalid user role.";
+
+                    return View(model);
+            }
         }
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]

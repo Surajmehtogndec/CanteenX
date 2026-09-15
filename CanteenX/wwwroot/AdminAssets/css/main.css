@@ -1,0 +1,404 @@
+body {
+    margin: 0;
+    background: #f5f7fb;
+    font-family: Arial, sans-serif;
+}
+
+.admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #111827;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.sidebar-brand {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    padding: 0 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.brand-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+.brand-text h5 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.brand-text span {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.sidebar-nav {
+    padding: 20px 14px;
+    flex: 1;
+}
+
+.nav-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 1px;
+    padding: 15px 12px 8px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 14px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+    .sidebar-link i {
+        font-size: 17px;
+    }
+
+    .sidebar-link:hover {
+        color: white;
+        background: #1f2937;
+    }
+
+    .sidebar-link.active {
+        color: white;
+        background: #2563eb;
+    }
+
+.sidebar-bottom {
+    padding: 15px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.admin-mini-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.admin-avatar,
+.profile-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.admin-info {
+    display: flex;
+    flex-direction: column;
+}
+
+    .admin-info strong {
+        font-size: 13px;
+    }
+
+    .admin-info small {
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+.logout-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #9ca3af;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+    .logout-link:hover {
+        color: white;
+        background: #1f2937;
+    }
+
+
+/* Main */
+
+.admin-main {
+    margin-left: 260px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-navbar {
+    height: 75px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.navbar-left,
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-left {
+    gap: 15px;
+}
+
+    .navbar-left h6 {
+        font-weight: 700;
+    }
+
+    .navbar-left small {
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+.navbar-right {
+    gap: 20px;
+}
+
+.navbar-icon-btn {
+    position: relative;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    color: #4b5563;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ef4444;
+}
+
+.navbar-profile {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+}
+
+    .profile-details strong {
+        font-size: 13px;
+    }
+
+    .profile-details small {
+        color: #9ca3af;
+        font-size: 11px;
+    }
+
+.profile-arrow {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.menu-toggle {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 25px;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 30px;
+}
+
+.admin-footer {
+    padding: 18px 30px;
+    display: flex;
+    justify-content: space-between;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    .admin-sidebar {
+        transform: translateX(-100%);
+        transition: 0.3s;
+    }
+
+        .admin-sidebar.show {
+            transform: translateX(0);
+        }
+
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .profile-details,
+    .profile-arrow {
+        display: none;
+    }
+
+    .admin-navbar {
+        padding: 0 18px;
+    }
+
+    .admin-content {
+        padding: 20px;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 999;
+    }
+}
+
+
+/* Admin Profile Dropdown */
+
+.navbar-profile {
+    border: none;
+    background: transparent;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+    .navbar-profile::after {
+        margin-left: 3px;
+        color: #9ca3af;
+    }
+
+    .navbar-profile:hover {
+        opacity: 0.85;
+    }
+
+
+/* Dropdown */
+
+.admin-profile-menu {
+    width: 250px;
+    margin-top: 10px !important;
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Profile Header */
+
+.profile-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+}
+
+    .profile-menu-header strong {
+        display: block;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .profile-menu-header small {
+        display: block;
+        margin-top: 2px;
+        font-size: 11px;
+        color: #9ca3af;
+    }
+
+
+/* Large Avatar */
+
+.profile-avatar.large {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+
+/* Dropdown Items */
+
+.admin-profile-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 11px;
+    border-radius: 9px;
+    font-size: 13px;
+    color: #374151;
+    transition: 0.2s;
+}
+
+    .admin-profile-menu .dropdown-item i {
+        width: 18px;
+        font-size: 16px;
+        color: #6b7280;
+    }
+
+    .admin-profile-menu .dropdown-item:hover {
+        background: #f3f4f6;
+        color: #111827;
+    }
+
+        .admin-profile-menu .dropdown-item:hover i {
+            color: #2563eb;
+        }
+
+
+/* Logout */
+
+.admin-profile-menu .logout-item {
+    color: #dc2626;
+}
+
+    .admin-profile-menu .logout-item i {
+        color: #dc2626;
+    }
+
+    .admin-profile-menu .logout-item:hover {
+        background: #fef2f2;
+        color: #dc2626;
+    }

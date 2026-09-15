@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - CanteenX Admin</title>
+    <link href="~/adminassets/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/adminassets/libs/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/adminassets/css/main.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="icon" type="image/x-icon" href="~/favicon1.ico" asp-append-version="true" />
+</head>
+
+<body>
+
+    <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+
+        <!-- Brand -->
+        <div class="sidebar-brand">
+
+            <div class="brand-icon">
+                <i class="bi bi-shop"></i>
+            </div>
+
+            <div class="brand-text">
+                <h5>CanteenX</h5>
+                <span>Admin Panel</span>
+            </div>
+
+        </div>
+
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-title">
+                MAIN
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                <i class="bi bi-grid-1x2-fill"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <div class="nav-section-title">
+                MANAGEMENT
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="AddCanteens"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "AddCanteens" ? "active" : "")">
+
+                <i class="bi bi-shop-window"></i>
+
+                <span>Add Canteen</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="CreateCanteen"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString()== "CreateCanteen"? "active" : "")">
+
+                <i class="bi bi-person-badge-fill"></i>
+
+                <span>Create Canteen Login</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="Students"
+               class="sidebar-link">
+
+                <i class="bi bi-people-fill"></i>
+
+                <span>View All Students</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="Orders"
+               class="sidebar-link">
+
+                <i class="bi bi-receipt-cutoff"></i>
+
+                <span>View All Orders</span>
+
+            </a>
+
+            
+            <a asp-controller="Admin"
+               asp-action="Payments"
+               class="sidebar-link">
+
+                <i class="bi bi-wallet2"></i>
+
+                <span>View All Payments</span>
+
+            </a>
+
+
+            <a asp-controller="Admin"
+               asp-action="AllCanteens"
+               class="sidebar-link">
+
+                <i class="bi bi-eye"></i>
+
+                <span>View All Canteens</span>
+
+            </a>
+
+
+           
+
+        </nav>
+
+
+    
+
+    </aside>
+
+
+    <!-- Main Area -->
+    <div class="admin-main">
+
+        <!-- Top Navbar -->
+        <header class="admin-navbar">
+
+            <div class="navbar-left">
+
+                <!-- Mobile Menu -->
+                <button type="button"
+                        class="menu-toggle"
+                        id="menuToggle">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <div>
+
+                    <h6 class="mb-0">
+                        Admin Dashboard
+                    </h6>
+
+                    <small>
+                        Manage your CanteenX platform
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                <!-- Notification -->
+                <button type="button"
+                        class="navbar-icon-btn">
+
+                    <i class="bi bi-bell"></i>
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+                <!-- Admin Profile Dropdown -->
+                <div class="dropdown">
+
+                    <button class="navbar-profile dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                        <div class="profile-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div class="profile-details">
+
+                            <strong>
+                                @(User.Identity?.Name ?? "Admin")
+                            </strong>
+
+                            <small>
+                                Administrator
+                            </small>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- Dropdown Menu -->
+                    <ul class="dropdown-menu dropdown-menu-end admin-profile-menu">
+
+                        <!-- Profile Header -->
+                        <li class="profile-menu-header">
+
+                            <div class="profile-avatar large">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                            <div>
+                                <strong>
+                                    @(User.Identity?.Name ?? "Admin")
+                                </strong>
+
+                                <small>
+                                    Administrator
+                                </small>
+                            </div>
+
+                        </li>
+
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+
+
+                        <!-- Profile -->
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Admin"
+                               asp-action="Profile">
+
+                                <i class="bi bi-person"></i>
+
+                                <span>My Profile</span>
+
+                            </a>
+                        </li>
+
+
+                        <!-- Settings -->
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Admin"
+                               asp-action="Settings">
+
+                                <i class="bi bi-gear"></i>
+
+                                <span>Account Settings</span>
+
+                            </a>
+                        </li>
+
+
+                        <!-- Notifications -->
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Admin"
+                               asp-action="Notifications">
+
+                                <i class="bi bi-bell"></i>
+
+                                <span>Notifications</span>
+
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+
+
+                        <!-- Logout -->
+                        <li>
+                            <a class="dropdown-item logout-item"
+                               asp-controller="Admin"
+                               asp-action="Logout">
+
+                                <i class="bi bi-box-arrow-right"></i>
+
+                                <span>Logout</span>
+
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+              
+
+            </div>
+
+        </header>
+
+
+        <!-- Page Content -->
+        <main class="admin-content">
+
+            @RenderBody()
+
+        </main>
+
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+
+            <span>
+                © @DateTime.Now.Year CanteenX
+            </span>
+
+            <span>
+                Admin Panel
+            </span>
+
+        </footer>
+
+    </div>
+    <script src="~/adminassets/libs/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/adminassets/js/dashboard.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

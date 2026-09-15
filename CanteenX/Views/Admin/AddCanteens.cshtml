@@ -1,0 +1,158 @@
+﻿@model CanteenX.Models.Admin.AddCanteens
+
+@{
+    ViewData["Title"] = "Add Canteen";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- Responsive Header -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1">Add Canteen</h2>
+            <p class="text-muted mb-0">Add a new canteen to the CanteenX system.</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Canteens" class="btn btn-light border shadow-sm w-100 w-sm-auto">
+            <i class="bi bi-arrow-left me-2"></i>Back to Canteens
+        </a>
+    </div>
+
+    <!-- Form Card (Increased max-width for 2-column layout) -->
+    <div class="card border-0 shadow-lg mx-auto" style="max-width: 1000px; border-radius: 18px;">
+        <div class="card-body p-3 p-sm-4 p-md-5">
+
+            <form asp-controller="Admin" asp-action="CreateCanteen" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+
+                <!-- 2-Column Grid Row -->
+                <div class="row gx-lg-5">
+
+                    <!-- LEFT COLUMN (Basic Details) -->
+                    <div class="col-lg-6">
+
+                        <!-- Canteen Name -->
+                        <div class="mb-3 mb-md-4">
+                            <label asp-for="CanteenName" class="form-label fw-semibold">Canteen Name</label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-shop"></i></span>
+                                <input asp-for="CanteenName" class="form-control border-start-0 ps-0 fs-6 fs-md-5" placeholder="e.g. Main Canteen" />
+                            </div>
+                            <span asp-validation-for="CanteenName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-3 mb-md-4">
+                            <label asp-for="Location" class="form-label fw-semibold">Location</label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
+                                <input asp-for="Location" class="form-control border-start-0 ps-0 fs-6 fs-md-5" placeholder="e.g. Near Main Gate" />
+                            </div>
+                            <span asp-validation-for="Location" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3 mb-md-4">
+                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                            <textarea asp-for="Description" class="form-control shadow-sm rounded-3 fs-6" rows="5" placeholder="Enter a short description about this canteen..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN (Media & Settings) -->
+                    <div class="col-lg-6">
+
+                        <!-- Image Upload -->
+                        <div class="mb-3 mb-md-4">
+                            <label class="form-label fw-semibold">Canteen Image</label>
+
+                            <!-- Responsive Dropzone -->
+                            <div class="border border-2 border-dashed rounded-3 p-3 p-md-4 text-center position-relative bg-light h-100" id="uploadZone" style="transition: all 0.3s ease; min-height: 185px;">
+                                <input type="file" name="ImageFile" id="ImageFile" class="position-absolute w-100 h-100 opacity-0" style="top:0; left:0; cursor:pointer;" accept="image/*" onchange="previewImage(event)" />
+
+                                <div id="uploadPlaceholder" class="mt-2">
+                                    <i class="bi bi-cloud-arrow-up display-5 display-md-4 text-primary"></i>
+                                    <h6 class="mt-2 mt-md-3 mb-1 fw-bold fs-6 fs-md-5">Click or drag image</h6>
+                                    <p class="small text-muted mb-0">SVG, PNG, JPG (max. 5MB)</p>
+                                </div>
+
+                                <!-- Image Preview Area -->
+                                <div id="imagePreviewContainer" class="d-none w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                    <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded-3 shadow-sm" style="max-height: 150px; object-fit: cover;" />
+                                    <p class="text-primary small mt-2 mb-0 fw-semibold">Click image to change</p>
+                                </div>
+                            </div>
+                            <div class="form-text mt-2">Optional. You can add the canteen image later.</div>
+                        </div>
+
+                        <!-- Active Status -->
+                        <div class="mb-3 mb-md-4 bg-light p-3 rounded-3 border">
+                            <div class="form-check form-switch d-flex align-items-center gap-2 gap-md-3 mb-0">
+                                <input asp-for="IsActive" class="form-check-input fs-5 fs-md-4 m-0" role="switch" />
+                                <div>
+                                    <label asp-for="IsActive" class="form-check-label fw-bold d-block">Active Canteen</label>
+                                    <small class="text-muted d-block" style="line-height: 1.2;">Active canteens will be visible to students.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                      
+
+                    </div>
+                </div>
+
+                <!-- Responsive Buttons (Placed nicely at the bottom right) -->
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-end pt-3 mt-4 mt-lg-5 border-top">
+                    <a asp-controller="Admin" asp-action="Canteens" class="btn btn-light btn-lg border shadow-sm rounded-3 px-4 px-md-5 order-2 order-sm-1">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger btn-lg px-4 px-md-5 shadow-sm rounded-3 order-1 order-sm-2">
+                        <i class="bi bi-plus-circle me-2"></i> Add Canteen
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- Script for Image Preview -->
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const file = input.files[0];
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewImage = document.getElementById('imagePreview');
+            const uploadZone = document.getElementById('uploadZone');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+
+                    // Hide placeholder, show image
+                    placeholder.classList.add('d-none');
+                    previewContainer.classList.remove('d-none');
+
+                    // Change background styling
+                    uploadZone.classList.remove('bg-light');
+                    uploadZone.classList.add('bg-white');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // Revert to placeholder if no image is selected
+                previewImage.src = "#";
+                placeholder.classList.remove('d-none');
+                previewContainer.classList.add('d-none');
+                uploadZone.classList.add('bg-light');
+                uploadZone.classList.remove('bg-white');
+            }
+        }
+    </script>
+}

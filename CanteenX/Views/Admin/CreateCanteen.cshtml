@@ -1,0 +1,180 @@
+﻿@model CanteenX.Models.Auth.RegisterDto
+@{
+    ViewData["Title"] = "Create Canteen Login Account";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    /* Custom UI Enhancements for a Modern SaaS look */
+    .form-card {
+        border-radius: 1rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border-right: 0;
+    }
+
+    .form-control {
+        border-left: 0;
+    }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        border-radius: 0.375rem;
+    }
+
+        .input-group:focus-within .input-group-text,
+        .input-group:focus-within .form-control,
+        .input-group:focus-within .btn {
+            border-color: #dc3545; /* Red focus to match btn-danger */
+        }
+
+    .info-callout {
+        border-left: 4px solid #0dcaf0;
+        background-color: #f1fbfe;
+    }
+</style>
+
+<div class="container-fluid py-4 px-3 px-md-4">
+
+    <!-- Centered Wrapper Start -->
+    <div class="mx-auto" style="max-width: 850px;">
+
+        <!-- Page Header -->
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1 text-dark">
+                Create Canteen Login
+            </h2>
+            <p class="text-muted mb-0">
+                Create a new canteen profile and set up staff access credentials.
+            </p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card form-card border-0">
+            <div class="card-body p-4 p-md-5">
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
+                            <div>
+                                <strong>Success!</strong> @ViewBag.SuccessMessage
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+
+                <form asp-controller="Admin" asp-action="RegisterCanteenLogin" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 mb-4"></div>
+
+                    <div class="row g-4">
+                        <!-- Canteen Name (Full Width) -->
+                        <div class="col-12">
+                            <label asp-for="FullName" class="form-label fw-semibold text-secondary small text-uppercase">Canteen Name</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"><i class="bi bi-shop"></i></span>
+                                <input asp-for="FullName" class="form-control" placeholder="Enter official canteen name" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Email (Half Width on Desktop) -->
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold text-secondary small text-uppercase">Email Address</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="canteen@example.com" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Phone Number (Half Width on Desktop) -->
+                        <div class="col-12 col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold text-secondary small text-uppercase">Phone Number</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="9876543210" maxlength="10" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Password (Half Width on Desktop) -->
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Password" class="form-label fw-semibold text-secondary small text-uppercase">Password</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                                <input asp-for="Password" type="password" class="form-control password-field" placeholder="Create strong password" autocomplete="new-password" />
+                                <button type="button" class="btn btn-outline-secondary border-start-0 password-toggle bg-white" data-target="Password">
+                                  
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                            <div class="form-text small text-muted mt-2">
+                                <i class="bi bi-check2-circle text-success me-1"></i> Must contain uppercase, lowercase, number & symbol.
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password (Half Width on Desktop) -->
+                        <div class="col-12 col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold text-secondary small text-uppercase">Confirm Password</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control password-field" placeholder="Confirm password" autocomplete="new-password" />
+                                <button type="button" class="btn btn-outline-secondary border-start-0 password-toggle bg-white" data-target="ConfirmPassword">
+                                   
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Info Alert -->
+                        <div class="col-12">
+                            <div class="info-callout p-3 rounded-3 mt-2">
+                                <div class="d-flex align-items-start gap-3">
+                                    <i class="bi bi-info-circle-fill text-info fs-5 mt-1"></i>
+                                    <div>
+                                        <strong class="text-dark">Automated Role Assignment</strong>
+                                        <p class="small text-muted mb-0 mt-1">
+                                            This account will automatically receive the <span class="badge bg-secondary">CanteenStaff</span> role. They will only have administrative access to manage this specific canteen's inventory and orders.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-12 mt-4 pt-2 border-top d-flex flex-column flex-sm-row gap-3">
+                            <button type="submit" class="btn btn-danger btn-lg px-5 fw-semibold shadow-sm">
+                                <i class="bi bi-person-plus-fill me-2"></i> Create Account
+                            </button>
+                            <a asp-controller="Admin" asp-action="Index" class="btn btn-light btn-lg border px-4 fw-medium text-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <!-- Centered Wrapper End -->
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+  
+}

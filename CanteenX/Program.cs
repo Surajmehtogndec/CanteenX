@@ -20,6 +20,9 @@ builder.Services
 
         options.DefaultSignInScheme =
             CookieAuthenticationDefaults.AuthenticationScheme;
+
+        options.DefaultChallengeScheme =
+          CookieAuthenticationDefaults.AuthenticationScheme;
     })
     .AddCookie(
         CookieAuthenticationDefaults.AuthenticationScheme,
