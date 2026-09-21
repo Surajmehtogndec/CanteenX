@@ -22,10 +22,22 @@
     <div class="card border-0 shadow-lg mx-auto" style="max-width: 1000px; border-radius: 18px;">
         <div class="card-body p-3 p-sm-4 p-md-5">
 
-            <form asp-controller="Admin" asp-action="CreateCanteen" method="post" enctype="multipart/form-data">
+            @if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> @ViewBag.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+
+
+
+            <form asp-controller="Admin" asp-action="AddCanteens" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+                <div asp-validation-summary="All" class="@(!ViewData.ModelState.IsValid ? "alert alert-danger rounded-3 mb-4" : "d-none")"></div> 
+               
 
                 <!-- 2-Column Grid Row -->
                 <div class="row gx-lg-5">
@@ -33,14 +45,42 @@
                     <!-- LEFT COLUMN (Basic Details) -->
                     <div class="col-lg-6">
 
-                        <!-- Canteen Name -->
                         <div class="mb-3 mb-md-4">
-                            <label asp-for="CanteenName" class="form-label fw-semibold">Canteen Name</label>
+
+                            <label asp-for="UserId"
+                                   class="form-label fw-semibold">
+                                Canteen Name
+                            </label>
+
                             <div class="input-group input-group-lg shadow-sm rounded-3">
-                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-shop"></i></span>
-                                <input asp-for="CanteenName" class="form-control border-start-0 ps-0 fs-6 fs-md-5" placeholder="e.g. Main Canteen" />
+
+                                <span class="input-group-text bg-white border-end-0 text-muted">
+                                    <i class="bi bi-shop"></i>
+                                </span>
+
+                                <select asp-for="UserId"
+                                        class="form-select border-start-0 ps-0 fs-6"
+                                        id="canteenStaffSelect">
+
+                                    <option value="">
+                                        Select Canteen
+                                    </option>
+
+                                    @foreach (var staff in ViewBag.CanteenStaff)
+                                    {
+                                        <option value="@staff.UserId">
+                                            @staff.CanteenName
+                                        </option>
+                                    }
+
+                                </select>
+
                             </div>
-                            <span asp-validation-for="CanteenName" class="text-danger small mt-1 d-block"></span>
+
+                            <span asp-validation-for="UserId"
+                                  class="text-danger small mt-1 d-block">
+                            </span>
+
                         </div>
 
                         <!-- Location -->
@@ -71,7 +111,7 @@
 
                             <!-- Responsive Dropzone -->
                             <div class="border border-2 border-dashed rounded-3 p-3 p-md-4 text-center position-relative bg-light h-100" id="uploadZone" style="transition: all 0.3s ease; min-height: 185px;">
-                                <input type="file" name="ImageFile" id="ImageFile" class="position-absolute w-100 h-100 opacity-0" style="top:0; left:0; cursor:pointer;" accept="image/*" onchange="previewImage(event)" />
+                                <input type="file" name="ImageUrl" id="ImageFile" class="position-absolute w-100 h-100 opacity-0" style="top:0; left:0; cursor:pointer;" accept=".jpg,.jpeg,.png" onchange="previewImage(event)" />
 
                                 <div id="uploadPlaceholder" class="mt-2">
                                     <i class="bi bi-cloud-arrow-up display-5 display-md-4 text-primary"></i>
@@ -85,7 +125,7 @@
                                     <p class="text-primary small mt-2 mb-0 fw-semibold">Click image to change</p>
                                 </div>
                             </div>
-                            <div class="form-text mt-2">Optional. You can add the canteen image later.</div>
+                           
                         </div>
 
                         <!-- Active Status -->
@@ -120,6 +160,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <!-- SweetAlert CDN (agar pehle se added nahi hai) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Script for Image Preview -->
     <script>
@@ -154,5 +196,23 @@
                 uploadZone.classList.remove('bg-white');
             }
         }
+
+        
+        // 2. Auto-hide Alert Logic (5 Seconds)
+        setTimeout(function () {
+            // Alert box ko dhoondhein
+            var alertBox = document.querySelector('.alert-success');
+            
+            if (alertBox) {
+                // 'show' class hatane se Bootstrap ka fade-out effect chalega
+                alertBox.classList.remove('show');
+                
+                // Fade effect complete hone ke baad HTML se poori tarah hata dein
+                setTimeout(function () {
+                    alertBox.remove();
+                }, 150); 
+            }
+        }, 5000); // 5000 ms = 5 seconds
+   
     </script>
 }
