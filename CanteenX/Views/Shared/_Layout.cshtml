@@ -4,201 +4,422 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CanteenX</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <link href="~/lib/boostrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/boostrap/css/aos.css" rel="stylesheet" asp-append-version="true" />
-   
     <link href="~/lib/boostrap/css/swiper-bundle.min.css" rel="stylesheet" asp-append-version="true" />
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="~/lib/boostrap/css/magnific-popup.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/CanteenX.styles.css" />
     <link rel="icon" type="image/x-icon" href="~/favicon1.ico" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+  <!-- UPDATED STYLES WITH HOVER EFFECTS, ACTIVE TAB & SMOOTH MOBILE MENU -->
+    <style>
+        header.ios-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .ios-navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 20px;
+        }
+
+        .ios-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .ios-logo-box {
+            width: 38px;
+            height: 38px;
+            background: #e8281a;
+            color: #fff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px rgba(232, 40, 26, 0.25);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ios-brand:hover .ios-logo-box {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        .ios-brand-text .bname {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+
+        .ios-brand-text .bname span {
+            color: #e8281a;
+        }
+
+        .ios-brand-text .bsub {
+            font-size: 0.65rem;
+            color: #777;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Desktop Nav Links with Active State & Hover */
+        .ios-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ios-nav-links a {
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #555;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .ios-nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #e8281a;
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 2px;
+        }
+
+        .ios-nav-links a:hover, 
+        .ios-nav-links a.active {
+            color: #e8281a;
+        }
+
+        .ios-nav-links a.active::after,
+        .ios-nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .ios-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ios-icon-btn, .ios-mobile-toggler {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ios-icon-btn:hover, .ios-mobile-toggler:hover {
+            background: #e8281a;
+            color: #fff;
+            border-color: #e8281a;
+            transform: scale(1.08);
+        }
+
+        .ios-mobile-toggler {
+            display: none;
+        }
+
+        /* Navbar Buttons Hover & Smooth Effects */
+        .ios-btn-primary {
+            background: #e8281a;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 6px 15px rgba(232, 40, 26, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none;
+        }
+
+        .ios-btn-primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(232, 40, 26, 0.4);
+            color: #fff;
+            background: #d02013;
+        }
+
+        .ios-btn-outline {
+            background: transparent;
+            color: #e8281a;
+            border: 1.5px solid #e8281a;
+            padding: 7px 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ios-btn-outline:hover {
+            background: rgba(232, 40, 26, 0.08);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(232, 40, 26, 0.15);
+            color: #e8281a;
+        }
+
+        /* ULTRA-SMOOTH MOBILE SIDEBAR MENU (iOS SPRING SLIDE) */
+        .ios-mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 82%;
+            max-width: 320px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            box-shadow: -15px 0 40px rgba(0,0,0,0.18);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1); /* Super Smooth Physics Easing */
+        }
+
+        .ios-mobile-menu.open {
+            right: 0;
+        }
+
+        .ios-mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding-bottom: 15px;
+        }
+
+        .ios-mobile-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ios-mobile-links a {
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ios-mobile-links a i {
+            color: #e8281a;
+            width: 22px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Mobile Options Hover & Active Effects */
+        .ios-mobile-links a:hover,
+        .ios-mobile-links a.active {
+            background: rgba(232, 40, 26, 0.08);
+            color: #e8281a;
+            transform: translateX(6px);
+        }
+
+        .ios-mobile-links a:hover i {
+            transform: scale(1.2);
+        }
+
+        .ios-mobile-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .ios-mobile-backdrop.open {
+            display: block;
+            opacity: 1;
+        }
+
+        @@media (max-width: 992px) {
+            .ios-nav-links {
+                display: none;
+            }
+            .ios-mobile-toggler {
+                display: flex;
+            }
+        }
+
+        /* Logout button ya kisi bhi dropdown item par blue focus/active color hatane ke liye */
+.dropdown-item:focus, 
+.dropdown-item:active,
+.dropdown-item.active {
+    background-color: rgba(232, 40, 26, 0.08) !important; /* Halkah red tint */
+    color: #e8281a !important; /* Text color red hi rahega */
+}
+        
+
+            /* Floating Cart & Back to Top Responsive adjustments */
+            .ios-cart-float {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                z-index: 999;
+                background: rgba(232, 40, 26, 0.9);
+                backdrop-filter: blur(12px);
+                color: #fff;
+                padding: 10px 18px;
+                border-radius: 50px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                cursor: pointer;
+                box-shadow: 0 10px 25px rgba(232, 40, 26, 0.3);
+            }
+
+            .ios-btt {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 999;
+                background: rgba(26, 26, 26, 0.85);
+                backdrop-filter: blur(12px);
+                color: #fff;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            }
+    </style>
 </head>
 
 <body>
-    <header>
-        <!-- ============================================================
-         NAVBAR
+    <!-- ============================================================
+         HEADER & iOS FROSTED GLASS RESPONSIVE NAVBAR
          ============================================================ -->
-        <nav class="navbar navbar-expand-lg" id="nav">
-            <div class="container">
-
-                <!-- Logo -->
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <div class="blogo">
-                        <div class="bico">
-                            <i class="fas fa-utensils"></i>
-                        </div>
-
-                        <div>
-                            <div class="bname">
-                                Canteen<span>X</span>
-                            </div>
-
-                            <div class="bsub">
-                                Tap. Order. Eat.
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <!-- Mobile Toggle -->
-                <button class="navbar-toggler border-0"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navmenu">
-                    <i class="fas fa-bars"
-                       style="color:var(--primary);font-size:1.35rem;">
-                    </i>
-                </button>
-                <div class="collapse navbar-collapse" id="navmenu">
-
-                    <!-- Navigation -->
-                    <ul class="navbar-nav mx-auto">
-
-                        <li class="nav-item">
-                            <a class="nav-link active" asp-controller="Home" asp-action="Index">
-                                Home
-                            </a>
-                        </li>
-
-               
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Menu" asp-action="Index">
-                                Menu
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Offers" asp-action="Index">
-                                Offers
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="Index">
-                                My Orders
-                            </a>
-                        </li>
-
-                    </ul>
-
-
-                    <!-- Right Side -->
-                    <div class="d-flex align-items-center gap-2">
-
-                        <!-- Search -->
-                        <button id="navSearchBtn"
-                                class="nav-icon-btn"
-                                title="Search">
-
-                            <i class="fas fa-search"></i>
-
-                        </button>
-
-
-                        <!-- Cart -->
-                        <a href="#cart"
-                           class="nav-icon-btn cart-btn"
-                           title="Shopping Cart">
-
-                            <i class="fas fa-shopping-cart"></i>
-
-                            <!-- Cart Count -->
-                            <span class="cart-count">0</span>
-
-                        </a>
-
-
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <div class="dropdown user-profile-dropdown">
-
-                                <button class="user-profile-btn"
-                                        type="button"
-                                        data-bs-toggle="dropdown">
-
-                                    <div class="user-avatar">
-                                        @User.Identity.Name?.Substring(0, 1).ToUpper()
-                                    </div>
-
-                                    <div class="user-info">
-                                        <span class="user-name">
-                                            @User.Identity.Name
-                                        </span>
-
-                                        <small>
-                                            @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-                                        </small>
-                                    </div>
-
-                                    <i class="fas fa-chevron-down"></i>
-
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-menu-end">
-
-                                  
-
-                                   
-
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-
-                                    <li>
-                                        <form asp-controller="Account"
-                                              asp-action="Logout"
-                                              method="post">
-
-                                            @Html.AntiForgeryToken()
-
-                                            <button type="submit"
-                                                    class="dropdown-item logout-btn" asp-for="Account.Logout">
-
-                                                <i class="fas fa-sign-out-alt"></i>
-                                                Logout
-
-                                            </button>
-
-                                        </form>
-                                    </li>
-
-                                </ul>
-
-                            </div>
-                        }
-                        else
-                        {
-                            <a href="/Account/Login"
-                               class="login-btn">
-
-                                <i class="fas fa-user me-2"></i>
-                                Login / Sign Up
-
-                            </a>
-                        }
-
-
-                        <!-- Order Now -->
-                        <a href="#menu"
-                           class="nav-link nav-cta">
-
-                            <i class="fas fa-shopping-bag me-1"></i>
-                            Order Now
-
-                        </a>
-
-                    </div>
-
+    <header class="ios-header">
+        <nav class="ios-navbar">
+            <!-- Logo -->
+            <a class="ios-brand" asp-controller="Home" asp-action="Index">
+                <div class="ios-logo-box">
+                    <i class="fas fa-utensils"></i>
                 </div>
+                <div class="ios-brand-text">
+                    <div class="bname">Canteen<span>X</span></div>
+                    <div class="bsub">Tap. Order. Eat.</div>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="ios-nav-links">
+                @{
+                        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+                    }
+                <li><a asp-controller="Home" asp-action="Index" class="@(currentController == "Home" && currentAction=="Index" ? "active" : "")">Home</a></li>
+                <li><a asp-controller="Menu" asp-action="Index" class="@(currentController == "Menu" ? "active" : "")">Menu</a></li>
+                <li><a asp-controller="Offers" asp-action="Index" class="@(currentController == "Offers" ? "active" : "")">Offers</a></li>
+                <li><a asp-controller="Orders" asp-action="Index" class="@(currentController == "Orders" ? "active" : "")">My Orders</a></li>
+            </ul>
+
+            <!-- Right Actions -->
+            <div class="ios-actions">
+                <button id="navSearchBtn" class="ios-icon-btn" title="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="dropdown d-none d-sm-block">
+                        <button class="ios-btn-outline rounded-pill px-3 py-1 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <span style="width: 22px; height: 22px; background: #e8281a; color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem;">
+                                @User.Identity.Name?.Substring(0, 1).ToUpper()
+                            </span>
+                            <span style="font-size: 0.8rem;">@User.Identity.Name</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);">
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item text-danger fw-semibold rounded-3 py-2">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="ios-btn-outline d-none d-sm-flex">
+                        <i class="fas fa-user"></i> Login
+                    </a>
+                }
+
+                <a href="#menu" class="ios-btn-primary d-none d-lg-flex">
+                    <i class="fas fa-shopping-bag"></i> Order Now
+                </a>
+
+                <!-- Mobile Toggle Button -->
+                <button class="ios-mobile-toggler" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </nav>
 
-        <!-- ============================================================
-         FIX 1 � SEARCH OVERLAY POPUP
-         ============================================================ -->
+        <!-- SEARCH OVERLAY -->
         <div id="searchOv">
             <button class="sovclose" id="searchClose"><i class="fas fa-times"></i></button>
             <div class="sovbox">
@@ -207,127 +428,143 @@
                     <input type="text" id="searchInput" placeholder="Search burgers, pizza, chicken..." autocomplete="off" />
                     <button><i class="fas fa-search"></i></button>
                 </div>
-                <!-- Categories inside search box -->
                 <div class="sovcats">
-                    <div class="sovcat active" data-cat="all">
-                        <img src="img/menu/1.jpg" alt="" />All Items
-                    </div>
-                    <div class="sovcat" data-cat="burgers">
-                        <img src="img/menu/1.jpg" alt="" />Burgers
-                    </div>
-                    <div class="sovcat" data-cat="pizza">
-                        <img src="img/menu/2.jpg" alt="" />Pizza
-                    </div>
-                    <div class="sovcat" data-cat="chicken">
-                        <img src="img/menu/3.jpg" alt="" />Chicken
-                    </div>
-                    <div class="sovcat" data-cat="wraps">
-                        <img src="img/menu/4.jpg" alt="" />Wraps
-                    </div>
-                    <div class="sovcat" data-cat="pasta">
-                        <img src="img/menu/5.jpg" alt="" />Pasta
-                    </div>
-                    <div class="sovcat" data-cat="desserts">
-                        <img src="img/menu/6.jpg" alt="" />Desserts
-                    </div>
-                </div>
-                <div class="sovtrend">
-                    <p><i class="fas fa-fire me-1" style="color:var(--secondary);"></i>Trending Searches</p>
-                    <span class="ttag">Smash Burger</span>
-                    <span class="ttag">Nashville Chicken</span>
-                    <span class="ttag">Truffle Pizza</span>
-                    <span class="ttag">Lava Cake</span>
-                    <span class="ttag">Loaded Fries</span>
-                    <span class="ttag">Mango Shake</span>
+                    <div class="sovcat active" data-cat="all"><img src="~/img/menu/1.jpg" alt="" />All Items</div>
+                    <div class="sovcat" data-cat="burgers"><img src="~/img/menu/1.jpg" alt="" />Burgers</div>
+                    <div class="sovcat" data-cat="pizza"><img src="~/img/menu/2.jpg" alt="" />Pizza</div>
+                    <div class="sovcat" data-cat="chicken"><img src="~/img/menu/3.jpg" alt="" />Chicken</div>
+                    <div class="sovcat" data-cat="wraps"><img src="~/img/menu/4.jpg" alt="" />Wraps</div>
+                    <div class="sovcat" data-cat="pasta"><img src="~/img/menu/5.jpg" alt="" />Pasta</div>
+                    <div class="sovcat" data-cat="desserts"><img src="~/img/menu/6.jpg" alt="" />Desserts</div>
                 </div>
             </div>
         </div>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <!-- MOBILE SIDEBAR NAVIGATION MENU -->
+    <div class="ios-mobile-backdrop" id="mobileBackdrop"></div>
+    <div class="ios-mobile-menu" id="mobileMenu">
+        <div class="ios-mobile-menu-header">
+            <div class="bname" style="font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700;">Canteen<span style="color:#e8281a;">X</span></div>
+            <button class="ios-icon-btn" id="mobileMenuClose"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="ios-mobile-links">
+            <li><a asp-controller="Home" asp-action="Index" class="@(currentController == "Home" && currentAction=="Index" ? "active" : "")"><i class="fas fa-home"></i> Home</a></li>
+            <li><a asp-controller="Menu" asp-action="Index"  class="@(currentController == "Menu" ? "active" : "")"><i class="fas fa-utensils"></i> Menu</a></li>
+            <li><a asp-controller="Offers" asp-action="Index" class="@(currentController == "Offers" ? "active" : "")"><i class="fas fa-tags"></i> Offers</a></li>
+            <li><a asp-controller="Orders" asp-action="Index" class="@(currentController == "Orders" ? "active" : "")"><i class="fas fa-box"></i> My Orders</a></li>
+        </ul>
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.08);">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="ios-btn-outline w-100 justify-content-center text-danger" style="border-color: #e8281a;">
+                        <i class="fas fa-sign-out-alt"></i> Logout (@User.Identity.Name)
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a href="/Account/Login" class="ios-btn-outline w-100 justify-content-center">
+                    <i class="fas fa-user"></i> Login / Sign Up
+                </a>
+            }
+            <a href="#menu" class="ios-btn-primary w-100 justify-content-center">
+                <i class="fas fa-shopping-bag"></i> Order Now
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN BODY -->
+    <div style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="row g-5">
-                <div class="col-lg-4">
-                    <div class="fnm">Canteen<span>X</span></div>
-                    <p class="fdesc">Your campus food, simplified. Discover menus from all campus canteens, order online, pay securely, and skip the queue.</p>
-                    <div class="fsoc">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-2">
-                    <div class="ftit">Quick Links</div>
-                    <ul class="flinks ps-0">
-                        <li><a href="#hero"><i class="fas fa-chevron-right"></i>Home</a></li>
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Our Menu</a></li>
-                        <li><a href="#offers"><i class="fas fa-chevron-right"></i>Offers</a></li>
-                        <li><a href="#orders"><i class="fas fa-chevron-right"></i>Orders</a></li>
 
+    <!-- ============================================================
+         RESPONSIVE FOOTER
+         ============================================================ -->
+    <footer class="ios-footer" style="background: #111115; color: #fff; padding: 50px 0 20px 0; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 12px; color: #fff;">Canteen<span style="color: #e8281a;">X</span></h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.88rem; line-height: 1.6;">Your campus food, simplified. Discover menus from all campus canteens, order online, and skip the queue.</p>
+                </div>
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h4 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #fff;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0; line-height: 2; font-size: 0.88rem;">
+                        <li><a href="/" style="color: rgba(255,255,255,0.6); text-decoration: none;">Home</a></li>
+                        <li><a asp-controller="Menu" asp-action="Index" style="color: rgba(255,255,255,0.6); text-decoration: none;">Our Menu</a></li>
+                        <li><a asp-controller="Offers" asp-action="Index" style="color: rgba(255,255,255,0.6); text-decoration: none;">Offers</a></li>
                     </ul>
                 </div>
-                <div class="col-sm-6 col-lg-2">
-                    <div class="ftit">Our Menu</div>
-                    <ul class="flinks ps-0">
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Burgers</a></li>
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Pizza</a></li>
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Fried Chicken</a></li>
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Wraps &amp; Rolls</a></li>
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Pasta</a></li>
-                        <li><a href="#menu"><i class="fas fa-chevron-right"></i>Desserts</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <div class="ftit">Get In Touch</div>
-                    <div class="fci">
-                        <div class="fciico"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="fciinfo">
-                            <strong>Address</strong>GNDEC Campus, Ludhiana, Punjab
-                        </div>
-                    </div>
-                    <div class="fci">
-                        <div class="fciico"><i class="fas fa-phone-alt"></i></div>
-                        <div class="fciinfo"><strong>Phone</strong>91+ 0161 5064501</div>
-                    </div>
-                    <div class="fci">
-                        <div class="fciico"><i class="fas fa-envelope"></i></div>
-                        <div class="fciinfo"><strong>Email</strong>principal@gndec.ac.in</div>
-                    </div>
-                    <div class="fci">
-                        <div class="fciico"><i class="fas fa-clock"></i></div>
-                        <div class="fciinfo"><strong>Hours</strong>Mon - Fri: 10 AM - 5 PM</div>
-                    </div>
+                <div class="col-lg-4 col-md-12">
+                    <h4 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; color: #fff;">Get In Touch</h4>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.88rem; margin-bottom: 6px;"><strong>Address:</strong> GNDEC Campus, Ludhiana</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.88rem;"><strong>Email:</strong> principal@gndec.ac.in</p>
                 </div>
             </div>
-        </div>
-        <div class="fbot">
-            <div class="container">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <p>&copy;2026 All Rights Reserved.<span>CanteenX</span>. Developed with ❤️ by CanteenX Team  </p>
-
-                </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 30px; padding-top: 20px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem;">
+                &copy; 2026 CanteenX. All Rights Reserved. Developed with ❤️ by CanteenX Team.
             </div>
         </div>
     </footer>
-    <!-- Floating cart -->
-    <div class="cartfl"><i class="fas fa-shopping-cart"></i><span>My Cart</span><div class="ccount" id="cartCount">0</div></div>
-    <!-- Back to top -->
-    <button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
+    <!-- FLOATING UTILITIES -->
+    <div class="ios-cart-float shadow-lg">
+        <i class="fas fa-shopping-cart"></i>
+        <span style="font-weight: 600;">My Cart</span>
+        <div style="background: #fff; color: #e8281a; font-weight: 700; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;" id="cartCount">0</div>
+    </div>
+
+    <button class="ios-btt shadow-lg" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Scripts -->
     <script src="~/lib/boostrap/js/jquery-3.7.1.min.js" asp-append-version="true"></script>
     <script src="~/lib/boostrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/lib/boostrap/js/aos.js" asp-append-version="true"></script>
     <script src="~/lib/boostrap/js/swiper-bundle.min.js" asp-append-version="true"></script>
-
     <script src="~/lib/boostrap/js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+     <!-- SweetAlert2 CDN (Agar pehle se nahi hai) -->
+        <script src="~/lib\sweetalert2@11.js"> </script>
+
+    <!-- MOBILE MENU TOGGLE SCRIPT -->
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+             
+
+              
+
+                // 2. Smooth Mobile Menu Toggle Animation
+                const toggleBtn = document.getElementById("mobileMenuToggle");
+                const closeBtn = document.getElementById("mobileMenuClose");
+                const menu = document.getElementById("mobileMenu");
+                const backdrop = document.getElementById("mobileBackdrop");
+
+                function openMenu() {
+                    menu.classList.add("open");
+                    backdrop.classList.add("open");
+                    document.body.style.overflow = "hidden";
+                }
+
+                function closeMenu() {
+                    menu.classList.remove("open");
+                    backdrop.classList.remove("open");
+                    document.body.style.overflow = "auto";
+                }
+
+                if (toggleBtn) toggleBtn.addEventListener("click", openMenu);
+                if (closeBtn) closeBtn.addEventListener("click", closeMenu);
+                if (backdrop) backdrop.addEventListener("click", closeMenu);
+            });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -5,98 +5,371 @@
     Layout = "_AdminLayout";
 }
 
-<div class="container-fluid py-4">
+<style>
+    /* =========================================
+           FUTURISTIC & iOS GLASSMORPHISM UI STYLES
+           ========================================= */
+    .futuristic-wrapper {
+        animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes pageEnter {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Staggered Field Animations */
+    .stagger-1 {
+        animation: fadeUp 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .stagger-2 {
+        animation: fadeUp 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .stagger-3 {
+        animation: fadeUp 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .stagger-4 {
+        animation: fadeUp 0.5s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Glass Card with Ambient Glow */
+    .glass-form-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+        position: relative;
+        overflow: hidden;
+    }
+
+        /* Decorative Top Gradient Bar */
+        .glass-form-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #007aff, #5856d6, #ff2d55);
+        }
+
+    /* Interactive Input Groups */
+    .modern-input-group {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+
+        .modern-input-group:hover {
+            border-color: #cbd5e1;
+            background: #ffffff;
+        }
+
+        .modern-input-group:focus-within {
+            background: #ffffff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .modern-input-group .input-group-text {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            padding-left: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* Icon lights up when user clicks inside the input */
+        .modern-input-group:focus-within .input-group-text {
+            color: #007aff;
+            transform: scale(1.12);
+        }
+
+        .modern-input-group .form-control,
+        .modern-input-group .form-select {
+            background: transparent;
+            border: none;
+            padding: 13px 16px 13px 8px;
+            font-size: 0.96rem;
+            color: #1e293b;
+            box-shadow: none !important;
+        }
+
+    .modern-textarea {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 14px 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        resize: none;
+    }
+
+        .modern-textarea:hover {
+            border-color: #cbd5e1;
+            background: #ffffff;
+        }
+
+        .modern-textarea:focus {
+            background: #ffffff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12) !important;
+            transform: translateY(-2px);
+        }
+
+    /* Futuristic Dropzone */
+    .futuristic-dropzone {
+        border: 2px dashed #cbd5e1;
+        border-radius: 18px;
+        background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+        min-height: 220px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .futuristic-dropzone:hover,
+        .futuristic-dropzone.drag-active {
+            border-color: #007aff;
+            background: rgba(0, 122, 255, 0.03);
+            box-shadow: 0 12px 30px rgba(0, 122, 255, 0.08);
+            transform: translateY(-3px);
+        }
+
+    .upload-icon-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(0, 122, 255, 0.1);
+        color: #007aff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        transition: all 0.35s ease;
+    }
+
+    .futuristic-dropzone:hover .upload-icon-circle {
+        background: #007aff;
+        color: #ffffff;
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
+    }
+
+    /* Interactive Active Status Card */
+    .status-card {
+        border-radius: 16px;
+        border: 1.5px solid #e2e8f0;
+        background: #f8fafc;
+        padding: 18px 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .status-card.active-glow {
+            border-color: rgba(52, 199, 89, 0.5);
+            background: rgba(52, 199, 89, 0.05);
+            box-shadow: 0 8px 24px rgba(52, 199, 89, 0.08);
+        }
+
+    .form-switch .form-check-input {
+        width: 3.2em;
+        height: 1.7em;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+        .form-switch .form-check-input:checked {
+            background-color: #34c759; /* Apple Green */
+            border-color: #34c759;
+            box-shadow: 0 0 12px rgba(52, 199, 89, 0.4);
+        }
+
+    /* Futuristic Buttons */
+    .btn-futuristic-primary {
+        background: linear-gradient(135deg, #007aff, #5856d6);
+        border: none;
+        color: white;
+        border-radius: 14px;
+        padding: 12px 32px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        box-shadow: 0 8px 20px rgba(0, 122, 255, 0.28);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .btn-futuristic-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 122, 255, 0.4);
+            color: white;
+        }
+
+        .btn-futuristic-primary:active {
+            transform: scale(0.97);
+        }
+
+    .btn-futuristic-light {
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        color: #475569;
+        border-radius: 14px;
+        padding: 12px 28px;
+        font-weight: 600;
+        transition: all 0.25s ease;
+    }
+
+        .btn-futuristic-light:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+            transform: translateY(-2px);
+        }
+
+    /* Invalid Field Red Glow & Shake Animation */
+    .input-invalid {
+        border-color: #ff3b30 !important;
+        background: rgba(255, 59, 48, 0.03) !important;
+        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
+        animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @@keyframes iosShake {
+        10%, 90% {
+            transform: translateX(-2px);
+        }
+
+        20%, 80% {
+            transform: translateX(4px);
+        }
+
+        30%, 50%, 70% {
+            transform: translateX(-6px);
+        }
+
+        40%, 60% {
+            transform: translateX(6px);
+        }
+    }
+</style>
+
+<div class="container-fluid py-4 futuristic-wrapper">
 
     <!-- Responsive Header -->
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3 mx-auto" style="max-width: 1000px;">
         <div>
-            <h2 class="fw-bold mb-1">Add Canteen</h2>
-            <p class="text-muted mb-0">Add a new canteen to the CanteenX system.</p>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge rounded-pill px-3 py-1" style="background: rgba(0, 122, 255, 0.1); color: #007aff; font-weight: 600;">
+                    <i class="bi bi-stars me-1"></i> Portal Setup
+                </span>
+            </div>
+            <h2 class="fw-bold mb-1" style="color: #1c1c1e; letter-spacing: -0.5px;">Add New Canteen</h2>
+            <p class="text-muted mb-0">Configure and onboard a new canteen to the CanteenX ecosystem.</p>
         </div>
-        <a asp-controller="Admin" asp-action="Canteens" class="btn btn-light border shadow-sm w-100 w-sm-auto">
+        <a asp-controller="Admin" asp-action="Canteens" class="btn btn-futuristic-light shadow-sm w-100 w-sm-auto">
             <i class="bi bi-arrow-left me-2"></i>Back to Canteens
         </a>
     </div>
 
-    <!-- Form Card (Increased max-width for 2-column layout) -->
-    <div class="card border-0 shadow-lg mx-auto" style="max-width: 1000px; border-radius: 18px;">
+    <!-- Main Glass Card -->
+    <div class="glass-form-card mx-auto" style="max-width: 1000px;">
         <div class="card-body p-3 p-sm-4 p-md-5">
 
+            <!-- Success Alert -->
             @if (ViewBag.SuccessMessage != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <strong>Success!</strong> @ViewBag.SuccessMessage
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
+            {
+                <div class="alert alert-success alert-dismissible fade show rounded-4 border-0 shadow-sm d-flex align-items-center mb-4" role="alert" style="background: rgba(52, 199, 89, 0.12); color: #15803d;">
+                    <i class="bi bi-check-circle-fill fs-4 me-3 text-success"></i>
+                    <div>
+                        <strong>Awesome!</strong> @ViewBag.SuccessMessage
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
 
-
-
-
-            <form asp-controller="Admin" asp-action="AddCanteens" method="post" enctype="multipart/form-data">
+            <form asp-controller="Admin" asp-action="AddCanteens" method="post" enctype="multipart/form-data" id="addCanteenForm">
                 @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="All" class="@(!ViewData.ModelState.IsValid ? "alert alert-danger rounded-3 mb-4" : "d-none")"></div> 
-               
+                <!-- Dynamic Validation Summary -->
+                <div asp-validation-summary="All" class="@(!ViewData.ModelState.IsValid ? "alert alert-danger rounded-4 border-0 shadow-sm mb-4" : "d-none")"></div>
 
                 <!-- 2-Column Grid Row -->
-                <div class="row gx-lg-5">
+                <div class="row gx-lg-5 gy-4">
 
                     <!-- LEFT COLUMN (Basic Details) -->
                     <div class="col-lg-6">
 
-                        <div class="mb-3 mb-md-4">
-
-                            <label asp-for="UserId"
-                                   class="form-label fw-semibold">
-                                Canteen Name
+                        <!-- Canteen Staff Dropdown -->
+                        <div class="mb-4 stagger-1">
+                            <label asp-for="UserId" class="form-label fw-semibold text-dark mb-2">
+                                Canteen Name <span class="text-danger">*</span>
                             </label>
-
-                            <div class="input-group input-group-lg shadow-sm rounded-3">
-
-                                <span class="input-group-text bg-white border-end-0 text-muted">
+                            <div class="input-group modern-input-group">
+                                <span class="input-group-text">
                                     <i class="bi bi-shop"></i>
                                 </span>
-
-                                <select asp-for="UserId"
-                                        class="form-select border-start-0 ps-0 fs-6"
-                                        id="canteenStaffSelect">
-
-                                    <option value="">
-                                        Select Canteen
-                                    </option>
-
-                                    @foreach (var staff in ViewBag.CanteenStaff)
+                                <select asp-for="UserId" class="form-select" id="canteenStaffSelect">
+                                    <option value="">Select Canteen Owner / Staff</option>
+                                    @if (ViewBag.CanteenStaff != null)
                                     {
-                                        <option value="@staff.UserId">
-                                            @staff.CanteenName
-                                        </option>
+                                        foreach (var staff in ViewBag.CanteenStaff)
+                                        {
+                                            <option value="@staff.UserId">@staff.CanteenName</option>
+                                        }
                                     }
-
                                 </select>
-
                             </div>
-
-                            <span asp-validation-for="UserId"
-                                  class="text-danger small mt-1 d-block">
-                            </span>
-
+                            <span asp-validation-for="UserId" class="text-danger small mt-1 d-block"></span>
                         </div>
 
                         <!-- Location -->
-                        <div class="mb-3 mb-md-4">
-                            <label asp-for="Location" class="form-label fw-semibold">Location</label>
-                            <div class="input-group input-group-lg shadow-sm rounded-3">
-                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-geo-alt"></i></span>
-                                <input asp-for="Location" class="form-control border-start-0 ps-0 fs-6 fs-md-5" placeholder="e.g. Near Main Gate" />
+                        <div class="mb-4 stagger-2">
+                            <label asp-for="Location" class="form-label fw-semibold text-dark mb-2">
+                                Campus Location <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group modern-input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-geo-alt"></i>
+                                </span>
+                                <input asp-for="Location" class="form-control" placeholder="e.g. Near Main Gate or Block B" />
                             </div>
                             <span asp-validation-for="Location" class="text-danger small mt-1 d-block"></span>
                         </div>
 
                         <!-- Description -->
-                        <div class="mb-3 mb-md-4">
-                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
-                            <textarea asp-for="Description" class="form-control shadow-sm rounded-3 fs-6" rows="5" placeholder="Enter a short description about this canteen..."></textarea>
+                        <div class="mb-2 stagger-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label asp-for="Description" class="form-label fw-semibold text-dark mb-0">Description</label>
+                                <small class="text-muted" id="charCount">0 / 250</small>
+                            </div>
+                            <textarea asp-for="Description" class="form-control modern-textarea" rows="4" maxlength="250" id="descInput" placeholder="Highlight specialties, timings, or popular dishes..."></textarea>
                             <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
                         </div>
 
@@ -106,113 +379,257 @@
                     <div class="col-lg-6">
 
                         <!-- Image Upload -->
-                        <div class="mb-3 mb-md-4">
-                            <label class="form-label fw-semibold">Canteen Image</label>
+                        <div class="mb-4 stagger-2">
+                            <label class="form-label fw-semibold text-dark mb-2">Canteen Cover Image</label>
 
-                            <!-- Responsive Dropzone -->
-                            <div class="border border-2 border-dashed rounded-3 p-3 p-md-4 text-center position-relative bg-light h-100" id="uploadZone" style="transition: all 0.3s ease; min-height: 185px;">
-                                <input type="file" name="ImageUrl" id="ImageFile" class="position-absolute w-100 h-100 opacity-0" style="top:0; left:0; cursor:pointer;" accept=".jpg,.jpeg,.png" onchange="previewImage(event)" />
+                            <div class="futuristic-dropzone position-relative p-4 text-center" id="uploadZone">
+                                <input type="file" name="ImageUrl" id="ImageFile" class="position-absolute w-100 h-100 opacity-0" style="top:0; left:0; cursor:pointer; z-index: 5;" accept=".jpg,.jpeg,.png,.webp" onchange="previewImage(event)" />
 
-                                <div id="uploadPlaceholder" class="mt-2">
-                                    <i class="bi bi-cloud-arrow-up display-5 display-md-4 text-primary"></i>
-                                    <h6 class="mt-2 mt-md-3 mb-1 fw-bold fs-6 fs-md-5">Click or drag image</h6>
-                                    <p class="small text-muted mb-0">SVG, PNG, JPG (max. 5MB)</p>
+                                <!-- Default Upload Prompt -->
+                                <div id="uploadPlaceholder" class="py-2">
+                                    <div class="upload-icon-circle mb-3">
+                                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-1" style="color: #1e293b;">Drop your image here, or <span style="color: #007aff;">browse</span></h6>
+                                    <p class="small text-muted mb-0">Supports JPG, PNG, WEBP (Max 5MB)</p>
                                 </div>
 
-                                <!-- Image Preview Area -->
-                                <div id="imagePreviewContainer" class="d-none w-100 h-100 d-flex flex-column justify-content-center align-items-center">
-                                    <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded-3 shadow-sm" style="max-height: 150px; object-fit: cover;" />
-                                    <p class="text-primary small mt-2 mb-0 fw-semibold">Click image to change</p>
-                                </div>
-                            </div>
-                           
-                        </div>
-
-                        <!-- Active Status -->
-                        <div class="mb-3 mb-md-4 bg-light p-3 rounded-3 border">
-                            <div class="form-check form-switch d-flex align-items-center gap-2 gap-md-3 mb-0">
-                                <input asp-for="IsActive" class="form-check-input fs-5 fs-md-4 m-0" role="switch" />
-                                <div>
-                                    <label asp-for="IsActive" class="form-check-label fw-bold d-block">Active Canteen</label>
-                                    <small class="text-muted d-block" style="line-height: 1.2;">Active canteens will be visible to students.</small>
+                                <!-- Live Image Preview Area -->
+                                <div id="imagePreviewContainer" class="d-none w-100 d-flex flex-column justify-content-center align-items-center position-relative" style="z-index: 2;">
+                                    <div class="position-relative d-inline-block">
+                                        <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded-4 shadow" style="max-height: 145px; object-fit: cover; border: 3px solid white;" />
+                                        <span class="badge bg-dark bg-opacity-75 position-absolute bottom-0 end-0 m-2 rounded-pill px-2 py-1" id="fileSizeBadge" style="font-size: 10px;"></span>
+                                    </div>
+                                    <span class="badge rounded-pill mt-3 px-3 py-2" style="background: rgba(0, 122, 255, 0.1); color: #007aff;">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Click or drag to replace image
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
-                      
+                        <!-- Active Status Toggle Card -->
+                        <div class="stagger-3">
+                            <label class="form-label fw-semibold text-dark mb-2">Visibility Status</label>
+                            <div class="status-card" id="statusCard" onclick="toggleStatusCard(event)">
+                                <div class="form-check form-switch d-flex align-items-center justify-content-between ps-0 mb-0">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center" id="statusIconBox" style="width: 42px; height: 42px; background: rgba(100, 116, 139, 0.1); color: #64748b; transition: all 0.3s;">
+                                            <i class="bi bi-broadcast fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <label asp-for="IsActive" class="form-check-label fw-bold d-block text-dark" style="cursor: pointer;">
+                                                Live for Students
+                                            </label>
+                                            <small class="text-muted d-block" id="statusSubtext">Turn on to make this canteen visible on the app.</small>
+                                        </div>
+                                    </div>
+                                    <input asp-for="IsActive" class="form-check-input ms-2 m-0" role="switch" id="isActiveSwitch" onchange="updateStatusUI()" />
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
 
-                <!-- Responsive Buttons (Placed nicely at the bottom right) -->
-                <div class="d-grid gap-3 d-sm-flex justify-content-sm-end pt-3 mt-4 mt-lg-5 border-top">
-                    <a asp-controller="Admin" asp-action="Canteens" class="btn btn-light btn-lg border shadow-sm rounded-3 px-4 px-md-5 order-2 order-sm-1">
+                <!-- Footer Action Buttons -->
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-end pt-4 mt-4 mt-lg-5 border-top stagger-4">
+                    <a asp-controller="Admin" asp-action="Canteens" class="btn btn-futuristic-light order-2 order-sm-1">
                         Cancel
                     </a>
-                    <button type="submit" class="btn btn-danger btn-lg px-4 px-md-5 shadow-sm rounded-3 order-1 order-sm-2">
-                        <i class="bi bi-plus-circle me-2"></i> Add Canteen
+                    <button type="submit" class="btn btn-futuristic-primary order-1 order-sm-2 d-flex align-items-center justify-content-center gap-2" id="submitBtn">
+                        <i class="bi bi-plus-circle-fill" id="submitIcon"></i>
+                        <span id="submitText">Launch Canteen</span>
                     </button>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <!-- SweetAlert CDN (agar pehle se added nahi hai) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Script for Image Preview -->
     <script>
+        // 1. Live Image Preview & File Size Calculation
         function previewImage(event) {
             const input = event.target;
             const file = input.files[0];
             const placeholder = document.getElementById('uploadPlaceholder');
             const previewContainer = document.getElementById('imagePreviewContainer');
             const previewImage = document.getElementById('imagePreview');
-            const uploadZone = document.getElementById('uploadZone');
+            const fileSizeBadge = document.getElementById('fileSizeBadge');
 
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
-
-                    // Hide placeholder, show image
                     placeholder.classList.add('d-none');
                     previewContainer.classList.remove('d-none');
 
-                    // Change background styling
-                    uploadZone.classList.remove('bg-light');
-                    uploadZone.classList.add('bg-white');
+                    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                    fileSizeBadge.textContent = sizeInMB + ' MB';
                 }
                 reader.readAsDataURL(file);
             } else {
-                // Revert to placeholder if no image is selected
                 previewImage.src = "#";
                 placeholder.classList.remove('d-none');
                 previewContainer.classList.add('d-none');
-                uploadZone.classList.add('bg-light');
-                uploadZone.classList.remove('bg-white');
             }
         }
 
-        
-        // 2. Auto-hide Alert Logic (5 Seconds)
-        setTimeout(function () {
-            // Alert box ko dhoondhein
-            var alertBox = document.querySelector('.alert-success');
-            
-            if (alertBox) {
-                // 'show' class hatane se Bootstrap ka fade-out effect chalega
-                alertBox.classList.remove('show');
-                
-                // Fade effect complete hone ke baad HTML se poori tarah hata dein
-                setTimeout(function () {
-                    alertBox.remove();
-                }, 150); 
+        // 2. Drag & Drop Visual Highlight
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('ImageFile');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileInput.addEventListener(eventName, () => uploadZone.classList.add('drag-active'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileInput.addEventListener(eventName, () => uploadZone.classList.remove('drag-active'), false);
+        });
+
+        // 3. Interactive Status Card Glow
+        const isActiveSwitch = document.getElementById('isActiveSwitch');
+        const statusCard = document.getElementById('statusCard');
+        const statusIconBox = document.getElementById('statusIconBox');
+        const statusSubtext = document.getElementById('statusSubtext');
+
+        function updateStatusUI() {
+            if (isActiveSwitch.checked) {
+                statusCard.classList.add('active-glow');
+                statusIconBox.style.background = 'rgba(52, 199, 89, 0.15)';
+                statusIconBox.style.color = '#34c759';
+                statusSubtext.textContent = 'Canteen is currently active and accepting orders.';
+            } else {
+                statusCard.classList.remove('active-glow');
+                statusIconBox.style.background = 'rgba(100, 116, 139, 0.1)';
+                statusIconBox.style.color = '#64748b';
+                statusSubtext.textContent = 'Currently hidden from students.';
             }
-        }, 5000); // 5000 ms = 5 seconds
-   
+        }
+
+        function toggleStatusCard(e) {
+            if (e.target !== isActiveSwitch && e.target.tagName !== 'LABEL') {
+                isActiveSwitch.checked = !isActiveSwitch.checked;
+                updateStatusUI();
+            }
+        }
+
+        updateStatusUI();
+
+        // 4. Live Character Counter for Description
+        const descInput = document.getElementById('descInput');
+        const charCount = document.getElementById('charCount');
+        if (descInput) {
+            descInput.addEventListener('input', () => {
+                charCount.textContent = `${descInput.value.length} / 250`;
+            });
+        }
+
+
+
+        // =========================================================
+        // 5. NO-REFRESH CLIENT-SIDE VALIDATION & LOADING SPINNER
+        // =========================================================
+        const form = document.getElementById('addCanteenForm');
+        const staffSelect = document.getElementById('canteenStaffSelect');
+        const locationInput = document.getElementById('Location');
+
+        // Helper function: Error dikhane ke liye
+        function showFieldError(inputElement, message) {
+            const wrapper = inputElement.closest('.modern-input-group') || inputElement;
+            wrapper.classList.remove('input-invalid');
+            void wrapper.offsetWidth; // Restart shake animation
+            wrapper.classList.add('input-invalid');
+
+            // Field ke niche wale span mein error text daalna
+            const errorSpan = inputElement.closest('.mb-4, .mb-2').querySelector('span.text-danger');
+            if (errorSpan) {
+                errorSpan.textContent = message;
+            }
+        }
+
+        // Helper function: Jab user type kare toh error hatane ke liye
+        function clearFieldError(inputElement) {
+            const wrapper = inputElement.closest('.modern-input-group') || inputElement;
+            wrapper.classList.remove('input-invalid');
+            const errorSpan = inputElement.closest('.mb-4, .mb-2').querySelector('span.text-danger');
+            if (errorSpan) {
+                errorSpan.textContent = '';
+            }
+        }
+
+        // User jaise hi type ya select kare, red warning hat jaye
+        [staffSelect, locationInput, descInput].forEach(el => {
+            if (el) {
+                el.addEventListener('input', () => clearFieldError(el));
+                el.addEventListener('change', () => clearFieldError(el));
+            }
+        });
+
+        form.addEventListener('submit', function (e) {
+            let isValid = true;
+
+            // Check 1: Canteen Name
+            if (!staffSelect.value.trim()) {
+                showFieldError(staffSelect, 'Please select a Canteen.');
+                isValid = false;
+            }
+
+            // Check 2: Location
+            if (!locationInput.value.trim()) {
+                showFieldError(locationInput, 'Campus Location is required.');
+                isValid = false;
+            }
+
+            // Check 3: Description
+            if (!descInput.value.trim()) {
+                showFieldError(descInput, 'Description is required.');
+                isValid = false;
+            }
+
+            // Agar koi bhi field khali hai, toh PAGE REFRESH ROKO!
+            if (!isValid) {
+                e.preventDefault(); // Yeh line page refresh hone se rokti hai
+
+                // iOS Style SweetAlert Toast Warning
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'Please fill in all required fields!',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg border'
+                    }
+                });
+
+                return false;
+            }
+
+            // Agar sab sahi hai, tabhi Loading Spinner chalao aur submit hone do
+            const btn = document.getElementById('submitBtn');
+            const icon = document.getElementById('submitIcon');
+            const text = document.getElementById('submitText');
+
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.85';
+            icon.className = 'spinner-border spinner-border-sm';
+            text.textContent = 'Uploading & Saving...';
+        });
+
+        // 6. Auto-hide Success Alert (5 Seconds)
+        setTimeout(function () {
+            var alertBox = document.querySelector('.alert-success');
+            if (alertBox) {
+                alertBox.classList.remove('show');
+                setTimeout(() => alertBox.remove(), 200);
+            }
+        }, 5000);
     </script>
 }

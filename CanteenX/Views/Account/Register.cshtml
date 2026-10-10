@@ -1,150 +1,456 @@
 ﻿@model CanteenX.Models.Auth.RegisterDto;
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
     ViewData["Title"] = "Register";
 }
 
+<style>
+    /* =========================================
+       iOS FROSTED GLASS REGISTER STYLING (RESPONSIVE)
+       ========================================= */
+    body {
+        background: radial-gradient(circle at top left, #f8fafc, #edf2f7);
+        min-height: 100vh;
+    }
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100 py-5">
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="max-width: 950px; width: 100%;">
-        <div class="row g-0">
+    .ios-register-wrapper {
+        animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        padding-bottom: 80px; 
+    }
 
-            <!-- Left Side (Brand Panel) -->
-            <div class="col-md-5 p-5 d-flex flex-column justify-content-between" style="background-color: #0e754a;">
-                <div>
-                    <div class="d-flex align-items-center mb-1">
-                        <span class="bg-white text-danger rounded p-1 me-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-utensils"></i>
-                        </span>
-                        <h4 class="mb-0 fw-bold text-dark" style="font-family: serif;">Canteen<span class="text-warning">X</span></h4>
-                    </div>
-                    <small class="text-light opacity-75">Smart Campus Food Platform</small>
-                </div>
+    @@keyframes iosFadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-                <div class="my-5">
-                    <h1 class="fw-bold mb-0 text-dark" style="font-family: serif; font-size: 3rem;">Join Us.</h1>
-                    <h1 class="fw-bold text-warning mb-3" style="font-family: serif; font-size: 2.8rem;">Skip the Queue.</h1>
-                    <p class="text-light" style="font-size: 1.1rem; line-height: 1.6;">
-                        Register today to order your favorite meals from campus canteens quickly and easily.
-                    </p>
-                </div>
+    /* iOS Glassmorphism Card Container */
+    .ios-glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 28px !important;
+        overflow: hidden;
+    }
 
-                <small class="text-light opacity-75">&copy; 2026 CanteenX</small>
-            </div>
+    /* Left Brand Panel Gradient */
+    .ios-brand-panel {
+        background: linear-gradient(135deg, #087f5b 0%, #055a40 100%);
+        position: relative;
+        overflow: hidden;
+    }
 
-            <!-- Right Side (Form Panel) -->
-            <div class="col-md-7 p-5 bg-white">
-                <h2 class="fw-bold" style="font-family: serif;">Create an account ✨</h2>
-                <p class="text-muted mb-4">Sign up to get started with CanteenX.</p>
+    .ios-brand-panel::before {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+        top: -60px;
+        left: -80px;
+        animation: pulseBlob 8s infinite alternate ease-in-out;
+    }
 
-                <form asp-action="Register" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+    @@keyframes pulseBlob {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.15); }
+    }
 
-                    <!-- Full Name -->
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label fw-bold small text-dark">Full Name</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="far fa-user"></i></span>
-                            <input asp-for="FullName" class="form-control bg-light border-start-0" placeholder="John Doe" required />
+    /* iOS Style Interactive Input Group */
+    .ios-input-group {
+        background: rgba(240, 243, 246, 0.8);
+        border: 1.5px solid rgba(0, 0, 0, 0.06);
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        overflow: hidden;
+    }
+
+    .ios-input-group:focus-within {
+        background: #ffffff;
+        border-color: #e8281a;
+        box-shadow: 0 0 0 4px rgba(232, 40, 26, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .ios-input-group .input-group-text,
+    .ios-input-group .btn {
+        background: transparent;
+        border: none;
+        color: #8e8e93;
+        transition: color 0.3s ease;
+    }
+
+    .ios-input-group:focus-within .input-group-text {
+        color: #e8281a;
+    }
+
+    .ios-input-group .form-control {
+        background: transparent;
+        border: none;
+        padding: 13px 12px;
+        box-shadow: none !important;
+        font-size: 0.95rem;
+        color: #1c1c1e;
+        width: 100%;
+    }
+
+    /* iOS Spring Physics Buttons */
+    .ios-primary-btn {
+        background: #e8281a;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 25px rgba(232, 40, 26, 0.3);
+    }
+
+    .ios-primary-btn:hover {
+        background: #d02013;
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 15px 30px rgba(232, 40, 26, 0.4);
+        color: white;
+    }
+
+    .ios-primary-btn:active {
+        transform: scale(0.97);
+    }
+
+    .ios-google-btn {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        color: #1c1c1e;
+        font-weight: 600;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .ios-google-btn:hover {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .ios-google-btn:active {
+        transform: scale(0.97);
+    }
+
+    /* =========================================
+       MOBILE RESPONSIVE ADJUSTMENTS
+       ========================================= */
+    @@media (max-width: 768px) {
+        .ios-register-wrapper {
+            margin-top: 1.5rem !important;
+            margin-bottom: 2rem !important;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 100px;
+        }
+
+        .ios-glass-card {
+            border-radius: 20px !important;
+        }
+
+        .ios-form-container {
+            padding: 1.5rem 1.25rem !important; 
+        }
+
+        .ios-input-group .form-control {
+            padding: 11px 10px; 
+        }
+        
+        .ios-primary-btn, .ios-google-btn {
+            padding-top: 11px !important;
+            padding-bottom: 11px !important;
+        }
+    }
+    /* Hide default browser password reveal icon (Edge) */
+     input::-ms-reveal,
+     input::-ms-clear {
+    display: none !important;
+    } 
+
+    /* Hide auto-fill icons (Safari/Chrome safety) */
+    input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+   }
+
+   
+    /* Hide auto-fill icons (Safari/Chrome safety) */
+    input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+   }
+   /* Invalid Field Red Glow & Shake Animation */
+    .input-invalid {
+        border-color: #ff3b30 !important;
+        background: rgba(255, 59, 48, 0.03) !important;
+        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
+        animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @@keyframes iosShake {
+        10%, 90% { transform: translateX(-2px); }
+        20%, 80% { transform: translateX(4px); }
+        30%, 50%, 70% { transform: translateX(-6px); }
+        40%, 60% { transform: translateX(6px); }
+    }
+</style>
+
+<div class="container my-4 my-md-5 ios-register-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-11 col-md-11 col-lg-11">
+            <div class="card ios-glass-card">
+                <div class="row g-0">
+
+                    <!-- Left Side: Brand Panel -->
+                    <div class="col-md-5 ios-brand-panel text-white d-none d-md-flex flex-column justify-content-between p-4 p-lg-5">
+                        <div style="position: relative; z-index: 2;">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <div class="bg-white text-danger rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px;">
+                                    <i class="fas fa-utensils fs-5" style="color: #e8281a;"></i>
+                                </div>
+                                <h3 class="fw-bold mb-0" style="letter-spacing: -0.5px;">Canteen<span class="text-warning">X</span></h3>
+                            </div>
+                            <small class="text-white-50 fw-medium">Smart Campus Food Platform</small>
                         </div>
-                        <span asp-validation-for="FullName" class="text-danger small"></span>
-                    </div>
 
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label fw-bold small text-dark">Email Address</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="far fa-envelope"></i></span>
-                            <input asp-for="Email" type="email" class="form-control bg-light border-start-0" placeholder="student@example.com" required />
+                        <div class="my-5" style="position: relative; z-index: 2;">
+                            <h1 class="fw-bolder display-6 text-white mb-2" style="line-height: 1.1;">Join Us.</h1>
+                            <h1 class="fw-bolder display-6 text-warning" style="line-height: 1.1;">Skip the Queue.</h1>
+                            <p class="text-white-50 mt-4 fs-6" style="line-height: 1.6;">Register today to order your favorite meals from campus canteens quickly and easily.</p>
                         </div>
-                        <span asp-validation-for="Email" class="text-danger small"></span>
+
+                        <small class="text-white-50" style="position: relative; z-index: 2;">&copy; @DateTime.Now.Year CanteenX</small>
                     </div>
 
-                 <!-- PhoneNumber-->
-                    <!-- Phone Number -->
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label fw-bold small text-dark">Phone Number</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-phone"></i></span>
-                            <input asp-for="PhoneNumber" class="form-control bg-light border-start-0" placeholder="9876543210" required />
+                    <!-- Right Side: Form Panel -->
+                    <div class="col-md-7 p-4 p-md-5 bg-transparent ios-form-container">
+                        <div class="mb-4">
+                            <h2 class="fw-bold text-dark mb-1" style="font-family: 'Playfair Display', serif;">Create an account </h2>
+                            <p class="text-muted small">Sign up to get started with CanteenX.</p>
                         </div>
-                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
-                    </div>
 
-                    <!-- Password -->
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label fw-bold small text-dark">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-lock"></i></span>
-                            <input asp-for="Password" type="password" id="regPassword" class="form-control bg-light border-start-0 border-end-0" placeholder="••••••••" required />
-                            <button class="input-group-text bg-light border-start-0 text-muted" type="button" onclick="togglePassword('regPassword')">
-                                <i class="far fa-eye"></i>
+                        <form asp-action="Register" method="post" id="registerForm">
+                           
+
+                            <!-- Full Name -->
+                            <div class="mb-3">
+                                <label asp-for="FullName" class="form-label fw-semibold small text-secondary">Full Name</label>
+                                <div class="ios-input-group">
+                                    <span class="input-group-text px-3"><i class="far fa-user"></i></span>
+                                    <input asp-for="FullName" class="form-control" placeholder="Enter your full name" id="inputName" />
+                                </div>
+                                <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label fw-semibold small text-secondary">Email Address</label>
+                                <div class="ios-input-group">
+                                    <span class="input-group-text px-3"><i class="far fa-envelope"></i></span>
+                                    <input asp-for="Email" type="email" class="form-control" placeholder="student@example.com" id="inputEmail" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="mb-3">
+                                <label asp-for="PhoneNumber" class="form-label fw-semibold small text-secondary">Phone Number</label>
+                                <div class="ios-input-group">
+                                    <span class="input-group-text px-3"><i class="fas fa-phone"></i></span>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number" id="inputPhone" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <!-- Password -->
+                                <div class="col-md-6">
+                                    <label asp-for="Password" class="form-label fw-semibold small text-secondary">Password</label>
+                                    <div class="ios-input-group">
+                                        <span class="input-group-text px-3"><i class="fas fa-lock"></i></span>
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" id="inputPassword" />
+                                        <button class="btn px-3" type="button" tabindex="-1" onclick="let inp=this.previousElementSibling; let icon=this.children[0]; if(inp.type==='password'){inp.type='text'; icon.className='far fa-eye-slash text-danger';} else {inp.type='password'; icon.className='far fa-eye';}">
+                                            <i class="far fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-md-6">
+                                    <label asp-for="ConfirmPassword" class="form-label fw-semibold small text-secondary">Confirm Password</label>
+                                    <div class="ios-input-group">
+                                        <span class="input-group-text px-3"><i class="fas fa-lock"></i></span>
+                                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••••" id="inputConfirmPassword" />
+                                        <button class="btn px-3" type="button" tabindex="-1" onclick="let inp=this.previousElementSibling; let icon=this.children[0]; if(inp.type==='password'){inp.type='text'; icon.className='far fa-eye-slash text-danger';} else {inp.type='password'; icon.className='far fa-eye';}">
+                                            <i class="far fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="ios-primary-btn w-100 py-3 mb-3 fs-6 d-flex justify-content-center align-items-center gap-2" id="registerBtn">
+                                <span>Create Account</span>
+                                <i class="fas fa-arrow-right small"></i>
                             </button>
+                        </form>
+
+                        <div class="d-flex align-items-center my-4">
+                            <hr class="flex-grow-1 text-muted opacity-25">
+                            <span class="mx-3 text-muted text-uppercase" style="font-size: 10px; letter-spacing: 1px;">or continue with</span>
+                            <hr class="flex-grow-1 text-muted opacity-25">
                         </div>
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
 
-                    <!-- Confirm Password -->
-                    <div class="mb-4">
-                        <label asp-for="ConfirmPassword" class="form-label fw-bold small text-dark">Confirm Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-lock"></i></span>
-                            <input asp-for="ConfirmPassword" type="password" id="regConfirmPassword" class="form-control bg-light border-start-0 border-end-0" placeholder="••••••••" required />
-                            <button class="input-group-text bg-light border-start-0 text-muted" type="button" onclick="togglePassword('regConfirmPassword')">
-                                <i class="far fa-eye"></i>
-                            </button>
+                        <!-- Google Button -->
+                        <a class="ios-google-btn btn w-100 py-3 mb-4 d-flex align-items-center justify-content-center gap-2" asp-controller="Account" asp-action="GoogleLogin">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 18px; height: 18px;">
+                            <span>Continue with Google</span>
+                        </a>
+
+                        <!-- Footer Links -->
+                        <div class="text-center small text-muted">
+                            Already have an account? <a asp-action="Login" class="fw-bold ms-1 text-decoration-none" style="color: #e8281a;">Login</a>
                         </div>
-                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                     </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn w-100 py-2 fw-bold text-white mb-4" style="background-color: #da291c; border-radius: 6px;">
-                        Create Account
-                    </button>
-                </form>
-
-                <div class="d-flex align-items-center mb-4">
-                    <hr class="flex-grow-1 text-muted">
-                    <span class="mx-3 text-muted small" style="font-size: 0.8rem;">or continue with</span>
-                    <hr class="flex-grow-1 text-muted">
-                </div>
-
-                <!-- Google Button -->
-                <a class="btn btn-outline-dark w-100 py-2 mb-4 fw-bold rounded-2 d-flex justify-content-center align-items-center" asp-controller="Account" asp-action="GoogleLogin">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="18" class="me-2" />
-                    Continue with Google
-                </a>
-
-                <!-- Footer Links -->
-                <div class="text-center mt-2">
-                   
-                    <p class="mb-0" style="font-size: 0.9rem;">
-                        Already have an account? <a asp-action="Login" class="fw-bold text-decoration-none" style="color: #da291c;">Login</a>
-                    </p>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        // Password Show/Hide Toggle
-        function togglePassword(inputId) {
-            var input = document.getElementById(inputId);
-            var icon = input.nextElementSibling.querySelector('i');
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+   <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            
+            // 1. SECURE SERVER ERROR HANDLING (XSS Protected)
+            @if (TempData["LoginError"] != null)
+            {
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    // Json.Serialize ensures the string is safely escaped for JavaScript
+                    title: @Html.Raw(Json.Serialize(TempData["LoginError"])), 
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg border'
+                    }
+                });
+                </text>
             }
-        }
+
+            // 2. CLIENT-SIDE VALIDATION, SHAKE & LOADING SPINNER
+            const form = document.getElementById('registerForm');
+            const nameInput = document.getElementById('inputName');
+            const emailInput = document.getElementById('inputEmail');
+            const phoneInput = document.getElementById('inputPhone');
+            const passwordInput = document.getElementById('inputPassword');
+            const confirmPasswordInput = document.getElementById('inputConfirmPassword');
+            const submitBtn = document.getElementById('registerBtn');
+
+            // DOM elements null check (Prevents console errors)
+            if (!form || !nameInput || !emailInput || !phoneInput || !passwordInput || !confirmPasswordInput || !submitBtn) return;
+
+            const showFieldError = (inputElement, message) => {
+                const wrapper = inputElement.closest('.ios-input-group') || inputElement;
+                wrapper.classList.remove('input-invalid');
+                void wrapper.offsetWidth; // Force reflow to restart animation
+                wrapper.classList.add('input-invalid');
+
+                // Find the validation span (works for both full width and half-width columns)
+                const errorSpan = inputElement.closest('.mb-3, .col-md-6')?.querySelector('span.text-danger');
+                if (errorSpan) errorSpan.textContent = message;
+            };
+
+            const clearFieldError = (inputElement) => {
+                const wrapper = inputElement.closest('.ios-input-group') || inputElement;
+                wrapper.classList.remove('input-invalid');
+                
+                const errorSpan = inputElement.closest('.mb-3, .col-md-6')?.querySelector('span.text-danger');
+                if (errorSpan) errorSpan.textContent = '';
+            };
+
+            // Clear red warnings instantly as the user types
+            [nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput].forEach(el => {
+                el.addEventListener('input', () => clearFieldError(el));
+            });
+
+            form.addEventListener('submit', function (e) {
+                let isValid = true;
+
+                // Empty Field Checks
+                if (!nameInput.value.trim()) {
+                    showFieldError(nameInput, 'Full Name is required.');
+                    isValid = false;
+                }
+
+                if (!emailInput.value.trim()) {
+                    showFieldError(emailInput, 'Email Address is required.');
+                    isValid = false;
+                }
+
+                if (!phoneInput.value.trim()) {
+                    showFieldError(phoneInput, 'Phone Number is required.');
+                    isValid = false;
+                }
+
+                if (!passwordInput.value.trim()) {
+                    showFieldError(passwordInput, 'Password is required.');
+                    isValid = false;
+                }
+
+                if (!confirmPasswordInput.value.trim()) {
+                    showFieldError(confirmPasswordInput, 'Please confirm your password.');
+                    isValid = false;
+                } else if (passwordInput.value !== confirmPasswordInput.value) {
+                    showFieldError(confirmPasswordInput, 'Passwords do not match.');
+                    isValid = false;
+                }
+
+                // Agar form invalid hai, toh refresh roko aur Toast dikhao
+                if (!isValid) {
+                    e.preventDefault(); 
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Please fill in all required fields properly!',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg border'
+                        }
+                    });
+
+                    return false;
+                }
+
+                // Agar sab sahi hai, button disable karo aur loader dikhao
+                submitBtn.style.pointerEvents = 'none';
+                submitBtn.style.opacity = '0.85';
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> <span>Creating Account...</span>';
+            });
+        });
     </script>
+
+   
+
+   
 }

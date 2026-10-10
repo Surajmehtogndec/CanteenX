@@ -68,7 +68,7 @@
 
             <a asp-controller="Admin"
                asp-action="RegisterCanteens"
-               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString()== "CreateCanteen"? "active" : "")">
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString()== "RegisterCanteens"? "active" : "")">
 
                 <i class="bi bi-person-badge-fill"></i>
 
@@ -152,7 +152,7 @@
                         Admin Dashboard
                     </h6>
 
-                    <small>
+                    <small >
                         Manage your CanteenX platform
                     </small>
 
@@ -319,6 +319,26 @@
         </footer>
 
     </div>
+
+        <!-- SweetAlert2 CDN (Agar pehle se nahi hai) -->
+        <script src="~/lib\sweetalert2@11.js"> </script>
+
+@if (TempData["LoginSuccess"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Login Successful!',
+                text: '@Html.Raw(TempData["LoginSuccess"])',
+                timer: 2500,
+                showConfirmButton: false,
+                background: '#ffffff',
+                customClass: { popup: 'rounded-4 shadow-lg border-0' }
+            });
+        });
+    </script>
+}
     <script src="~/adminassets/libs/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/adminassets/js/dashboard.js" asp-append-version="true"></script>
 

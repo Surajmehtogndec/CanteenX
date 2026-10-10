@@ -1,103 +1,319 @@
 ﻿@model CanteenX.Models.Auth.LoginDto
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
-   ViewData["Title"] = "Login";
+    ViewData["Title"] = "Login";
 }
 
+<style>
+    /* =========================================
+       iOS FROSTED GLASS LOGIN STYLING (RESPONSIVE)
+       ========================================= */
+    body {
+        background: radial-gradient(circle at top right, #f8fafc, #edf2f7);
+        min-height: 100vh;
+    }
 
+    .ios-login-wrapper {
+        animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        /* Bottom padding to prevent floating cart overlap on mobile */
+        padding-bottom: 80px; 
+    }
 
-<div class="container mt-5 mb-5">
+    @@keyframes iosFadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* iOS Glassmorphism Card Container */
+    .ios-glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 28px !important;
+        overflow: hidden;
+    }
+
+    /* Left Brand Panel Gradient */
+    .ios-brand-panel {
+        background: linear-gradient(135deg, #087f5b 0%, #055a40 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ios-brand-panel::before {
+        content: '';
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+        top: -60px;
+        right: -80px;
+        animation: pulseBlob 8s infinite alternate ease-in-out;
+    }
+
+    @@keyframes pulseBlob {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.15); }
+    }
+
+    /* iOS Style Interactive Input Group */
+    .ios-input-group {
+        background: rgba(240, 243, 246, 0.8);
+        border: 1.5px solid rgba(0, 0, 0, 0.06);
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        overflow: hidden;
+    }
+
+    .ios-input-group:focus-within {
+        background: #ffffff;
+        border-color: #e8281a;
+        box-shadow: 0 0 0 4px rgba(232, 40, 26, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .ios-input-group .input-group-text,
+    .ios-input-group .btn {
+        background: transparent;
+        border: none;
+        color: #8e8e93;
+        transition: color 0.3s ease;
+    }
+
+    .ios-input-group:focus-within .input-group-text {
+        color: #e8281a;
+    }
+
+    .ios-input-group .form-control {
+        background: transparent;
+        border: none;
+        padding: 13px 12px;
+        box-shadow: none !important;
+        font-size: 0.95rem;
+        color: #1c1c1e;
+        width: 100%;
+    }
+
+    /* iOS Spring Physics Buttons */
+    .ios-primary-btn {
+        background: #e8281a;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-weight: 600;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 25px rgba(232, 40, 26, 0.3);
+    }
+
+    .ios-primary-btn:hover {
+        background: #d02013;
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 15px 30px rgba(232, 40, 26, 0.4);
+        color: white;
+    }
+
+    .ios-primary-btn:active {
+        transform: scale(0.97);
+    }
+
+    .ios-google-btn {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1.5px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        color: #1c1c1e;
+        font-weight: 600;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .ios-google-btn:hover {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .ios-google-btn:active {
+        transform: scale(0.97);
+    }
+
+    /* Custom Checkbox */
+    .ios-checkbox .form-check-input {
+        width: 1.25em;
+        height: 1.25em;
+        cursor: pointer;
+        border-radius: 6px !important;
+        border: 1.5px solid #c7c7cc;
+        margin-top: 0.15em;
+    }
+
+    .ios-checkbox .form-check-input:checked {
+        background-color: #e8281a;
+        border-color: #e8281a;
+    }
+
+    /* =========================================
+       MOBILE RESPONSIVE ADJUSTMENTS
+       ========================================= */
+    @@media (max-width: 768px) {
+        .ios-login-wrapper {
+            margin-top: 1.5rem !important;
+            margin-bottom: 2rem !important;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 100px; /* Extra space for scrolling past floating cart */
+        }
+
+        .ios-glass-card {
+            border-radius: 20px !important;
+        }
+
+        /* Reduce inner padding on mobile to maximize form space */
+        .ios-form-container {
+            padding: 1.5rem 1.25rem !important; 
+        }
+
+        .ios-input-group .form-control {
+            padding: 11px 10px; /* Tighter inputs */
+        }
+        
+        .ios-primary-btn, .ios-google-btn {
+            padding-top: 11px !important;
+            padding-bottom: 11px !important;
+        }
+
+        /* Allow options to wrap gracefully on very small screens */
+        .ios-options-row {
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+        }
+    }
+    /* Hide default browser password reveal icon (Edge) */
+     input::-ms-reveal,
+     input::-ms-clear {
+    display: none !important;
+    } 
+
+    /* Hide auto-fill icons (Safari/Chrome safety) */
+    input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+   }
+   /* Invalid Field Red Glow & Shake Animation */
+    .input-invalid {
+        border-color: #ff3b30 !important;
+        background: rgba(255, 59, 48, 0.03) !important;
+        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
+        animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @@keyframes iosShake {
+        10%, 90% { transform: translateX(-2px); }
+        20%, 80% { transform: translateX(4px); }
+        30%, 50%, 70% { transform: translateX(-6px); }
+        40%, 60% { transform: translateX(6px); }
+    }
+</style>
+
+<!-- Responsive margin classes (my-4 my-md-5) -->
+<div class="container my-4 my-md-5 ios-login-wrapper">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-lg overflow-hidden rounded-4">
+        <!-- Slightly wider on mobile, standard on desktop -->
+        <div class="col-12 col-sm-10 col-md-10 col-lg-10">
+            <div class="card ios-glass-card">
                 <div class="row g-0">
 
                     <!-- Left Side: Brand Panel -->
-                    <div class="col-md-5 text-white d-none d-md-flex flex-column justify-content-between p-5" style="background-color:  #087f5b;">
-                        <div>
+                    <div class="col-md-5 ios-brand-panel text-white d-none d-md-flex flex-column justify-content-between p-4 p-lg-5">
+                        <div style="position: relative; z-index: 2;">
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <div class="bg-white text-danger rounded p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                    <i class="fas fa-utensils fs-5"></i>
+                                <div class="bg-white text-danger rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px;">
+                                    <i class="fas fa-utensils fs-5" style="color: #e8281a;"></i>
                                 </div>
-                                <h3 class="fw-bold mb-0">Canteen<span class="text-warning">X</span></h3>
+                                <h3 class="fw-bold mb-0" style="letter-spacing: -0.5px;">Canteen<span class="text-warning">X</span></h3>
                             </div>
-                            <small class="text-white-50">Smart Campus Food Platform</small>
+                            <small class="text-white-50 fw-medium">Smart Campus Food Platform</small>
                         </div>
 
-                        <div class="mt-5 mb-5">
-                            <h1 class="fw-bolder display-6">Eat Better.<br /><span class="text-warning">Skip the Queue.</span></h1>
-                            <p class="text-white-50 mt-3 fs-6">Order your favorite meals from campus canteens quickly and easily.</p>
+                        <div class="mt-5 mb-5" style="position: relative; z-index: 2;">
+                            <h1 class="fw-bolder display-6" style="line-height: 1.2;">Eat Better.<br /><span class="text-warning">Skip the Queue.</span></h1>
+                            <p class="text-white-50 mt-3 fs-6" style="line-height: 1.6;">Order your favorite meals from campus canteens quickly and easily.</p>
                         </div>
 
-                        <small class="text-white-50">&copy; 2026 CanteenX</small>
+                        <small class="text-white-50" style="position: relative; z-index: 2;">&copy; @DateTime.Now.Year CanteenX</small>
                     </div>
 
                     <!-- Right Side: Login Form -->
-                    <div class="col-md-7 p-4 p-md-5 bg-white">
+                    <div class="col-md-7 p-4 p-md-5 bg-transparent ios-form-container">
                         <div class="mb-4">
-                            <h2 class="fw-bold">Welcome back 👋</h2>
+                            <h2 class="fw-bold text-dark mb-1" style="font-family: 'Playfair Display', serif;">Welcome back 👋</h2>
                             <p class="text-muted small">Sign in to continue to your CanteenX account.</p>
                         </div>
 
-                        <form asp-controller="Account" asp-action="Login" method="post">
+                        <form asp-controller="Account" asp-action="Login" method="post" id="loginForm">
+                            @Html.AntiForgeryToken()
+
+
+                           
 
                             <!-- Email Input -->
                             <div class="mb-3">
-                                <label class="form-label fw-semibold small" asp-for="EmailOrPhone">Email or Phone Number</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0"><i class="far fa-user"></i></span>
-                                    <input asp-for="EmailOrPhone" class="form-control bg-light border-start-0 shadow-none" placeholder="Enter email or phone" required>
+                                <label class="form-label fw-semibold small text-secondary" asp-for="EmailOrPhone">Email or Phone Number</label>
+                                <div class="ios-input-group">
+                                    <span class="input-group-text px-3"><i class="far fa-user"></i></span>
+                                    <input asp-for="EmailOrPhone" class="form-control" placeholder="Enter email or phone" id="inputEmailorPhone">
                                 </div>
-                                <span class="text-danger small" asp-validation-for="EmailOrPhone"></span>
+                                <span class="text-danger small mt-1 d-block" asp-validation-for="EmailOrPhone"></span>
                             </div>
 
                             <!-- Password Input -->
                             <div class="mb-4">
-                                <label class="form-label fw-semibold small" asp-for="Password">Password</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-lock"></i></span>
-
-                                    <input asp-for="Password" type="password" class="form-control bg-light border-start-0 shadow-none" placeholder="Enter your password" required>
-
-                                    <button class="btn btn-light border border-start-0 text-muted shadow-none" type="button"
-                                            onclick="let inp=this.previousElementSibling; let icon=this.children[0]; if(inp.type==='password'){inp.type='text'; icon.className='far fa-eye-slash';} else {inp.type='password'; icon.className='far fa-eye';}">
+                                <label class="form-label fw-semibold small text-secondary" asp-for="Password">Password</label>
+                                <div class="ios-input-group">
+                                    <span class="input-group-text px-3"><i class="fas fa-lock"></i></span>
+                                    <input asp-for="Password" class="form-control" placeholder="Enter your password" id="inputpassword">
+                                    <button class="btn px-3" type="button" tabindex="-1"
+                                            onclick="let inp=this.previousElementSibling; let icon=this.children[0]; if(inp.type==='password'){inp.type='text'; 
+                                            icon.className='far fa-eye-slash text-danger';} else {inp.type='password'; icon.className='far fa-eye';}">
                                         <i class="far fa-eye"></i>
                                     </button>
                                 </div>
-                                <span class="text-danger small" asp-validation-for="Password"></span>
+                                <span class="text-danger small mt-1 d-block" asp-validation-for="Password"></span>
                             </div>
 
                             <!-- Options -->
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    <input class="form-check-input shadow-none" type="checkbox" id="RememberMe" style="cursor:pointer;">
-                                    <label class="form-check-label text-muted small user-select-none" for="RememberMe" style="cursor:pointer;">Remember me</label>
+                            <div class="d-flex justify-content-between ios-options-row align-items-center mb-4 w-100">
+                                <div class="form-check ios-checkbox mb-0">
+                                    <input asp-for="RememberMe" class="form-check-input shadow-none" type="checkbox" id="RememberMe">
+                                    <label class="form-check-label text-muted small user-select-none" for="RememberMe">Remember me</label>
                                 </div>
-                                <a  class="text-decoration-none small fw-semibold" style="color: #e8281a;" asp-controller="Account" asp-action="ForgotPassword">Forgot password?</a>
+                                <a class="text-decoration-none small fw-semibold text-end" style="color: #e8281a; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'" asp-controller="Account" asp-action="ForgotPassword">Forgot password?</a>
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" class="btn text-white w-100 py-2 mb-3 fw-semibold shadow-sm" style="background-color: #e8281a;">
-                                Login
+                            <button type="submit" class="ios-primary-btn w-100 py-3 mb-3 fs-6 d-flex justify-content-center align-items-center gap-2" id="loginBtn">
+                                <span>Sign In</span>
+                                <i class="fas fa-arrow-right small"></i>
                             </button>
 
                             <div class="d-flex align-items-center my-4">
                                 <hr class="flex-grow-1 text-muted opacity-25">
-                                <span class="mx-3 text-muted" style="font-size: 11px;">or continue with</span>
+                                <span class="mx-3 text-muted text-uppercase" style="font-size: 10px; letter-spacing: 1px;">or continue with</span>
                                 <hr class="flex-grow-1 text-muted opacity-25">
                             </div>
 
                             <!-- Google Login -->
-                            <a class="btn btn-outline-secondary w-100 py-2 mb-4 text-dark fw-semibold shadow-sm" asp-controller="Account" asp-action="GoogleLogin">
-                                <i class="fab fa-google text-primary me-2"></i> Continue with Google
+                            <a class="ios-google-btn btn w-100 py-3 mb-4 d-flex align-items-center justify-content-center gap-2" asp-controller="Account" asp-action="GoogleLogin">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" style="width: 18px; height: 18px;">
+                                <span>Continue with Google</span>
                             </a>
 
-                           
-
                             <div class="text-center small text-muted">
-                                Don't have an account? <a href="~/Account/Register" class="text-decoration-none fw-bold" style="color: #e8281a;">Create account</a>
+                                Don't have an account? <a href="~/Account/Register" class="text-decoration-none fw-bold ms-1" style="color: #e8281a;">Create account</a>
                             </div>
 
                         </form>
@@ -108,77 +324,104 @@
     </div>
 </div>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+  
 
-
-<!-- Login Error Modal -->
-<div class="modal fade"
-     id="loginErrorModal"
-     tabindex="-1"
-     aria-labelledby="loginErrorModalLabel"
-     aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title"
-                    id="loginErrorModalLabel">
-                    Login Failed
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                </button>
-
-            </div>
-
-            <div class="modal-body">
-
-                <div class="alert alert-danger mb-0">
-                    <i class="bi bi-exclamation-circle me-2"></i>
-
-                    @TempData["LoginError"]
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    OK
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-@if (TempData["LoginError"] != null)
-{
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // 1. SECURE SERVER ERROR HANDLING (XSS Protected)
+            @if (TempData["LoginError"] != null)
+            {
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    // Json.Serialize ensures the string is safely escaped for JavaScript
+                    title: @Html.Raw(Json.Serialize(TempData["LoginError"])), 
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg border'
+                    }
+                });
+                </text>
+            }
 
-            var modalElement =
-                document.getElementById("loginErrorModal");
+            // 2. CLIENT-SIDE VALIDATION, SHAKE & LOADING SPINNER
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('inputEmailorPhone');
+            const passwordInput = document.getElementById('inputpassword');
+            const submitBtn = document.getElementById('loginBtn');
 
-            var modal =
-                new bootstrap.Modal(modalElement);
+            // Prevent script crash if elements are missing from the DOM
+            if (!form || !emailInput || !passwordInput || !submitBtn) return;
 
-            modal.show();
+            const showFieldError = (inputElement, message) => {
+                const wrapper = inputElement.closest('.ios-input-group') || inputElement;
+                wrapper.classList.remove('input-invalid');
+                void wrapper.offsetWidth; // Force reflow to restart animation
+                wrapper.classList.add('input-invalid');
 
+                const errorSpan = inputElement.closest('.mb-3, .mb-4')?.querySelector('span.text-danger');
+                if (errorSpan) errorSpan.textContent = message;
+            };
+
+            const clearFieldError = (inputElement) => {
+                const wrapper = inputElement.closest('.ios-input-group') || inputElement;
+                wrapper.classList.remove('input-invalid');
+                
+                const errorSpan = inputElement.closest('.mb-3, .mb-4')?.querySelector('span.text-danger');
+                if (errorSpan) errorSpan.textContent = '';
+            };
+
+            // Clear red warnings instantly as the user types
+            [emailInput, passwordInput].forEach(el => {
+                el.addEventListener('input', () => clearFieldError(el));
+            });
+
+            form.addEventListener('submit', function (e) {
+                let isValid = true;
+
+                if (!emailInput.value.trim()) {
+                    showFieldError(emailInput, 'Email or Phone Number is required.');
+                    isValid = false;
+                }
+
+                if (!passwordInput.value.trim()) {
+                    showFieldError(passwordInput, 'Password is required.');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    e.preventDefault(); 
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Please fill in all required fields!',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg border'
+                        }
+                    });
+
+                    return false;
+                }
+
+                // Prevent double submissions and show loading spinner
+                submitBtn.style.pointerEvents = 'none';
+                submitBtn.style.opacity = '0.85';
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> <span>Signing In...</span>';
+            });
         });
     </script>
-}
-@section Scripts
-{
-    <partial name="_ValidationScriptsPartial" />
 }
