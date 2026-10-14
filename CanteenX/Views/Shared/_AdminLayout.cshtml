@@ -203,24 +203,6 @@
                     <!-- Dropdown Menu -->
                     <ul class="dropdown-menu dropdown-menu-end admin-profile-menu">
 
-                        <!-- Profile Header -->
-                        <li class="profile-menu-header">
-
-                            <div class="profile-avatar large">
-                                <i class="bi bi-person-fill"></i>
-                            </div>
-
-                            <div>
-                                <strong>
-                                    @(User.Identity?.Name ?? "Admin")
-                                </strong>
-
-                                <small>
-                                    Administrator
-                                </small>
-                            </div>
-
-                        </li>
 
                         <li>
                             <hr class="dropdown-divider" />
@@ -242,17 +224,6 @@
 
 
                         <!-- Settings -->
-                        <li>
-                            <a class="dropdown-item"
-                               asp-controller="Admin"
-                               asp-action="Settings">
-
-                                <i class="bi bi-gear"></i>
-
-                                <span>Account Settings</span>
-
-                            </a>
-                        </li>
 
 
                         <!-- Notifications -->
@@ -321,7 +292,7 @@
     </div>
 
         <!-- SweetAlert2 CDN (Agar pehle se nahi hai) -->
-        <script src="~/lib\sweetalert2@11.js"> </script>
+       <script src="~/adminassets/libs\sweetalert2@11.js"></script>
 
 @if (TempData["LoginSuccess"] != null)
 {

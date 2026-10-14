@@ -67,6 +67,23 @@ namespace CanteenX.Controllers
                 // Login Success - Session Create karein
                 await CreateUserSessionAsync(result,model.RememberMe);
 
+
+                Response.Cookies.Append("jwt_token", result.AccessToken, new CookieOptions
+                {
+                    HttpOnly = true, // XSS attacks se safe
+                    Secure = true,   // HTTPS only
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(15) // API ke token expiry se match karta hua
+                });
+
+                Response.Cookies.Append("refresh_token", result.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = model.RememberMe ? DateTime.UtcNow.AddDays(30) : DateTime.UtcNow.AddDays(7)
+                });
+
                 // Naye page (Dashboard) par SweetAlert dikhane ke liye TempData set karein
                 TempData["LoginSuccess"] = "Welcome back! You have successfully logged in.";
 
@@ -138,6 +155,28 @@ namespace CanteenX.Controllers
                 }
 
                 await CreateUserSessionAsync(apiResult, true);
+
+                // =========================================================
+                // YAHAN COOKIES MEIN TOKENS SAVE KAREIN
+                // =========================================================
+                Response.Cookies.Append("jwt_token", apiResult.AccessToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddMinutes(15)
+                });
+
+                // Google login mein hum by default 'Remember Me' true maan kar chal rahe hain (30 days)
+                Response.Cookies.Append("refresh_token", apiResult.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(30)
+                });
+                // =========================================================
+
                 await HttpContext.SignOutAsync(GoogleScheme);
 
                 return RedirectToAction("Index", "Home");
@@ -165,19 +204,38 @@ namespace CanteenX.Controllers
                 var response = await client.PostAsJsonAsync("api/Auth/register", model);
                 var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
 
-                if (result == null || !result.Success)
+                if (!response.IsSuccessStatusCode || result == null || !result.Success )
                 {
-                    ModelState.AddModelError("", result?.Message ?? "Registration failed.");
+                    TempData["LoginError"] = result?.Message ?? "Registration failed. Please try again.";
                     return View(model);
                 }
 
+                await CreateUserSessionAsync(result, false);
+                // 2. Tokens ko cookies mein save karein
+        Response.Cookies.Append("jwt_token", result.AccessToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddMinutes(15)
+        });
+
+                Response.Cookies.Append("refresh_token", result.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(7)
+                });
+
                 TempData["SuccessMessage"] = "Account created successfully! Please login.";
-                return RedirectToAction(nameof(Login));
+                ModelState.Clear();
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during registration.");
-                ModelState.AddModelError("", "Service unavailable. Please try again later.");
+                TempData["LoginError"] = "Service unavailable. Please try again later.";
                 return View(model);
             }
         }
@@ -289,8 +347,25 @@ namespace CanteenX.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            var refreshToken = Request.Cookies["refresh_token"];
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                try
+                {
+                    var client = _httpClientFactory.CreateClient(ApiClientName);
+                    // API ka naya revoke endpoint call kar rahe hain
+                    await client.PostAsJsonAsync("api/Auth/revoke-token", new { Token = refreshToken });
+                }
+                catch (Exception ex)
+                {
+                    // Agar API down ho, tab bhi aage ka code chalega aur user MVC se log out ho jayega
+                    _logger.LogError(ex, "API Error: Could not revoke token during logout.");
+                }
+            }
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
+            Response.Cookies.Delete("jwt_token");
+            Response.Cookies.Delete("refresh_token");
             return RedirectToAction("Index", "Home");
         }
 

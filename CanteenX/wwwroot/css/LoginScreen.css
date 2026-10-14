@@ -1,0 +1,235 @@
+﻿
+/* =========================================
+       iOS FROSTED GLASS LOGIN STYLING (RESPONSIVE)
+       ========================================= */
+body {
+    background: radial-gradient(circle at top right, #f8fafc, #edf2f7);
+    min-height: 100vh;
+}
+
+.ios-login-wrapper {
+    animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    /* Bottom padding to prevent floating cart overlap on mobile */
+    padding-bottom: 80px;
+}
+
+@keyframes iosFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* iOS Glassmorphism Card Container */
+.ios-glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 28px !important;
+    overflow: hidden;
+}
+
+/* Left Brand Panel Gradient */
+.ios-brand-panel {
+    background: linear-gradient(135deg, #087f5b 0%, #055a40 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+    .ios-brand-panel::before {
+        content: '';
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 50%;
+        top: -60px;
+        right: -80px;
+        animation: pulseBlob 8s infinite alternate ease-in-out;
+    }
+
+@keyframes pulseBlob {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.15);
+    }
+}
+
+/* iOS Style Interactive Input Group */
+.ios-input-group {
+    background: rgba(240, 243, 246, 0.8);
+    border: 1.5px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    overflow: hidden;
+}
+
+    .ios-input-group:focus-within {
+        background: #ffffff;
+        border-color: #e8281a;
+        box-shadow: 0 0 0 4px rgba(232, 40, 26, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .ios-input-group .input-group-text,
+    .ios-input-group .btn {
+        background: transparent;
+        border: none;
+        color: #8e8e93;
+        transition: color 0.3s ease;
+    }
+
+    .ios-input-group:focus-within .input-group-text {
+        color: #e8281a;
+    }
+
+    .ios-input-group .form-control {
+        background: transparent;
+        border: none;
+        padding: 13px 12px;
+        box-shadow: none !important;
+        font-size: 0.95rem;
+        color: #1c1c1e;
+        width: 100%;
+    }
+
+/* iOS Spring Physics Buttons */
+.ios-primary-btn {
+    background: #e8281a;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 600;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 25px rgba(232, 40, 26, 0.3);
+}
+
+    .ios-primary-btn:hover {
+        background: #d02013;
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 15px 30px rgba(232, 40, 26, 0.4);
+        color: white;
+    }
+
+    .ios-primary-btn:active {
+        transform: scale(0.97);
+    }
+
+.ios-google-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    color: #1c1c1e;
+    font-weight: 600;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+    .ios-google-btn:hover {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    .ios-google-btn:active {
+        transform: scale(0.97);
+    }
+
+/* Custom Checkbox */
+.ios-checkbox .form-check-input {
+    width: 1.25em;
+    height: 1.25em;
+    cursor: pointer;
+    border-radius: 6px !important;
+    border: 1.5px solid #c7c7cc;
+    margin-top: 0.15em;
+}
+
+    .ios-checkbox .form-check-input:checked {
+        background-color: #e8281a;
+        border-color: #e8281a;
+    }
+
+/* =========================================
+       MOBILE RESPONSIVE ADJUSTMENTS
+       ========================================= */
+@media (max-width: 768px) {
+    .ios-login-wrapper {
+        margin-top: 1.5rem !important;
+        margin-bottom: 2rem !important;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 100px; /* Extra space for scrolling past floating cart */
+    }
+
+    .ios-glass-card {
+        border-radius: 20px !important;
+    }
+    /* Reduce inner padding on mobile to maximize form space */
+    .ios-form-container {
+        padding: 1.5rem 1.25rem !important;
+    }
+
+    .ios-input-group .form-control {
+        padding: 11px 10px; /* Tighter inputs */
+    }
+
+    .ios-primary-btn, .ios-google-btn {
+        padding-top: 11px !important;
+        padding-bottom: 11px !important;
+    }
+    /* Allow options to wrap gracefully on very small screens */
+    .ios-options-row {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+    }
+}
+/* Hide default browser password reveal icon (Edge) */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
+}
+
+/* Hide auto-fill icons (Safari/Chrome safety) */
+input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+}
+/* Invalid Field Red Glow & Shake Animation */
+.input-invalid {
+    border-color: #ff3b30 !important;
+    background: rgba(255, 59, 48, 0.03) !important;
+    box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
+    animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes iosShake {
+    10%, 90% {
+        transform: translateX(-2px);
+    }
+
+    20%, 80% {
+        transform: translateX(4px);
+    }
+
+    30%, 50%, 70% {
+        transform: translateX(-6px);
+    }
+
+    40%, 60% {
+        transform: translateX(6px);
+    }
+}

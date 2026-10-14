@@ -1,207 +1,8 @@
-﻿@model CanteenX.Models.Auth.RegisterDto;
+﻿@model CanteenX.Models.Auth.RegisterDto
 @{
     ViewData["Title"] = "Register";
 }
-
-<style>
-    /* =========================================
-       iOS FROSTED GLASS REGISTER STYLING (RESPONSIVE)
-       ========================================= */
-    body {
-        background: radial-gradient(circle at top left, #f8fafc, #edf2f7);
-        min-height: 100vh;
-    }
-
-    .ios-register-wrapper {
-        animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        padding-bottom: 80px; 
-    }
-
-    @@keyframes iosFadeUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* iOS Glassmorphism Card Container */
-    .ios-glass-card {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(25px) saturate(180%);
-        -webkit-backdrop-filter: blur(25px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12), 0 10px 20px rgba(0, 0, 0, 0.05);
-        border-radius: 28px !important;
-        overflow: hidden;
-    }
-
-    /* Left Brand Panel Gradient */
-    .ios-brand-panel {
-        background: linear-gradient(135deg, #087f5b 0%, #055a40 100%);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .ios-brand-panel::before {
-        content: '';
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.06);
-        border-radius: 50%;
-        top: -60px;
-        left: -80px;
-        animation: pulseBlob 8s infinite alternate ease-in-out;
-    }
-
-    @@keyframes pulseBlob {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.15); }
-    }
-
-    /* iOS Style Interactive Input Group */
-    .ios-input-group {
-        background: rgba(240, 243, 246, 0.8);
-        border: 1.5px solid rgba(0, 0, 0, 0.06);
-        border-radius: 14px;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        display: flex;
-        overflow: hidden;
-    }
-
-    .ios-input-group:focus-within {
-        background: #ffffff;
-        border-color: #e8281a;
-        box-shadow: 0 0 0 4px rgba(232, 40, 26, 0.12);
-        transform: translateY(-1px);
-    }
-
-    .ios-input-group .input-group-text,
-    .ios-input-group .btn {
-        background: transparent;
-        border: none;
-        color: #8e8e93;
-        transition: color 0.3s ease;
-    }
-
-    .ios-input-group:focus-within .input-group-text {
-        color: #e8281a;
-    }
-
-    .ios-input-group .form-control {
-        background: transparent;
-        border: none;
-        padding: 13px 12px;
-        box-shadow: none !important;
-        font-size: 0.95rem;
-        color: #1c1c1e;
-        width: 100%;
-    }
-
-    /* iOS Spring Physics Buttons */
-    .ios-primary-btn {
-        background: #e8281a;
-        color: white;
-        border: none;
-        border-radius: 14px;
-        font-weight: 600;
-        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 10px 25px rgba(232, 40, 26, 0.3);
-    }
-
-    .ios-primary-btn:hover {
-        background: #d02013;
-        transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 15px 30px rgba(232, 40, 26, 0.4);
-        color: white;
-    }
-
-    .ios-primary-btn:active {
-        transform: scale(0.97);
-    }
-
-    .ios-google-btn {
-        background: rgba(255, 255, 255, 0.9);
-        border: 1.5px solid rgba(0, 0, 0, 0.08);
-        border-radius: 14px;
-        color: #1c1c1e;
-        font-weight: 600;
-        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-    }
-
-    .ios-google-btn:hover {
-        background: #ffffff;
-        border-color: rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-    }
-
-    .ios-google-btn:active {
-        transform: scale(0.97);
-    }
-
-    /* =========================================
-       MOBILE RESPONSIVE ADJUSTMENTS
-       ========================================= */
-    @@media (max-width: 768px) {
-        .ios-register-wrapper {
-            margin-top: 1.5rem !important;
-            margin-bottom: 2rem !important;
-            padding-left: 10px;
-            padding-right: 10px;
-            padding-bottom: 100px;
-        }
-
-        .ios-glass-card {
-            border-radius: 20px !important;
-        }
-
-        .ios-form-container {
-            padding: 1.5rem 1.25rem !important; 
-        }
-
-        .ios-input-group .form-control {
-            padding: 11px 10px; 
-        }
-        
-        .ios-primary-btn, .ios-google-btn {
-            padding-top: 11px !important;
-            padding-bottom: 11px !important;
-        }
-    }
-    /* Hide default browser password reveal icon (Edge) */
-     input::-ms-reveal,
-     input::-ms-clear {
-    display: none !important;
-    } 
-
-    /* Hide auto-fill icons (Safari/Chrome safety) */
-    input::-webkit-credentials-auto-fill-button {
-    visibility: hidden;
-    display: none !important;
-   }
-
-   
-    /* Hide auto-fill icons (Safari/Chrome safety) */
-    input::-webkit-credentials-auto-fill-button {
-    visibility: hidden;
-    display: none !important;
-   }
-   /* Invalid Field Red Glow & Shake Animation */
-    .input-invalid {
-        border-color: #ff3b30 !important;
-        background: rgba(255, 59, 48, 0.03) !important;
-        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
-        animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-
-    @@keyframes iosShake {
-        10%, 90% { transform: translateX(-2px); }
-        20%, 80% { transform: translateX(4px); }
-        30%, 50%, 70% { transform: translateX(-6px); }
-        40%, 60% { transform: translateX(6px); }
-    }
-</style>
-
+<link rel="stylesheet" href="~/css/RegisterScreen.css" asp-append-version="true" />
 <div class="container my-4 my-md-5 ios-register-wrapper">
     <div class="row justify-content-center">
         <div class="col-12 col-sm-11 col-md-11 col-lg-11">
@@ -237,7 +38,7 @@
                         </div>
 
                         <form asp-action="Register" method="post" id="registerForm">
-                           
+                            @Html.AntiForgeryToken()
 
                             <!-- Full Name -->
                             <div class="mb-3">
@@ -246,7 +47,6 @@
                                     <span class="input-group-text px-3"><i class="far fa-user"></i></span>
                                     <input asp-for="FullName" class="form-control" placeholder="Enter your full name" id="inputName" />
                                 </div>
-                                <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
                             </div>
 
                             <!-- Email -->
@@ -256,7 +56,6 @@
                                     <span class="input-group-text px-3"><i class="far fa-envelope"></i></span>
                                     <input asp-for="Email" type="email" class="form-control" placeholder="student@example.com" id="inputEmail" />
                                 </div>
-                                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
                             </div>
 
                             <!-- Phone Number -->
@@ -266,7 +65,6 @@
                                     <span class="input-group-text px-3"><i class="fas fa-phone"></i></span>
                                     <input asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number" id="inputPhone" />
                                 </div>
-                                <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
                             </div>
 
                             <div class="row g-3 mb-4">
@@ -276,11 +74,10 @@
                                     <div class="ios-input-group">
                                         <span class="input-group-text px-3"><i class="fas fa-lock"></i></span>
                                         <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" id="inputPassword" />
-                                        <button class="btn px-3" type="button" tabindex="-1" onclick="let inp=this.previousElementSibling; let icon=this.children[0]; if(inp.type==='password'){inp.type='text'; icon.className='far fa-eye-slash text-danger';} else {inp.type='password'; icon.className='far fa-eye';}">
+                                        <button class="btn px-3 toggle-pwd-btn" type="button" tabindex="-1">
                                             <i class="far fa-eye"></i>
                                         </button>
                                     </div>
-                                    <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
                                 </div>
 
                                 <!-- Confirm Password -->
@@ -289,11 +86,10 @@
                                     <div class="ios-input-group">
                                         <span class="input-group-text px-3"><i class="fas fa-lock"></i></span>
                                         <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••••" id="inputConfirmPassword" />
-                                        <button class="btn px-3" type="button" tabindex="-1" onclick="let inp=this.previousElementSibling; let icon=this.children[0]; if(inp.type==='password'){inp.type='text'; icon.className='far fa-eye-slash text-danger';} else {inp.type='password'; icon.className='far fa-eye';}">
+                                        <button class="btn px-3 toggle-pwd-btn" type="button" tabindex="-1">
                                             <i class="far fa-eye"></i>
                                         </button>
                                     </div>
-                                    <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
                                 </div>
                             </div>
 
@@ -328,11 +124,31 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-   <script>
+   
+    <script>
         document.addEventListener("DOMContentLoaded", function(){
-            
-            // 1. SECURE SERVER ERROR HANDLING (XSS Protected)
+
+
+              //SECURE SERVER RESPONSES (XSS Protected)
+    @if(TempData["SuccessMessage"] != null)
+        {
+            <text>
+            Swal.fire({
+            toast:true,
+            position: 'top-end',
+            icon:'success',
+            title:'Registration Successful',
+            text:@Html.Raw(Json.Serialize(TempData["SuccessMessage"])),
+            showConfirmButton:false,
+            timer: 4000,
+            timerProgressBar: true,
+            background: 'rgba(255, 255, 255, 0.95)',
+            customClass: { popup: 'rounded-4 shadow-lg border' }
+            });
+            </text>
+        }
+
+            // 1. BACKEND API ERRORS (e.g., Email already exists)
             @if (TempData["LoginError"] != null)
             {
                 <text>
@@ -340,20 +156,39 @@
                     toast: true,
                     position: 'top-end',
                     icon: 'error',
-                    // Json.Serialize ensures the string is safely escaped for JavaScript
-                    title: @Html.Raw(Json.Serialize(TempData["LoginError"])), 
+                    title: 'Registration Failed',
+                    text: @Html.Raw(Json.Serialize(TempData["LoginError"])), 
                     showConfirmButton: false,
-                    timer: 4000,
+                    timer: 5000,
                     timerProgressBar: true,
                     background: 'rgba(255, 255, 255, 0.95)',
-                    customClass: {
-                        popup: 'rounded-4 shadow-lg border'
-                    }
+                    customClass: { popup: 'rounded-4 shadow-lg border' }
                 });
                 </text>
             }
 
-            // 2. CLIENT-SIDE VALIDATION, SHAKE & LOADING SPINNER
+            // Backend ASP.NET Validation Errors (Catch-all)
+            @if (!ViewData.ModelState.IsValid)
+            {
+                var errors = ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                var combinedErrors = string.Join(" | ", errors);
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: @Html.Raw(Json.Serialize(combinedErrors)),
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: { popup: 'rounded-4 shadow-lg border' }
+                });
+                </text>
+            }
+
+            // 2. DOM ELEMENTS SETUP
             const form = document.getElementById('registerForm');
             const nameInput = document.getElementById('inputName');
             const emailInput = document.getElementById('inputEmail');
@@ -362,66 +197,98 @@
             const confirmPasswordInput = document.getElementById('inputConfirmPassword');
             const submitBtn = document.getElementById('registerBtn');
 
-            // DOM elements null check (Prevents console errors)
             if (!form || !nameInput || !emailInput || !phoneInput || !passwordInput || !confirmPasswordInput || !submitBtn) return;
 
-            const showFieldError = (inputElement, message) => {
+            // 3. SECURE PASSWORD VISIBILITY TOGGLE 
+            document.querySelectorAll('.toggle-pwd-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const wrapper = this.closest('.ios-input-group');
+                    const input = wrapper.querySelector('input');
+                    const icon = this.querySelector('i');
+
+                    if (input && icon) {
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            icon.className = 'far fa-eye-slash text-danger';
+                        } else {
+                            input.type = 'password';
+                            icon.className = 'far fa-eye';
+                        }
+                    }
+                });
+            });
+
+            // 4. CLIENT-SIDE VALIDATION & SHAKE ANIMATION
+            const showFieldError = (inputElement) => {
                 const wrapper = inputElement.closest('.ios-input-group') || inputElement;
                 wrapper.classList.remove('input-invalid');
-                void wrapper.offsetWidth; // Force reflow to restart animation
+                void wrapper.offsetWidth; 
                 wrapper.classList.add('input-invalid');
-
-                // Find the validation span (works for both full width and half-width columns)
-                const errorSpan = inputElement.closest('.mb-3, .col-md-6')?.querySelector('span.text-danger');
-                if (errorSpan) errorSpan.textContent = message;
             };
 
             const clearFieldError = (inputElement) => {
                 const wrapper = inputElement.closest('.ios-input-group') || inputElement;
                 wrapper.classList.remove('input-invalid');
-                
-                const errorSpan = inputElement.closest('.mb-3, .col-md-6')?.querySelector('span.text-danger');
-                if (errorSpan) errorSpan.textContent = '';
             };
 
-            // Clear red warnings instantly as the user types
             [nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput].forEach(el => {
                 el.addEventListener('input', () => clearFieldError(el));
             });
 
+            // 5. NO-REFRESH FORM SUBMIT
             form.addEventListener('submit', function (e) {
                 let isValid = true;
+                let toastErrorMessage = '';
 
-                // Empty Field Checks
-                if (!nameInput.value.trim()) {
-                    showFieldError(nameInput, 'Full Name is required.');
+                // Regex Patterns
+                const emailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@@$!%*?&])[A-Za-z\d@@$!%*?&]{8,}$/;
+
+                const nameVal = nameInput.value.trim();
+                const emailVal = emailInput.value.trim();
+                const phoneVal = phoneInput.value.trim();
+                const pwdVal = passwordInput.value;
+                const confirmPwdVal = confirmPasswordInput.value;
+
+                if (!nameVal) {
+                    showFieldError(nameInput);
+                    toastErrorMessage = 'Full Name is required.';
+                    isValid = false;
+                }
+                else if (!emailVal || !emailPattern.test(emailVal)) {
+                    showFieldError(emailInput);
+                    toastErrorMessage = 'Please enter a valid email address.';
+                    isValid = false;
+                }
+                else if (!phoneVal) {
+                    showFieldError(phoneInput);
+                    toastErrorMessage = 'Phone Number is required.';
+                    isValid = false;
+                }
+                else if (!pwdVal) {
+                    showFieldError(passwordInput);
+                    toastErrorMessage = 'Password is required.';
+                    isValid = false;
+                }
+                else if (!passwordPattern.test(pwdVal)) {
+                    showFieldError(passwordInput);
+                    toastErrorMessage = 'Password must be 8+ chars with uppercase, lowercase, number, and special character.';
+                    isValid = false;
+                }
+                else if (!confirmPwdVal) {
+                    showFieldError(confirmPasswordInput);
+                    toastErrorMessage = 'Please confirm your password.';
+                    isValid = false;
+                }
+                else if (pwdVal !== confirmPwdVal) {
+                    showFieldError(passwordInput);
+                    showFieldError(confirmPasswordInput);
+                    toastErrorMessage = 'Passwords do not match!';
                     isValid = false;
                 }
 
-                if (!emailInput.value.trim()) {
-                    showFieldError(emailInput, 'Email Address is required.');
-                    isValid = false;
-                }
-
-                if (!phoneInput.value.trim()) {
-                    showFieldError(phoneInput, 'Phone Number is required.');
-                    isValid = false;
-                }
-
-                if (!passwordInput.value.trim()) {
-                    showFieldError(passwordInput, 'Password is required.');
-                    isValid = false;
-                }
-
-                if (!confirmPasswordInput.value.trim()) {
-                    showFieldError(confirmPasswordInput, 'Please confirm your password.');
-                    isValid = false;
-                } else if (passwordInput.value !== confirmPasswordInput.value) {
-                    showFieldError(confirmPasswordInput, 'Passwords do not match.');
-                    isValid = false;
-                }
-
-                // Agar form invalid hai, toh refresh roko aur Toast dikhao
+                // If invalid, block form submission and show specific Toast
                 if (!isValid) {
                     e.preventDefault(); 
 
@@ -429,28 +296,23 @@
                         toast: true,
                         position: 'top-end',
                         icon: 'warning',
-                        title: 'Please fill in all required fields properly!',
+                        title: 'Validation Failed',
+                        text: toastErrorMessage,
                         showConfirmButton: false,
-                        timer: 3000,
+                        timer: 4500,
                         timerProgressBar: true,
                         background: 'rgba(255, 255, 255, 0.95)',
-                        customClass: {
-                            popup: 'rounded-4 shadow-lg border'
-                        }
+                        customClass: { popup: 'rounded-4 shadow-lg border' }
                     });
 
                     return false;
                 }
 
-                // Agar sab sahi hai, button disable karo aur loader dikhao
+                // Show spinner only if validation passes
                 submitBtn.style.pointerEvents = 'none';
                 submitBtn.style.opacity = '0.85';
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> <span>Creating Account...</span>';
             });
         });
     </script>
-
-   
-
-   
 }
