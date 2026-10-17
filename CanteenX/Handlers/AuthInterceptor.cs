@@ -107,7 +107,7 @@ namespace CanteenX.Handlers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddDays(7)
             });
 
             context.Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions

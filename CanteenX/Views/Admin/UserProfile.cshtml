@@ -1,0 +1,213 @@
+﻿@model CanteenX.Models.Admin.UserProfileDto
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "_AdminLayout";
+}
+
+<link href="~/adminassets/css/UserProfileStyle.css" rel="stylesheet" asp-append-version="true" />
+<div class="profile-dashboard-wrapper">
+    
+    <div class="enterprise-glass-panel stagger-1">
+        
+        <!-- Header -->
+        <div class="panel-header">
+            <div class="avatar-display stagger-2">
+                <i class="bi bi-person"></i>
+            </div>
+            <div class="stagger-3">
+                <h3 class="fw-bold text-dark mb-1 h4">@(User.Identity?.Name ?? "Administrator")</h3>
+                <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-semibold shadow-sm mt-1 d-inline-block">
+                    <i class="bi bi-shield-check me-1"></i> System Admin
+                </span>
+            </div>
+        </div>
+
+        <form asp-controller="Admin" asp-action="UpdateProfile" method="post" id="profileForm">
+            @Html.AntiForgeryToken()
+            
+            <div class="panel-body" id="formBody">
+                
+                <div class="row g-4">
+                    <!-- Full Name -->
+                    <div class="col-md-6 stagger-2">
+                        <label asp-for="FullName" class="field-label">Full Name</label>
+                        <div class="modern-input-wrapper">
+                            <i class="bi bi-person-badge input-icon"></i>
+                            <input asp-for="FullName" class="modern-form-control" placeholder="Enter your full name" readonly />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div class="col-md-6 stagger-3">
+                        <label asp-for="Email" class="field-label">Email Address</label>
+                        <div class="modern-input-wrapper">
+                            <i class="bi bi-envelope input-icon"></i>
+                            <input asp-for="Email" type="email" class="modern-form-control" placeholder="admin@canteenx.com" readonly />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="col-md-6 stagger-4">
+                        <label asp-for="PhoneNumber" class="field-label">Phone Number</label>
+                        <div class="modern-input-wrapper">
+                            <i class="bi bi-telephone input-icon"></i>
+                            <input asp-for="PhoneNumber" type="tel" class="modern-form-control" placeholder="+91 9876543210" readonly />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- Interactive Account Status Toggle -->
+                    <div class="col-md-6 stagger-4">
+                        <label asp-for="IsActive" class="field-label">Account Status</label>
+                        <div class="modern-input-wrapper is-toggle-wrapper justify-content-between pe-3" style="padding: 6px 0;">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-power input-icon" id="statusIcon"></i>
+                                <span class="fw-bold ms-2" id="statusText" style="font-size: 0.96rem;">Active</span>
+                            </div>
+                            <!-- Assuming your Dto has a boolean IsActive property -->
+                            <label class="ios-switch">
+                                <input asp-for="IsActive" type="checkbox" id="IsActiveToggle" disabled />
+                                <span class="ios-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Smart Footer Buttons -->
+            <div class="panel-footer stagger-4">
+                
+                <button type="button" class="btn-enterprise btn-primary-action" id="enableEditBtn" onclick="toggleEditMode(true)">
+                    <i class="bi bi-pencil-square"></i> Edit Profile
+                </button>
+
+                <div id="editActions" class="d-none edit-actions-wrapper">
+                    <button type="button" class="btn-enterprise btn-secondary-action" onclick="toggleEditMode(false)">Cancel</button>
+                    <button type="submit" class="btn-enterprise btn-success-action" id="saveProfileBtn">
+                        <i class="bi bi-check2-circle"></i> Save Changes
+                    </button>
+                </div>
+                
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+   @*  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> *@
+    
+    <script>
+        let originalValues = {};
+        let originalToggleState = false;
+
+        // Dynamic text update for Toggle Switch
+        const toggleInput = document.getElementById('IsActiveToggle');
+        const statusText = document.getElementById('statusText');
+        const statusIcon = document.getElementById('statusIcon');
+
+        function updateStatusUI() {
+            if (toggleInput.checked) {
+                statusText.innerText = "Active";
+                statusText.className = "fw-bold ms-2 text-success";
+                statusIcon.className = "bi bi-power input-icon text-success";
+            } else {
+                statusText.innerText = "Disabled";
+                statusText.className = "fw-bold ms-2 text-secondary";
+                statusIcon.className = "bi bi-power input-icon text-secondary";
+            }
+        }
+        
+        // Listen to switch changes
+        if (toggleInput) {
+            toggleInput.addEventListener('change', updateStatusUI);
+            updateStatusUI(); // Run once on load
+        }
+
+        function toggleEditMode(isEditing) {
+            const formBody = document.getElementById('formBody');
+            const enableEditBtn = document.getElementById('enableEditBtn');
+            const editActions = document.getElementById('editActions');
+            const editableInputs = document.querySelectorAll('.modern-input-wrapper:not(.is-toggle-wrapper) .modern-form-control');
+
+            if (isEditing) {
+                // Save original values
+                editableInputs.forEach(input => originalValues[input.id] = input.value);
+                if (toggleInput) originalToggleState = toggleInput.checked;
+
+                formBody.classList.add('is-editing');
+                editableInputs.forEach(input => input.removeAttribute('readonly'));
+                if (toggleInput) toggleInput.removeAttribute('disabled');
+                
+                enableEditBtn.classList.add('d-none');
+                editActions.classList.remove('d-none');
+                
+                setTimeout(() => editableInputs[0].focus(), 100);
+            } else {
+                // Restore original values
+                editableInputs.forEach(input => input.value = originalValues[input.id]);
+                if (toggleInput) {
+                    toggleInput.checked = originalToggleState;
+                    updateStatusUI();
+                }
+
+                formBody.classList.remove('is-editing');
+                editableInputs.forEach(input => input.setAttribute('readonly', true));
+                if (toggleInput) toggleInput.setAttribute('disabled', true);
+                
+                enableEditBtn.classList.remove('d-none');
+                editActions.classList.add('d-none');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('profileForm');
+            const submitBtn = document.getElementById('saveProfileBtn');
+            
+            form.addEventListener('submit', function(e) {
+               
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+                    submitBtn.style.pointerEvents = 'none';
+                    submitBtn.style.opacity = '0.85';
+                
+            });
+
+            @if (TempData["ProfileSuccess"] != null)
+            {
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '@Html.Raw(TempData["ProfileSuccess"])',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: { popup: 'rounded-4 shadow-lg border' }
+                });
+                </text>
+            }
+             @if (TempData["ProfileError"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: '@Html.Raw(TempData["ProfileError"])',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            customClass: { popup: 'rounded-4 shadow-lg border' }
+                        });
+                    </text>
+            }
+        });
+    </script>
+}

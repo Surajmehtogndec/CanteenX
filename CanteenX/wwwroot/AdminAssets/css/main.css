@@ -4,7 +4,7 @@
 body {
     margin: 0;
     /* iOS standard light background */
-    background: #f2f2f7;
+    background: white;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -131,6 +131,10 @@ html {
     padding: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+
+
+
 
 /* =========================================================
    Main Content & Navbar (Light Frosted Glass)
@@ -352,6 +356,167 @@ html {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
+/* =========================================================
+   Dyna-Anim "Create" Button & Dropdown (matched dashboard)
+   ========================================================= */
+.btn-quick-action {
+    background: linear-gradient(135deg, #007aff, #0056b3); /* Smooth gradient for rich look */
+    color: #ffffff;
+    border-radius: 50px;
+    padding: 8px 22px;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: none;
+    position: relative;
+    overflow: hidden; /* Overlay effects (like ripples) highlight inside bounds */
+    z-index: 1;
+    /* Dynamic physics-based transition */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s ease;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.25), inset 0 -2px 0px rgba(0, 0, 0, 0.15); /* Sleek dimensional feel */
+}
+
+    /* Subtle gloss overlay to create depth */
+    .btn-quick-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -50%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient( to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100% );
+        transform: skewX(-25deg) translateX(-100%);
+        transition: transform 0.85s cubic-bezier(0.19, 1, 0.22, 1);
+        z-index: -1;
+    }
+
+    /* Remove default Bootstrap arrow */
+    .btn-quick-action::after {
+        display: none;
+    }
+
+    /* 1. HOVER STATE: Gentle spring launch with a rich bloom */
+    .btn-quick-action:hover {
+        transform: translateY(-3px) scale(1.05); /* Springy elevate + expand */
+        box-shadow: 0 8px 25px rgba(0, 122, 255, 0.45), /* Glow expanding/blooming outward */
+        0 2px 4px rgba(0, 0, 0, 0.05), inset 0 -1px 0px rgba(0, 0, 0, 0.1);
+    }
+
+        /* Interactive shine swipe on hover */
+        .btn-quick-action:hover::before {
+            transform: skewX(-25deg) translateX(100%);
+        }
+
+    /* 2. ACTIVE / PRESSED STATE: Tactile spring back */
+    .btn-quick-action:active {
+        transform: translateY(1px) scale(0.97); /* Tactile press feel */
+        box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.2); /* Sinks down dimensional depth */
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    /* Icon (plus Sign) specifically target for rotating micro-interaction */
+    .btn-quick-action i {
+        font-size: 16px;
+        line-height: 1;
+        display: inline-block;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* The plus rotates gently on focus & hover */
+    .btn-quick-action:hover i,
+    .btn-quick-action[aria-expanded="true"] i {
+        transform: rotate(90deg); /* Modern intuitive rotation on highlight */
+    }
+
+    /* Text slight parallax push forward */
+    .btn-quick-action span {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-quick-action:hover span {
+        transform: translateX(1px);
+    }
+
+/* Dropdown Menu - Sleek entrance animation with light bounce and scale */
+.dropdown-menu-quick-action {
+    width: 220px;
+    margin-top: 12px !important;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.82); /* Sleeker transparency */
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Ambient border highlights */
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 122, 255, 0.07), 0 5px 15px rgba(0, 0, 0, 0.05);
+    /* Dropdown spring drop insertion */
+    transform-origin: top center;
+    animation: iosMenuSlideIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Spring Drop effect keyframe */
+@keyframes iosMenuSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.95);
+        filter: blur(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.dropdown-menu-quick-action .dropdown-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8e8e93;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 8px 12px 6px;
+}
+
+.dropdown-menu-quick-action .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #1c1c1e;
+    font-weight: 500;
+    /* Fluid smooth links hover transitions */
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease, color 0.2s ease;
+}
+
+    /* 3. ITEM HOVER ANIMATION: Bounce expand on list hover with slide right */
+    .dropdown-menu-quick-action .dropdown-item:hover {
+        background: rgba(0, 122, 255, 0.08); /* Sophisticated subtle blue overlay */
+        color: #007aff;
+        transform: translateX(4px); /* Elastic shift on mouseover */
+    }
+
+    /* Little items push back on active clicks */
+    .dropdown-menu-quick-action .dropdown-item:active {
+        transform: translateX(2px) scale(0.98);
+        background: rgba(0, 122, 255, 0.12);
+    }
+
+    /* Icons inside the dropdown - animated with the parent items hover */
+    .dropdown-menu-quick-action .dropdown-item i {
+        color: #007aff;
+        font-size: 16px;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Scale icon slightly when link hover is in play */
+    .dropdown-menu-quick-action .dropdown-item:hover i {
+        transform: scale(1.15); /* Magnifies iconography for clear affordance */
+    }
 
 /* Mobile Breakpoint */
 @media (max-width: 768px) {

@@ -22,7 +22,7 @@ namespace CanteenX.Models.Admin
         [RegularExpression(@"^(?=.*[a-zA-Z])[^<>]+$", ErrorMessage = "Description must contain letters and cannot contain HTML tags (<, >).")]
         public string? Description { get; set; }
 
-       
+        [Required(ErrorMessage = "Canteen image is required.")]
         public IFormFile? ImageUrl { get; set; }
 
         public bool IsActive { get; set; } 

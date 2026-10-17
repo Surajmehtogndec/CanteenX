@@ -5,280 +5,7 @@
     Layout = "_AdminLayout";
 }
 
-<style>
-    /* =========================================
-           FUTURISTIC & iOS GLASSMORPHISM UI STYLES
-           ========================================= */
-    .futuristic-wrapper {
-        animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @@keyframes pageEnter {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Staggered Field Animations */
-    .stagger-1 {
-        animation: fadeUp 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .stagger-2 {
-        animation: fadeUp 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .stagger-3 {
-        animation: fadeUp 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .stagger-4 {
-        animation: fadeUp 0.5s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    @@keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(15px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Glass Card with Ambient Glow */
-    .glass-form-card {
-        background: rgba(255, 255, 255, 0.88);
-        backdrop-filter: blur(25px) saturate(180%);
-        -webkit-backdrop-filter: blur(25px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
-        position: relative;
-        overflow: hidden;
-    }
-
-        /* Decorative Top Gradient Bar */
-        .glass-form-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #007aff, #5856d6, #ff2d55);
-        }
-
-    /* Interactive Input Groups */
-    .modern-input-group {
-        background: #f8fafc;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 14px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow: hidden;
-    }
-
-        .modern-input-group:hover {
-            border-color: #cbd5e1;
-            background: #ffffff;
-        }
-
-        .modern-input-group:focus-within {
-            background: #ffffff;
-            border-color: #007aff;
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
-            transform: translateY(-2px);
-        }
-
-        .modern-input-group .input-group-text {
-            background: transparent;
-            border: none;
-            color: #64748b;
-            font-size: 1.2rem;
-            padding-left: 16px;
-            transition: all 0.3s ease;
-        }
-
-        /* Icon lights up when user clicks inside the input */
-        .modern-input-group:focus-within .input-group-text {
-            color: #007aff;
-            transform: scale(1.12);
-        }
-
-        .modern-input-group .form-control,
-        .modern-input-group .form-select {
-            background: transparent;
-            border: none;
-            padding: 13px 16px 13px 8px;
-            font-size: 0.96rem;
-            color: #1e293b;
-            box-shadow: none !important;
-        }
-
-    .modern-textarea {
-        background: #f8fafc;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 14px 16px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        resize: none;
-    }
-
-        .modern-textarea:hover {
-            border-color: #cbd5e1;
-            background: #ffffff;
-        }
-
-        .modern-textarea:focus {
-            background: #ffffff;
-            border-color: #007aff;
-            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12) !important;
-            transform: translateY(-2px);
-        }
-
-    /* Futuristic Dropzone */
-    .futuristic-dropzone {
-        border: 2px dashed #cbd5e1;
-        border-radius: 18px;
-        background: linear-gradient(145deg, #f8fafc, #f1f5f9);
-        min-height: 220px;
-        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-        .futuristic-dropzone:hover,
-        .futuristic-dropzone.drag-active {
-            border-color: #007aff;
-            background: rgba(0, 122, 255, 0.03);
-            box-shadow: 0 12px 30px rgba(0, 122, 255, 0.08);
-            transform: translateY(-3px);
-        }
-
-    .upload-icon-circle {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: rgba(0, 122, 255, 0.1);
-        color: #007aff;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        transition: all 0.35s ease;
-    }
-
-    .futuristic-dropzone:hover .upload-icon-circle {
-        background: #007aff;
-        color: #ffffff;
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
-    }
-
-    /* Interactive Active Status Card */
-    .status-card {
-        border-radius: 16px;
-        border: 1.5px solid #e2e8f0;
-        background: #f8fafc;
-        padding: 18px 20px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-        .status-card.active-glow {
-            border-color: rgba(52, 199, 89, 0.5);
-            background: rgba(52, 199, 89, 0.05);
-            box-shadow: 0 8px 24px rgba(52, 199, 89, 0.08);
-        }
-
-    .form-switch .form-check-input {
-        width: 3.2em;
-        height: 1.7em;
-        cursor: pointer;
-        transition: all 0.25s ease;
-    }
-
-        .form-switch .form-check-input:checked {
-            background-color: #34c759; /* Apple Green */
-            border-color: #34c759;
-            box-shadow: 0 0 12px rgba(52, 199, 89, 0.4);
-        }
-
-    /* Futuristic Buttons */
-    .btn-futuristic-primary {
-        background: linear-gradient(135deg, #007aff, #5856d6);
-        border: none;
-        color: white;
-        border-radius: 14px;
-        padding: 12px 32px;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        box-shadow: 0 8px 20px rgba(0, 122, 255, 0.28);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-        .btn-futuristic-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(0, 122, 255, 0.4);
-            color: white;
-        }
-
-        .btn-futuristic-primary:active {
-            transform: scale(0.97);
-        }
-
-    .btn-futuristic-light {
-        background: #ffffff;
-        border: 1.5px solid #e2e8f0;
-        color: #475569;
-        border-radius: 14px;
-        padding: 12px 28px;
-        font-weight: 600;
-        transition: all 0.25s ease;
-    }
-
-        .btn-futuristic-light:hover {
-            background: #f1f5f9;
-            color: #0f172a;
-            transform: translateY(-2px);
-        }
-
-    /* Invalid Field Red Glow & Shake Animation */
-    .input-invalid {
-        border-color: #ff3b30 !important;
-        background: rgba(255, 59, 48, 0.03) !important;
-        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
-        animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-
-    @@keyframes iosShake {
-        10%, 90% {
-            transform: translateX(-2px);
-        }
-
-        20%, 80% {
-            transform: translateX(4px);
-        }
-
-        30%, 50%, 70% {
-            transform: translateX(-6px);
-        }
-
-        40%, 60% {
-            transform: translateX(6px);
-        }
-    }
-</style>
+<link href="~/adminassets/css/addcanteenstyle.css" rel="stylesheet" asp-append-version="true" />
 
 <div class="container-fluid py-4 futuristic-wrapper">
 
@@ -442,11 +169,13 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-   @*  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> *@
+   
 
     <script>
+
         // 1. Live Image Preview & File Size Calculation
         function previewImage(event) {
             const input = event.target;
@@ -458,7 +187,7 @@
 
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     previewImage.src = e.target.result;
                     placeholder.classList.add('d-none');
                     previewContainer.classList.remove('d-none');
@@ -467,8 +196,9 @@
                     fileSizeBadge.textContent = sizeInMB + ' MB';
                 }
                 reader.readAsDataURL(file);
+                clearFieldError(input); // Image select karte hi error hatao
             } else {
-                previewImage.src = "#";
+                previewImage.src = "#"; 
                 placeholder.classList.remove('d-none');
                 previewContainer.classList.add('d-none');
             }
@@ -524,8 +254,6 @@
             });
         }
 
-
-
         // =========================================================
         // 5. NO-REFRESH CLIENT-SIDE VALIDATION & LOADING SPINNER
         // =========================================================
@@ -535,30 +263,76 @@
 
         // Helper function: Error dikhane ke liye
         function showFieldError(inputElement, message) {
-            const wrapper = inputElement.closest('.modern-input-group') || inputElement;
+            const wrapper = inputElement.closest('.modern-input-group') || inputElement.closest('.upload-zone-wrapper') || inputElement;
             wrapper.classList.remove('input-invalid');
             void wrapper.offsetWidth; // Restart shake animation
             wrapper.classList.add('input-invalid');
 
             // Field ke niche wale span mein error text daalna
-            const errorSpan = inputElement.closest('.mb-4, .mb-2').querySelector('span.text-danger');
+            const errorSpan = inputElement.closest('.mb-4, .mb-2, .mb-5').querySelector('span.text-danger');
             if (errorSpan) {
                 errorSpan.textContent = message;
             }
         }
 
+
+            // Helper function: Error dikhane ke liye
+        function showFieldError(inputElement, message) {
+            // Agar element ImageFile hai, toh seedha uske bade box (uploadZone) ko pakdo
+            let wrapper;
+            if (inputElement.id === 'ImageFile') {
+                wrapper = document.getElementById('uploadZone');
+            } else {
+                wrapper = inputElement.closest('.modern-input-group') || inputElement;
+            }
+
+            // Shake animation restart karne ki trick
+            wrapper.classList.remove('input-invalid');
+            void wrapper.offsetWidth;
+            wrapper.classList.add('input-invalid');
+
+            // Field ke niche wale span mein error text daalna
+            const errorContainer = inputElement.closest('.mb-4, .mb-2, .mb-5, .card-body') || wrapper.parentElement;
+            if (errorContainer) {
+                const errorSpan = errorContainer.querySelector('span.text-danger');
+                if (errorSpan) {
+                    errorSpan.textContent = message;
+                }
+            } 
+        }
+
+        // Helper function: Jab user type/upload kare toh error hatane ke liye
+        function clearFieldError(inputElement) {
+            let wrapper;
+            if (inputElement.id === 'ImageFile') {
+                wrapper = document.getElementById('uploadZone');
+            } else {
+                wrapper = inputElement.closest('.modern-input-group') || inputElement;
+            }
+
+            wrapper.classList.remove('input-invalid');
+
+            const errorContainer = inputElement.closest('.mb-4, .mb-2, .mb-5, .card-body') || wrapper.parentElement;
+            if (errorContainer) {
+                const errorSpan = errorContainer.querySelector('span.text-danger');
+                if (errorSpan) {
+                    errorSpan.textContent = '';
+                }
+            }
+        }
+
         // Helper function: Jab user type kare toh error hatane ke liye
         function clearFieldError(inputElement) {
-            const wrapper = inputElement.closest('.modern-input-group') || inputElement;
+            const wrapper = inputElement.closest('.modern-input-group') || inputElement.closest('.upload-zone-wrapper') || inputElement;
             wrapper.classList.remove('input-invalid');
-            const errorSpan = inputElement.closest('.mb-4, .mb-2').querySelector('span.text-danger');
+            const errorSpan = inputElement.closest('.mb-4, .mb-2, .mb-5').querySelector('span.text-danger');
             if (errorSpan) {
                 errorSpan.textContent = '';
             }
         }
 
         // User jaise hi type ya select kare, red warning hat jaye
-        [staffSelect, locationInput, descInput].forEach(el => {
+        [staffSelect, locationInput, descInput, fileInput].forEach(el => {
             if (el) {
                 el.addEventListener('input', () => clearFieldError(el));
                 el.addEventListener('change', () => clearFieldError(el));
@@ -568,7 +342,7 @@
         form.addEventListener('submit', function (e) {
             let isValid = true;
 
-            // Check 1: Canteen Name
+            // Check 1: Canteen Name (Staff Select)
             if (!staffSelect.value.trim()) {
                 showFieldError(staffSelect, 'Please select a Canteen.');
                 isValid = false;
@@ -586,24 +360,32 @@
                 isValid = false;
             }
 
+            // Check 4: Image file check (FIXED SYNTAX)
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showFieldError(fileInput, 'Please upload a cover image.');
+                isValid = false;
+            }
+
             // Agar koi bhi field khali hai, toh PAGE REFRESH ROKO!
             if (!isValid) {
                 e.preventDefault(); // Yeh line page refresh hone se rokti hai
 
                 // iOS Style SweetAlert Toast Warning
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'warning',
-                    title: 'Please fill in all required fields!',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    customClass: {
-                        popup: 'rounded-4 shadow-lg border'
-                    }
-                });
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Please fill in all required fields!',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg border'
+                        }
+                    });
+                }
 
                 return false;
             }
@@ -613,10 +395,12 @@
             const icon = document.getElementById('submitIcon');
             const text = document.getElementById('submitText');
 
-            btn.style.pointerEvents = 'none';
-            btn.style.opacity = '0.85';
-            icon.className = 'spinner-border spinner-border-sm';
-            text.textContent = 'Uploading & Saving...';
+            if (btn && icon && text) {
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.85';
+                icon.className = 'spinner-border spinner-border-sm';
+                text.textContent = 'Uploading & Saving...';
+            }
         });
 
         // 6. Auto-hide Success Alert (5 Seconds)

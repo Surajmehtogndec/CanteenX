@@ -1,0 +1,499 @@
+﻿@model CanteenX.Models.Admin.RegisterCanteensDto
+@{
+    ViewData["Title"] = "Create Canteen Login Account";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    /* =========================================
+       FUTURISTIC & iOS GLASSMORPHISM UI STYLES
+       ========================================= */
+    .futuristic-wrapper {
+        animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes pageEnter {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Staggered Field Animations */
+    .stagger-1 { animation: fadeUp 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .stagger-2 { animation: fadeUp 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .stagger-3 { animation: fadeUp 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .stagger-4 { animation: fadeUp 0.5s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Card with Ambient Glow */
+    .glass-form-card {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Decorative Top Gradient Bar */
+    .glass-form-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #007aff, #5856d6, #ff2d55);
+    }
+
+    /* Interactive Input Groups */
+    .modern-input-group {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .modern-input-group:hover {
+        border-color: #cbd5e1;
+        background: #ffffff;
+    }
+
+    .modern-input-group:focus-within {
+        background: #ffffff;
+        border-color: #007aff;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .modern-input-group .input-group-text {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        font-size: 1.2rem;
+        padding-left: 16px;
+        padding-right: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .modern-input-group:focus-within .input-group-text {
+        color: #007aff;
+        transform: scale(1.12);
+    }
+
+    .modern-input-group .form-control {
+        background: transparent;
+        border: none;
+        padding: 13px 16px 13px 8px;
+        font-size: 0.96rem;
+        color: #1e293b;
+        box-shadow: none !important;
+        width: 100%;
+    }
+    
+    .modern-input-group .btn {
+        border: none;
+        background: transparent;
+        color: #64748b;
+        padding: 13px 16px;
+    }
+
+    /* Futuristic Buttons */
+    .btn-futuristic-primary {
+        background: linear-gradient(135deg, #007aff, #5856d6);
+        border: none;
+        color: white;
+        border-radius: 14px;
+        padding: 12px 32px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        box-shadow: 0 8px 20px rgba(0, 122, 255, 0.28);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-futuristic-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(0, 122, 255, 0.4);
+        color: white;
+    }
+
+    .btn-futuristic-primary:active {
+        transform: scale(0.97);
+    }
+
+    .btn-futuristic-light {
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        color: #475569;
+        border-radius: 14px;
+        padding: 12px 28px;
+        font-weight: 600;
+        transition: all 0.25s ease;
+    }
+
+    .btn-futuristic-light:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        transform: translateY(-2px);
+    }
+
+    /* Invalid Field Red Glow & Shake Animation */
+    .input-invalid {
+        border-color: #ff3b30 !important;
+        background: rgba(255, 59, 48, 0.03) !important;
+        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.12) !important;
+        animation: iosShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @@keyframes iosShake {
+        10%, 90% { transform: translateX(-2px); }
+        20%, 80% { transform: translateX(4px); }
+        30%, 50%, 70% { transform: translateX(-6px); }
+        40%, 60% { transform: translateX(6px); }
+    }
+    
+    .info-callout {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border-left: 4px solid #007aff;
+        border-radius: 14px;
+    }
+/* Hide default browser eye icon for passwords (especially in Edge/IE) */
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+        display: none;
+    }
+</style>
+
+<div class="container-fluid py-4 px-3 px-md-4 futuristic-wrapper">
+
+    <!-- Responsive Header -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3 mx-auto stagger-1" style="max-width: 900px;">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: #1c1c1e; letter-spacing: -0.5px;">Canteen Staff Access</h2>
+            <p class="text-muted mb-0">Create secure login credentials for new canteen administrators.</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Index" class="btn btn-futuristic-light shadow-sm w-100 w-sm-auto">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Main Glass Card -->
+    <div class="glass-form-card mx-auto stagger-2" style="max-width: 900px;">
+        <div class="card-body p-4 p-md-5">
+            <form asp-controller="Admin" asp-action="RegisterCanteenLogin" method="post" id="registerCanteenForm">
+                @Html.AntiForgeryToken()
+
+                <div class="row gx-lg-5 gy-4">
+                    
+                    <!-- LEFT COLUMN -->
+                    <div class="col-lg-6">
+                        
+                        <!-- Canteen Name -->
+                        <div class="mb-4 stagger-1 position-relative">
+                            <label asp-for="FullName" class="form-label fw-semibold text-dark mb-2">
+                                Canteen Name <span class="text-danger">*</span>
+                            </label>
+                            <div class="modern-input-group">
+                                <span class="input-group-text"><i class="bi bi-shop"></i></span>
+                                <input asp-for="FullName" class="form-control" placeholder="e.g. Main Campus Cafeteria" id="FullName" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small mt-1 d-block validation-msg"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-4 stagger-2 position-relative">
+                            <label asp-for="Email" class="form-label fw-semibold text-dark mb-2">
+                                Email Address <span class="text-danger">*</span>
+                            </label>
+                            <div class="modern-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="canteen@college.edu" autocomplete="off" id="Email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small mt-1 d-block validation-msg"></span>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-4 stagger-3 position-relative">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold text-dark mb-2">
+                                Phone Number <span class="text-danger">*</span>
+                            </label>
+                            <div class="modern-input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="9876543210" maxlength="10" autocomplete="off" id="PhoneNumber" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small mt-1 d-block validation-msg"></span>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="col-lg-6">
+                        
+                        <!-- Password -->
+                        <div class="mb-4 stagger-1 position-relative">
+                            <label asp-for="Password" class="form-label fw-semibold text-dark mb-2">
+                                Password <span class="text-danger">*</span>
+                            </label>
+                            <div class="modern-input-group">
+                                <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                                <input asp-for="Password" type="password" class="form-control password-field" placeholder="Create strong password" autocomplete="new-password" id="Password" />
+                                <button type="button" class="btn px-3 toggle-pwd-btn" tabindex="-1">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span asp-validation-for="Password" class="text-danger small d-block validation-msg"></span>
+                                <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Uppercase, number & symbol</span>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-4 stagger-2 position-relative">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold text-dark mb-2">
+                                Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            <div class="modern-input-group">
+                                <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Re-enter password" autocomplete="new-password" id="ConfirmPassword" />
+                                <button type="button" class="btn px-3 toggle-pwd-btn" tabindex="-1">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block validation-msg"></span>
+                        </div>
+
+                        <!-- Info Callout -->
+                        <div class="mb-4 stagger-3">
+                            <div class="info-callout p-3 mt-3 d-flex align-items-center gap-3">
+                                <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm text-primary" style="width: 45px; height: 45px; font-size: 20px;">
+                                    <i class="bi bi-robot"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="color: #1e293b;">Automated Role</h6>
+                                    <p class="small text-muted mb-0">
+                                        Gets <span class="badge bg-secondary fw-normal">CanteenStaff</span> role to manage specific canteen.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-end pt-4 mt-4 border-top stagger-4">
+                    <a asp-controller="Admin" asp-action="Index" class="btn btn-futuristic-light order-2 order-sm-1">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-futuristic-primary order-1 order-sm-2 d-flex align-items-center justify-content-center gap-2" id="submitBtn">
+                        <i class="bi bi-person-plus-fill" id="submitIcon"></i> 
+                        <span id="submitText">Create Account</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // 1. SECURE SERVER RESPONSE HANDLING (SweetAlert)
+            @if(TempData["SuccessMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Registration Successful!',
+                    text: @Html.Raw(Json.Serialize(TempData["SuccessMessage"])),
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: { popup: 'rounded-4 shadow-lg border' }
+                });
+                </text>
+            }
+
+            @if(TempData["ErrorMessage"] != null)
+            {
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Registration Failed!',
+                    text: @Html.Raw(Json.Serialize(TempData["ErrorMessage"])),
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: { popup: 'rounded-4 shadow-lg border' }
+                });
+                </text>
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                var errors = ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                var combinedErrors = string.Join(" | ", errors);
+                <text>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Validation Failed!',
+                    text: @Html.Raw(Json.Serialize(combinedErrors)),
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    customClass: { popup: 'rounded-4 shadow-lg border' }
+                });
+                </text>
+            }
+
+            // 2. DOM ELEMENTS SETUP
+            const form = document.getElementById('registerCanteenForm');
+            const nameInput = document.getElementById('FullName');
+            const emailInput = document.getElementById('Email');
+            const phoneInput = document.getElementById('PhoneNumber');
+            const passwordInput = document.getElementById('Password');
+            const confirmPasswordInput = document.getElementById('ConfirmPassword');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (!form || !nameInput || !emailInput || !phoneInput || !passwordInput || !confirmPasswordInput || !submitBtn) return;
+
+            // 3. TOGGLE PASSWORD VISIBILITY (Fixed icon logic)
+            document.querySelectorAll('.toggle-pwd-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const wrapper = this.closest('.modern-input-group');
+                    const input = wrapper.querySelector('input');
+                    const icon = this.querySelector('i');
+
+                    if (input && icon) {
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            icon.classList.replace('bi-eye-slash', 'bi-eye');
+                            icon.classList.add('text-primary');
+                        } else {
+                            input.type = 'password';
+                            icon.classList.replace('bi-eye', 'bi-eye-slash');
+                            icon.classList.remove('text-primary');
+                        }
+                    }
+                });
+            });
+
+            // 4. CLIENT-SIDE VALIDATION HELPERS (Fixed class names)
+            const showFieldError = (inputElement, message) => {
+                const wrapper = inputElement.closest('.modern-input-group') || inputElement;
+                wrapper.classList.remove('input-invalid');
+                void wrapper.offsetWidth; 
+                wrapper.classList.add('input-invalid');
+
+                const parentContainer = inputElement.closest('.mb-4');
+                const errorSpan = parentContainer ? parentContainer.querySelector('.validation-msg') : null;
+                if (errorSpan && message) errorSpan.textContent = message;
+            };
+
+            const clearFieldError = (inputElement) => {
+                const wrapper = inputElement.closest('.modern-input-group') || inputElement;
+                wrapper.classList.remove('input-invalid');
+                
+                const parentContainer = inputElement.closest('.mb-4');
+                const errorSpan = parentContainer ? parentContainer.querySelector('.validation-msg') : null;
+                if (errorSpan) errorSpan.textContent = '';
+            };
+
+            [nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput].forEach(el => {
+                el.addEventListener('input', () => clearFieldError(el));
+            });
+
+            // 5. NO-REFRESH FORM SUBMIT (Fixed conditions)
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Regex Patterns (Safe for Razor view)
+                const emailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@@$!%*?&])[A-Za-z\d@@$!%*?&]{8,}$/;
+                const phonePattern = /^\d{10}$/;
+
+                const nameVal = nameInput.value.trim();
+                const emailVal = emailInput.value.trim();
+                const phoneVal = phoneInput.value.trim();
+                const passwordVal = passwordInput.value.trim();
+                const confirmPasswordVal = confirmPasswordInput.value.trim();
+
+                // Check all fields simultaneously (not using else-if) so everything invalid shakes
+                if (!nameVal) {
+                    showFieldError(nameInput, 'Canteen Name is required.');
+                    isValid = false;
+                }
+                
+                if (!emailVal || !emailPattern.test(emailVal)) {
+                    showFieldError(emailInput, 'Please enter a valid email address.');
+                    isValid = false;
+                }
+                
+                if (!phoneVal || !phonePattern.test(phoneVal)) {
+                    showFieldError(phoneInput, 'Please enter a valid 10-digit phone number.');
+                    isValid = false;
+                }
+                
+                if (!passwordVal) {
+                    showFieldError(passwordInput, 'Password is required.');
+                    isValid = false;
+                } else if (!passwordPattern.test(passwordVal)) {
+                    showFieldError(passwordInput, 'Requires 8+ chars with uppercase, number & symbol.');
+                    isValid = false;
+                }
+                
+                if (!confirmPasswordVal) {
+                    showFieldError(confirmPasswordInput, 'Please confirm your password.');
+                    isValid = false;
+                } else if (passwordVal !== confirmPasswordVal) {
+                    showFieldError(confirmPasswordInput, 'Passwords do not match!');
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    e.preventDefault(); 
+                    
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: 'Validation Failed',
+                        text: 'Please correct the highlighted fields.',
+                        showConfirmButton: false,
+                        timer: 4500,
+                        timerProgressBar: true,
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        customClass: { popup: 'rounded-4 shadow-lg border' }
+                    });
+                    return false;
+                }
+
+                // Show spinner only if validation passes
+                submitBtn.style.pointerEvents = 'none';
+                submitBtn.style.opacity = '0.85';
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> <span>Creating Account...</span>';
+            });
+        });
+    </script>
+}

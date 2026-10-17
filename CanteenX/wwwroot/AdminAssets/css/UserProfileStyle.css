@@ -1,0 +1,315 @@
+﻿/* =========================================
+       FUTURISTIC & iOS GLASSMORPHISM UI
+       ========================================= */
+.profile-dashboard-wrapper {
+    min-height: calc(100vh - 100px);
+    padding: 1.5rem;
+    background: radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.04), transparent 25%), radial-gradient(circle at 85% 30%, rgba(88, 86, 214, 0.04), transparent 25%);
+}
+
+/* Staggered Animations */
+.stagger-1 {
+    animation: fadeUp 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-2 {
+    animation: fadeUp 0.5s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-3 {
+    animation: fadeUp 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stagger-4 {
+    animation: fadeUp 0.5s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Frosted Glass Panel */
+.enterprise-glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+    .enterprise-glass-panel::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #007aff, #5856d6, #ff2d55);
+        z-index: 10;
+    }
+
+/* Header Styling */
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.avatar-display {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007aff, #5856d6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 10px 25px rgba(0, 122, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    flex-shrink: 0;
+}
+
+/* Form Fields Styling */
+.panel-body {
+    padding: 30px;
+}
+
+.field-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Smart Input - Glassmorphism Transformation */
+.modern-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.3);
+    border: 1.5px solid transparent;
+}
+
+.input-icon {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    padding-left: 14px;
+    transition: color 0.3s ease;
+}
+
+.modern-form-control {
+    background: transparent;
+    border: none;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.96rem;
+    color: #1e293b;
+    font-weight: 600;
+    outline: none;
+    pointer-events: none;
+}
+
+/* --- iOS Toggle Switch --- */
+.ios-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    margin: 0;
+}
+
+    .ios-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.ios-slider {
+    position: absolute;
+    cursor: not-allowed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #e5e5ea;
+    transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 34px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+    .ios-slider:before {
+        position: absolute;
+        content: "";
+        height: 24px;
+        width: 24px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+input:checked + .ios-slider {
+    background-color: #34c759;
+}
+
+    input:checked + .ios-slider:before {
+        transform: translateX(22px);
+    }
+
+/* --- EDIT MODE ACTIVE STYLES --- */
+.is-editing .modern-input-wrapper:not(.is-toggle-wrapper) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+    .is-editing .modern-input-wrapper:not(.is-toggle-wrapper):focus-within {
+        background: #ffffff;
+        border-color: #007aff;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+        transform: translateY(-2px);
+    }
+
+.is-editing .modern-form-control:not([readonly]) {
+    pointer-events: auto;
+    font-weight: 500;
+}
+
+.is-editing .modern-input-wrapper:not(.is-toggle-wrapper):focus-within .input-icon {
+    color: #007aff;
+    transform: scale(1.1);
+}
+
+.is-editing .ios-slider {
+    cursor: pointer;
+}
+
+.is-editing .is-toggle-wrapper {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: #cbd5e1;
+}
+
+/* Futuristic Buttons */
+.panel-footer {
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-enterprise {
+    border-radius: 12px;
+    padding: 12px 26px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+}
+
+.btn-primary-action {
+    background: linear-gradient(135deg, #007aff, #5856d6);
+    color: white;
+    box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25);
+}
+
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(0, 122, 255, 0.35);
+        color: white;
+    }
+
+.btn-success-action {
+    background: linear-gradient(135deg, #34c759, #28a745);
+    color: white;
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.25);
+}
+
+    .btn-success-action:hover {
+        transform: translateY(-2px);
+        color: white;
+    }
+
+.btn-secondary-action {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1.5px solid #e2e8f0;
+    color: #475569;
+}
+
+    .btn-secondary-action:hover {
+        background: #f8fafc;
+        color: #0f172a;
+        transform: translateY(-2px);
+    }
+
+.edit-actions-wrapper {
+    display: flex;
+    gap: 12px;
+}
+
+/* =========================================
+       MOBILE RESPONSIVENESS FIXES
+       ========================================= */
+@@media (max-width: 768px) {
+    .profile-dashboard-wrapper {
+        padding: 1rem 0.5rem;
+    }
+
+    .enterprise-glass-panel {
+        border-radius: 20px;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 20px;
+        gap: 15px;
+    }
+
+    .panel-body {
+        padding: 25px 20px;
+    }
+
+    .panel-footer {
+        padding: 20px;
+        flex-direction: column;
+    }
+
+    .btn-enterprise {
+        width: 100%;
+    }
+
+    .edit-actions-wrapper {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+}
