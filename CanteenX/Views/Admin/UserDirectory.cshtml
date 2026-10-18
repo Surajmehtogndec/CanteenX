@@ -1,0 +1,386 @@
+﻿@{
+    ViewData["Title"] = "View Users";
+    Layout = "_AdminLayout";
+
+    // Static demo data. Replace this collection with your API/model data later.
+    var users = new[]
+    {
+        new { UserId = "6", FullName = "Alice Davis", Email = "alice@example.com", Role = "Admin", Status = "Active", LastActive = "30 minutes ago", Phone = "9876543201", Joined = new DateTime(2026, 1, 10) },
+        new { UserId = "5", FullName = "Bob Brown", Email = "bob@example.com", Role = "Student", Status = "Inactive", LastActive = "1 week ago", Phone = "9876543202", Joined = new DateTime(2026, 2, 15) },
+        new { UserId = "2", FullName = "Jane Smith", Email = "jane@example.com", Role = "Student", Status = "Active", LastActive = "1 hour ago", Phone = "9876543203", Joined = new DateTime(2026, 3, 20) },
+        new { UserId = "1", FullName = "John Doe", Email = "john@example.com", Role = "Admin", Status = "Active", LastActive = "2 minutes ago", Phone = "9876543204", Joined = new DateTime(2026, 4, 5) },
+        new { UserId = "8", FullName = "Lisa Garcia", Email = "lisa@example.com", Role = "CanteenStaff", Status = "Active", LastActive = "1 hour ago", Phone = "9876543205", Joined = new DateTime(2026, 5, 12) },
+        new { UserId = "3", FullName = "Mike Johnson", Email = "mike@example.com", Role = "CanteenStaff", Status = "Pending", LastActive = "1 day ago", Phone = "9876543206", Joined = new DateTime(2026, 6, 1) },
+        new { UserId = "4", FullName = "Sarah Wilson", Email = "sarah@example.com", Role = "Student", Status = "Active", LastActive = "5 minutes ago", Phone = "9876543207", Joined = new DateTime(2026, 6, 18) },
+        new { UserId = "7", FullName = "Tom Miller", Email = "tom@example.com", Role = "Student", Status = "Active", LastActive = "3 hours ago", Phone = "9876543208", Joined = new DateTime(2026, 7, 2) }
+    };
+}
+
+<style>
+    /* =========================================
+       PREMIUM iOS GLASSMORPHISM STYLING
+       ========================================= */
+    body { background: #f4f7fa; } /* Ambient background */
+    
+    .bg-blob-1 { position: fixed; top: -10%; left: -10%; width: 40vw; height: 40vw; background: rgba(0, 122, 255, 0.05); border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .bg-blob-2 { position: fixed; bottom: -10%; right: -5%; width: 30vw; height: 30vw; background: rgba(232, 40, 26, 0.03); border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+
+    .ud-page { position: relative; z-index: 1; color: #1c1c1e; padding: 24px 12px 32px; animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    @@keyframes iosFadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Card */
+    .ud-card { 
+        background: rgba(255, 255, 255, 0.85); 
+        backdrop-filter: blur(25px) saturate(180%); 
+        -webkit-backdrop-filter: blur(25px) saturate(180%); 
+        border: 1px solid rgba(255, 255, 255, 0.8); 
+        border-radius: 24px; 
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0,0,0,0.02); 
+        overflow: visible; 
+    }
+
+    /* Topbar */
+    .ud-topbar { padding: 28px 30px; border-bottom: 1px solid rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .ud-title { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; color: #1c1c1e; }
+    .ud-subtitle { margin: 4px 0 0; color: #8e8e93; font-size: 0.95rem; }
+    .ud-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    
+    /* Inputs & Selects */
+    .ud-search { position: relative; min-width: 260px; }
+    .ud-search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8e8e93; }
+    .ud-search input { 
+        padding: 12px 16px 12px 42px; border: 1.5px solid rgba(0,0,0,0.05); background: rgba(240, 243, 246, 0.7);
+        border-radius: 14px; min-height: 46px; box-shadow: none; font-weight: 500; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+    }
+    .ud-search input:focus { background: #fff; border-color: #007aff; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); outline: none; }
+    
+    .ud-select { 
+        min-height: 46px; min-width: 140px; border: 1.5px solid rgba(0,0,0,0.05); background: rgba(240, 243, 246, 0.7);
+        border-radius: 14px; color: #1c1c1e; box-shadow: none !important; font-weight: 500; cursor: pointer; transition: all 0.3s; 
+    }
+    .ud-select:focus { background: #fff; border-color: #007aff; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); }
+    
+    .ud-btn-export { 
+        min-height: 46px; background: #fff; border: 1.5px solid rgba(0,0,0,0.08); color: #1c1c1e; 
+        border-radius: 14px; font-weight: 600; padding: 10px 18px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .ud-btn-export:hover { background: #f8f9fa; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
+    .ud-btn-export:active { transform: scale(0.97); }
+
+    /* Summary Stats (iOS Widgets style) */
+    .ud-summary { display: flex; gap: 16px; padding: 24px 30px 0; flex-wrap: wrap; }
+    .ud-stat { 
+        display: flex; align-items: center; gap: 16px; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.6);
+        border-radius: 20px; flex: 1; min-width: 160px; box-shadow: 0 8px 20px rgba(0,0,0,0.03); transition: transform 0.3s ease; 
+    }
+    .ud-stat:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.05); }
+    .ud-stat-icon { height: 48px; width: 48px; border-radius: 14px; display: grid; place-items: center; background: rgba(0,122,255,0.1); color: #007aff; font-size: 1.3rem; }
+    .ud-stat small { display: block; color: #8e8e93; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ud-stat strong { display: block; font-size: 1.5rem; line-height: 1.2; font-weight: 800; color: #1c1c1e; }
+
+    /* Bulk Action Bar */
+    .ud-bulkbar { 
+        display: none; margin: 20px 30px 0; border: none; background: rgba(0, 122, 255, 0.08); 
+        border-radius: 16px; padding: 12px 20px; align-items: center; justify-content: space-between; gap: 10px; animation: iosFadeUp 0.3s forwards;
+    }
+    
+    /* Table Styling */
+    .ud-table-wrap { padding: 20px 30px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .ud-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin: 0; min-width: 900px; }
+    .ud-table thead th { 
+        background: transparent; color: #8e8e93; text-transform: uppercase; font-size: 0.75rem; 
+        letter-spacing: 0.5px; font-weight: 700; padding: 0 16px 12px; border: none; border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .ud-table tbody tr { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: transparent; }
+    .ud-table tbody tr:hover { background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.04); transform: scale(1.002); border-radius: 16px; position: relative; z-index: 2; }
+    .ud-table tbody td { padding: 16px; border: none; border-bottom: 1px solid rgba(0,0,0,0.03); vertical-align: middle; font-size: 0.95rem; font-weight: 500; }
+    .ud-table tbody tr:hover td { border-bottom-color: transparent; }
+    .ud-table tbody tr td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+    .ud-table tbody tr td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+
+    /* Checkbox & Avatars */
+    .ud-check { width: 20px; height: 20px; accent-color: #007aff; cursor: pointer; border-radius: 6px; }
+    .ud-user { display: flex; align-items: center; gap: 14px; min-width: 200px; }
+    .ud-avatar { height: 46px; width: 46px; border-radius: 50%; background: linear-gradient(135deg, #f0f3f6, #e2e8f0); color: #64748b; display: grid; place-items: center; font-size: 1.2rem; font-weight: 800; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5); }
+    .ud-user-name { display: block; font-weight: 700; color: #1c1c1e; }
+    .ud-user-id { color: #8e8e93; font-size: 0.8rem; }
+    .ud-email { color: #475467; }
+
+    /* iOS Badges */
+    .ud-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+    .ud-role-admin { color: #e8281a; background: rgba(232, 40, 26, 0.1); }
+    .ud-role-student { color: #007aff; background: rgba(0, 122, 255, 0.1); }
+    .ud-role-staff { color: #ff9500; background: rgba(255, 149, 0, 0.1); }
+    .ud-status-active { color: #34c759; background: rgba(52, 199, 89, 0.15); }
+    .ud-status-inactive { color: #8e8e93; background: rgba(142, 142, 147, 0.15); }
+    .ud-status-pending { color: #ff9500; background: rgba(255, 149, 0, 0.15); }
+    .ud-lastactive { color: #8e8e93; white-space: nowrap; }
+
+    /* Context Menu / Dropdown */
+    .ud-action-btn { width: 40px; height: 40px; border: none; border-radius: 12px; background: transparent; color: #8e8e93; transition: all 0.2s; display: grid; place-items: center; }
+    .ud-action-btn:hover, .ud-action-btn[aria-expanded="true"] { background: rgba(0,0,0,0.05); color: #1c1c1e; }
+    .ud-dropdown { border: 1px solid rgba(255,255,255,0.8); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.12); padding: 8px; min-width: 180px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); }
+    .ud-dropdown .dropdown-item { padding: 10px 14px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; color: #1c1c1e; transition: background 0.2s; }
+    .ud-dropdown .dropdown-item:hover { background: rgba(0,0,0,0.04); }
+    .ud-dropdown .dropdown-item i { width: 24px; display: inline-block; color: #8e8e93; }
+    .ud-dropdown .delete-item { color: #ff3b30 !important; }
+    .ud-dropdown .delete-item i { color: #ff3b30; }
+
+    /* Footer & Pagination */
+    .ud-empty { padding: 60px 12px; text-align: center; color: #8e8e93; }
+    .ud-footer { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid rgba(0,0,0,0.04); }
+    .ud-pagination { display: flex; gap: 6px; align-items: center; }
+    .ud-page-btn { border: none; background: rgba(0,0,0,0.04); color: #1c1c1e; min-width: 38px; height: 38px; border-radius: 10px; padding: 0 12px; font-weight: 600; transition: all 0.2s; }
+    .ud-page-btn:hover:not(:disabled) { background: rgba(0,0,0,0.08); }
+    .ud-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .ud-page-btn.active { background: #007aff; color: #fff; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); }
+
+    /* Modal iOS Refinement */
+    .modal-content { border-radius: 24px; background: rgba(255,255,255,0.95); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+    .modal-header { border-bottom: 1px solid rgba(0,0,0,0.05); padding: 20px 24px; }
+    .modal-footer { border-top: 1px solid rgba(0,0,0,0.05); padding: 16px 24px; background: transparent; }
+
+    /* Mobile Resizing */
+    @@media (max-width: 900px) { .ud-tools { width: 100%; justify-content: space-between; } .ud-search { flex: 1; min-width: 100%; } }
+    @@media (max-width: 576px) { 
+        .ud-topbar { padding: 20px; } .ud-summary { padding: 20px 20px 0; grid-template-columns: 1fr 1fr; }
+        .ud-table-wrap { padding: 20px 10px 0; } .ud-footer { padding: 20px; justify-content: center; } 
+    }
+</style>
+
+<!-- Background Ambience -->
+<div class="bg-blob-1"></div>
+<div class="bg-blob-2"></div>
+
+<div class="container-fluid ud-page">
+    <div class="ud-card">
+        <div class="ud-topbar">
+            <div>
+                <h2 class="ud-title">User Directory</h2>
+                <p class="ud-subtitle">Manage system access and roles.</p>
+            </div>
+            <div class="ud-tools">
+                <div class="ud-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="udSearch" placeholder="Search by name, email..." autocomplete="off" />
+                </div>
+                <select id="udStatusFilter" class="ud-select">
+                    <option value="">All Status</option><option>Active</option><option>Inactive</option><option>Pending</option>
+                </select>
+                <select id="udRoleFilter" class="ud-select">
+                    <option value="">All Roles</option><option>Admin</option><option>Student</option><option>CanteenStaff</option>
+                </select>
+                <button type="button" class="ud-btn-export" id="udExport"><i class="bi bi-arrow-down-circle me-2"></i>Export</button>
+            </div>
+        </div>
+
+
+        <div class="ud-bulkbar" id="udBulkbar">
+            <span><strong id="udSelectedCount">0</strong> users selected</span>
+            <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold shadow-sm" id="udExportSelected"><i class="bi bi-download me-1"></i>Export selected</button>
+        </div>
+
+        <div class="ud-table-wrap">
+            <table class="ud-table" id="udTable">
+                <thead><tr>
+                    <th style="width:50px"><input type="checkbox" class="ud-check" id="udSelectAll" aria-label="Select all visible users" /></th>
+                    <th>User</th><th>Contact Email</th><th>System Role</th><th>Status</th><th>Last Active</th><th class="text-end">Actions</th>
+                </tr></thead>
+                <tbody id="udTableBody">
+                @foreach (var user in users)
+                {
+                    var roleClass = user.Role == "Admin" ? "ud-role-admin" : user.Role == "CanteenStaff" ? "ud-role-staff" : "ud-role-student";
+                    var roleLabel = user.Role == "CanteenStaff" ? "Canteen Staff" : user.Role;
+                    var statusClass = user.Status == "Active" ? "ud-status-active" : user.Status == "Pending" ? "ud-status-pending" : "ud-status-inactive";
+                    var statusIcon = user.Status == "Active" ? "bi-check-circle-fill" : user.Status == "Pending" ? "bi-clock-fill" : "bi-dash-circle-fill";
+
+                    <tr class="ud-row" data-id="@user.UserId" data-name="@user.FullName" data-email="@user.Email" data-role="@user.Role" data-status="@user.Status" data-phone="@user.Phone" data-joined="@user.Joined.ToString("MMM dd, yyyy")" data-lastactive="@user.LastActive">
+                        <td><input type="checkbox" class="ud-check ud-row-check" aria-label="Select @user.FullName" /></td>
+                        <td><div class="ud-user"><div class="ud-avatar">@(user.FullName.Substring(0,1).ToUpper())</div><div><span class="ud-user-name">@user.FullName</span><span class="ud-user-id">ID: @user.UserId</span></div></div></td>
+                        <td class="ud-email">@user.Email</td>
+                        <td><span class="ud-badge @roleClass">@roleLabel</span></td>
+                        <td><span class="ud-badge @statusClass"><i class="bi @statusIcon"></i> @user.Status</span></td>
+                        <td class="ud-lastactive">@user.LastActive</td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="ud-action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-end ud-dropdown">
+                                    <li><button class="dropdown-item" type="button" data-action="view"><i class="bi bi-person-vcard text-primary"></i> View Profile</button></li>
+                                    <li><button class="dropdown-item" type="button" data-action="edit"><i class="bi bi-pencil-square text-warning"></i> Edit Details</button></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><button class="dropdown-item delete-item" type="button" data-action="delete"><i class="bi bi-trash3-fill"></i> Delete Account</button></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <div class="ud-empty d-none" id="udEmpty"><i class="bi bi-search fs-1 d-block mb-3"></i><strong class="fs-5 text-dark">No records found</strong><div class="mt-1">Try a different search query or filter.</div></div>
+        </div>
+
+        <div class="ud-footer">
+            <span id="udResultText" class="text-muted fw-medium">Showing records</span>
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted mb-0 fw-bold">Rows</label>
+                    <select id="udPageSize" class="ud-select" style="min-width:70px; min-height:38px; padding: 4px 12px;"><option>5</option><option selected>8</option><option>10</option></select>
+                </div>
+                <div class="ud-pagination" id="udPagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="udUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0">
+        <div class="modal-header"><h5 class="modal-title fw-bold" id="udModalTitle">User Details</h5><button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body" id="udModalBody"></div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
+    </div></div>
+</div>
+
+@section Scripts {
+<script>
+(() => {
+    const rows = Array.from(document.querySelectorAll('.ud-row'));
+    const search = document.getElementById('udSearch');
+    const statusFilter = document.getElementById('udStatusFilter');
+    const roleFilter = document.getElementById('udRoleFilter');
+    const pageSizeSelect = document.getElementById('udPageSize');
+    const pagination = document.getElementById('udPagination');
+    const selectAll = document.getElementById('udSelectAll');
+    const bulkbar = document.getElementById('udBulkbar');
+    const empty = document.getElementById('udEmpty');
+    let currentPage = 1;
+    let filteredRows = [...rows];
+
+    const csvEscape = value => '"' + String(value ?? '').replace(/"/g, '""') + '"';
+    function getFilteredRows() {
+        const query = search.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        const role = roleFilter.value;
+        return rows.filter(row => {
+            const text = [row.dataset.name, row.dataset.email, row.dataset.role, row.dataset.id, row.dataset.phone].join(' ').toLowerCase();
+            return (!query || text.includes(query)) && (!status || row.dataset.status === status) && (!role || row.dataset.role === role);
+        });
+    }
+    function updateStats() {
+        document.getElementById('udTotal').textContent = rows.length;
+        document.getElementById('udActive').textContent = rows.filter(r => r.dataset.status === 'Active').length;
+        document.getElementById('udPending').textContent = rows.filter(r => r.dataset.status === 'Pending').length;
+        document.getElementById('udInactive').textContent = rows.filter(r => r.dataset.status === 'Inactive').length;
+    }
+    function render() {
+        filteredRows = getFilteredRows();
+        const pageSize = Number(pageSizeSelect.value);
+        const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+        currentPage = Math.min(currentPage, pageCount);
+        const start = (currentPage - 1) * pageSize;
+        const pageRows = filteredRows.slice(start, start + pageSize);
+        rows.forEach(row => row.classList.add('d-none'));
+        pageRows.forEach(row => row.classList.remove('d-none'));
+        empty.classList.toggle('d-none', filteredRows.length !== 0);
+        document.getElementById('udTable').classList.toggle('d-none', filteredRows.length === 0);
+        document.getElementById('udResultText').textContent = filteredRows.length
+            ? `Showing ${start + 1} to ${Math.min(start + pageSize, filteredRows.length)} of ${filteredRows.length} users`
+            : 'Showing 0 users';
+        pagination.innerHTML = '';
+        const addButton = (label, page, disabled = false, active = false) => {
+            const button = document.createElement('button');
+            button.type = 'button'; button.className = 'ud-page-btn' + (active ? ' active' : '');
+            if(label === 'Previous') button.innerHTML = '<i class="bi bi-chevron-left"></i>';
+            else if(label === 'Next') button.innerHTML = '<i class="bi bi-chevron-right"></i>';
+            else button.textContent = label;
+            button.disabled = disabled;
+            button.addEventListener('click', () => { currentPage = page; render(); });
+            pagination.appendChild(button);
+        };
+        addButton('Previous', Math.max(1, currentPage - 1), currentPage === 1);
+        for (let p = 1; p <= pageCount; p++) addButton(String(p), p, false, p === currentPage);
+        addButton('Next', Math.min(pageCount, currentPage + 1), currentPage === pageCount);
+        selectAll.checked = pageRows.length > 0 && pageRows.every(r => r.querySelector('.ud-row-check').checked);
+        updateBulkbar();
+    }
+    function updateBulkbar() {
+        const selected = rows.filter(r => r.querySelector('.ud-row-check').checked);
+        document.getElementById('udSelectedCount').textContent = selected.length;
+        bulkbar.style.display = selected.length ? 'flex' : 'none';
+    }
+    function exportRows(rowsToExport, filename = 'canteenx-users.csv') {
+        if (!rowsToExport.length) { 
+            Swal.fire({ toast: true, position: 'top-end', icon: 'warning', titleText: 'No records to export.', showConfirmButton: false, timer: 3000 });
+            return; 
+        }
+        const header = ['User ID', 'Name', 'Email', 'Role', 'Status', 'Phone', 'Last Active', 'Joined Date'];
+        const lines = [header, ...rowsToExport.map(r => [r.dataset.id, r.dataset.name, r.dataset.email, r.dataset.role, r.dataset.status, r.dataset.phone, r.dataset.lastactive, r.dataset.joined])];
+        const csv = '\uFEFF' + lines.map(line => line.map(csvEscape).join(',')).join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a'); link.href = url; link.download = filename;
+        document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    }
+    [search, statusFilter, roleFilter].forEach(el => el.addEventListener('input', () => { currentPage = 1; render(); }));
+    pageSizeSelect.addEventListener('change', () => { currentPage = 1; render(); });
+    selectAll.addEventListener('change', () => {
+        const pageSize = Number(pageSizeSelect.value);
+        filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize).forEach(r => r.querySelector('.ud-row-check').checked = selectAll.checked);
+        updateBulkbar();
+    });
+    rows.forEach(row => row.querySelector('.ud-row-check').addEventListener('change', updateBulkbar));
+    document.getElementById('udExport').addEventListener('click', () => exportRows(filteredRows));
+    document.getElementById('udExportSelected').addEventListener('click', () => exportRows(rows.filter(r => r.querySelector('.ud-row-check').checked), 'canteenx-selected-users.csv'));
+
+    document.getElementById('udTableBody').addEventListener('click', event => {
+        const button = event.target.closest('[data-action]');
+        if (!button) return;
+        const row = button.closest('tr');
+        const action = button.dataset.action;
+        const name = row.dataset.name;
+        if (action === 'view' || action === 'edit') {
+            document.getElementById('udModalTitle').textContent = action === 'view' ? 'User Profile' : 'Edit User Settings';
+            document.getElementById('udModalBody').innerHTML = `
+                <div class="d-flex align-items-center gap-3 mb-4 mt-2">
+                    <div class="ud-avatar" style="width:65px; height:65px; font-size:1.6rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">${escapeHtml(name).substring(0,1).toUpperCase()}</div>
+                    <div><h4 class="mb-0 fw-bold text-dark">${escapeHtml(name)}</h4><div class="text-muted">Account ID: #${escapeHtml(row.dataset.id)}</div></div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-12"><small class="text-muted fw-bold text-uppercase">Email</small><div class="p-2 bg-light rounded-3 border mt-1">${escapeHtml(row.dataset.email)}</div></div>
+                    <div class="col-6"><small class="text-muted fw-bold text-uppercase">System Role</small><div class="p-2 bg-light rounded-3 border mt-1">${escapeHtml(row.dataset.role)}</div></div>
+                    <div class="col-6"><small class="text-muted fw-bold text-uppercase">Current Status</small><div class="p-2 bg-light rounded-3 border mt-1">${escapeHtml(row.dataset.status)}</div></div>
+                    <div class="col-6"><small class="text-muted fw-bold text-uppercase">Phone</small><div class="p-2 bg-light rounded-3 border mt-1">${escapeHtml(row.dataset.phone)}</div></div>
+                    <div class="col-6"><small class="text-muted fw-bold text-uppercase">Joined</small><div class="p-2 bg-light rounded-3 border mt-1">${escapeHtml(row.dataset.joined)}</div></div>
+                </div>
+                ${action === 'edit' ? '<div class="alert alert-info small mt-4 mb-0 fw-medium"><i class="bi bi-info-circle-fill me-2"></i>Editing is disabled in demo mode.</div>' : ''}`;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('udUserModal')).show();
+        } else if (action === 'delete') {
+            Swal.fire({
+                titleText: 'Delete Account?',
+                text: `Are you sure you want to permanently remove ${name}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff3b30',
+                cancelButtonColor: '#8e8e93',
+                confirmButtonText: 'Yes, delete it!',
+                background: 'rgba(255, 255, 255, 0.95)',
+                customClass: { popup: 'rounded-4 shadow-lg border' }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    row.remove();
+                    const index = rows.indexOf(row); if (index >= 0) rows.splice(index, 1);
+                    currentPage = 1; updateStats(); render();
+                    Swal.fire({ toast: true, position: 'top-end', icon: 'success', titleText: 'Record Deleted.', showConfirmButton: false, timer: 3000, background: 'rgba(255, 255, 255, 0.95)', customClass: { popup: 'rounded-4 shadow-lg border' }});
+                }
+            });
+        }
+    });
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
+    updateStats(); render();
+})();
+</script>
+}

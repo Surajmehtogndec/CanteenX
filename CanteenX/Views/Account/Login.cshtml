@@ -118,13 +118,14 @@
             // 1. SECURE SERVER ERROR HANDLING (XSS Protected)
             @if (TempData["LoginError"] != null)
             {
+                var safeErrorMessage = TempData["LoginError"]?.ToString() ?? "An error occurred.";
                 <text>
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
                     icon: 'error',
                     // Json.Serialize ensures the string is safely escaped for JavaScript
-                    title: @Html.Raw(Json.Serialize(TempData["LoginError"])), 
+                    titleText: @Html.Raw(Json.Serialize(safeErrorMessage)), 
                     showConfirmButton: false,
                     timer: 4000,
                     timerProgressBar: true,
@@ -145,7 +146,14 @@
             // Prevent script crash if elements are missing from the DOM
             if (!form || !emailInput || !passwordInput || !submitBtn) return;
 
+            const sanitizeInput = (str) => {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
+
             const showFieldError = (inputElement, message) => {
+
                 const wrapper = inputElement.closest('.ios-input-group') || inputElement;
                 wrapper.classList.remove('input-invalid');
                 void wrapper.offsetWidth; // Force reflow to restart animation
@@ -160,7 +168,7 @@
                 wrapper.classList.remove('input-invalid');
                 
                 const errorSpan = inputElement.closest('.mb-3, .mb-4')?.querySelector('span.text-danger');
-                if (errorSpan) errorSpan.textContent = '';
+                if (errorSpan) errorSpan.textContent = message;
             };
 
             // Clear red warnings instantly as the user types

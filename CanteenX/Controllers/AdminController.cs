@@ -30,6 +30,24 @@ namespace CanteenX.Controllers
             return View();
         }
 
+        public IActionResult UserDirectory(){
+            return View();
+        }
+        public IActionResult Transactions()
+        {
+            return View();
+        }
+
+        public IActionResult OrderHistorys()
+        {
+            return View();
+        }
+
+        public IActionResult CanteenDirectory()
+        {
+            return View();
+        }
+
 
 
         [HttpGet]
@@ -95,6 +113,7 @@ namespace CanteenX.Controllers
 
 
         [HttpGet]
+        
         public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["refresh_token"];

@@ -1,0 +1,310 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+     ViewData["Title"] = "View Canteen Directory";
+     Layout = "_AdminLayout";
+
+// Static demo data based on your database schema for UI testing.
+    var canteens = new[]
+    {
+        new { Id = 16, Name = "Bluebarry", Location = "Near TechShop", Description = "Very old canteen", ImageUrl = "/uploads/canteens/bluebarry_20261015_123043.jpg", IsActive = true, CreatedAt = new DateTime(2026, 10, 15) },
+        new { Id = 17, Name = "Campus Bites", Location = "Main Block A", Description = "Fast food and beverages", ImageUrl = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=150&q=80", IsActive = true, CreatedAt = new DateTime(2026, 9, 10) },
+        new { Id = 18, Name = "Healthy Eats", Location = "Library Ground", Description = "Salads and fresh juices", ImageUrl = "https://images.unsplash.com/photo-1493770348161-369560ae357d?w=150&q=80", IsActive = false, CreatedAt = new DateTime(2026, 9, 25) },
+        new { Id = 19, Name = "Nescafe Point", Location = "CS Department", Description = "Coffee and snacks", ImageUrl = "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=150&q=80", IsActive = true, CreatedAt = new DateTime(2026, 10, 1) },
+        new { Id = 20, Name = "Spicy Corner", Location = "Hostel B", Description = "Late night cravings", ImageUrl = "", IsActive = true, CreatedAt = new DateTime(2026, 10, 12) }
+    };
+}
+<style>
+    /* =========================================
+       PREMIUM iOS GLASSMORPHISM STYLING
+       ========================================= */
+    body { background: #f4f7fa; }
+    
+    .bg-blob-1 { position: fixed; top: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(255, 149, 0, 0.05); border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .bg-blob-2 { position: fixed; bottom: -10%; left: -5%; width: 30vw; height: 30vw; background: rgba(52, 199, 89, 0.03); border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+
+    .cd-page { position: relative; z-index: 1; color: #1c1c1e; padding: 24px 12px 32px; animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    @@keyframes iosFadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Card */
+    .cd-card { 
+        background: rgba(255, 255, 255, 0.85); 
+        backdrop-filter: blur(25px) saturate(180%); 
+        -webkit-backdrop-filter: blur(25px) saturate(180%); 
+        border: 1px solid rgba(255, 255, 255, 0.8); 
+        border-radius: 24px; 
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0,0,0,0.02); 
+    }
+
+    /* Topbar */
+    .cd-topbar { padding: 28px 30px; border-bottom: 1px solid rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .cd-title { margin: 0; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; color: #1c1c1e; }
+    .cd-subtitle { margin: 4px 0 0; color: #8e8e93; font-size: 0.95rem; }
+    .cd-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    
+    /* Inputs & Selects */
+    .cd-search { position: relative; min-width: 260px; }
+    .cd-search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8e8e93; }
+    .cd-search input { 
+        padding: 12px 16px 12px 42px; border: 1.5px solid rgba(0,0,0,0.05); background: rgba(240, 243, 246, 0.7);
+        border-radius: 14px; min-height: 46px; box-shadow: none; font-weight: 500; transition: all 0.3s; width: 100%;
+    }
+    .cd-search input:focus { background: #fff; border-color: #007aff; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); outline: none; }
+    
+    .cd-select { 
+        min-height: 46px; min-width: 140px; border: 1.5px solid rgba(0,0,0,0.05); background: rgba(240, 243, 246, 0.7);
+        border-radius: 14px; color: #1c1c1e; font-weight: 500; cursor: pointer; transition: all 0.3s; 
+    }
+    .cd-select:focus { background: #fff; border-color: #007aff; box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15); }
+    
+    .btn-add-canteen { 
+        min-height: 46px; background: #007aff; color: #fff; border: none; border-radius: 14px; 
+        font-weight: 600; padding: 10px 20px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+        display: flex; align-items: center; gap: 8px; text-decoration: none;
+    }
+    .btn-add-canteen:hover { background: #005bb5; transform: translateY(-2px); color: #fff; box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4); }
+
+    /* Summary Stats */
+    .cd-summary { display: flex; gap: 16px; padding: 24px 30px 0; flex-wrap: wrap; }
+    .cd-stat { 
+        display: flex; align-items: center; gap: 16px; padding: 18px 20px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.6);
+        border-radius: 20px; flex: 1; min-width: 160px; box-shadow: 0 8px 20px rgba(0,0,0,0.03); transition: transform 0.3s ease; 
+    }
+    .cd-stat:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.05); }
+    .cd-stat-icon { height: 48px; width: 48px; border-radius: 14px; display: grid; place-items: center; background: rgba(0,122,255,0.1); color: #007aff; font-size: 1.3rem; }
+    .cd-stat small { display: block; color: #8e8e93; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cd-stat strong { display: block; font-size: 1.5rem; line-height: 1.2; font-weight: 800; color: #1c1c1e; }
+
+    /* Table Styling */
+    .cd-table-wrap { padding: 20px 30px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .cd-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin: 0; min-width: 900px; }
+    .cd-table thead th { 
+        background: transparent; color: #8e8e93; text-transform: uppercase; font-size: 0.75rem; 
+        letter-spacing: 0.5px; font-weight: 700; padding: 0 16px 12px; border: none; border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .cd-table tbody tr { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); background: transparent; }
+    .cd-table tbody tr:hover { background: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.04); transform: scale(1.002); border-radius: 16px; position: relative; z-index: 2; }
+    .cd-table tbody td { padding: 16px; border: none; border-bottom: 1px solid rgba(0,0,0,0.03); vertical-align: middle; font-size: 0.95rem; font-weight: 500; }
+    .cd-table tbody tr:hover td { border-bottom-color: transparent; }
+    .cd-table tbody tr td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+    .cd-table tbody tr td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+
+    /* Canteen Avatar/Thumbnail */
+    .cd-thumbnail { 
+        height: 54px; width: 54px; border-radius: 12px; object-fit: cover; 
+        background: linear-gradient(135deg, #f0f3f6, #e2e8f0); display: grid; place-items: center; 
+        color: #8e8e93; font-size: 1.5rem; border: 1px solid rgba(0,0,0,0.05);
+    }
+    .cd-info-container { display: flex; align-items: center; gap: 14px; min-width: 250px; }
+    .cd-name { display: block; font-weight: 700; color: #1c1c1e; font-size: 1.05rem; }
+    .cd-location { color: #8e8e93; font-size: 0.85rem; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+
+    /* iOS Badges */
+    .cd-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+    .cd-status-active { color: #34c759; background: rgba(52, 199, 89, 0.15); }
+    .cd-status-inactive { color: #8e8e93; background: rgba(142, 142, 147, 0.15); }
+
+    /* Action Buttons */
+    .cd-action-btn { width: 40px; height: 40px; border: none; border-radius: 12px; background: transparent; color: #8e8e93; transition: all 0.2s; display: grid; place-items: center; }
+    .cd-action-btn:hover { background: rgba(0,0,0,0.05); color: #1c1c1e; }
+    .cd-dropdown { border: 1px solid rgba(255,255,255,0.8); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.12); padding: 8px; min-width: 180px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); }
+    .cd-dropdown .dropdown-item { padding: 10px 14px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; color: #1c1c1e; transition: background 0.2s; }
+    .cd-dropdown .dropdown-item:hover { background: rgba(0,0,0,0.04); }
+    .delete-item { color: #ff3b30 !important; }
+
+    /* Footer & Empty State */
+    .cd-empty { padding: 60px 12px; text-align: center; color: #8e8e93; }
+    .cd-footer { padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid rgba(0,0,0,0.04); }
+    
+    /* Mobile Resizing */
+    @@media (max-width: 900px) { .cd-tools { width: 100%; justify-content: space-between; } .cd-search { flex: 1; min-width: 100%; } }
+    @@media (max-width: 576px) { 
+        .cd-topbar { padding: 20px; } .cd-summary { padding: 20px 20px 0; grid-template-columns: 1fr 1fr; }
+        .cd-table-wrap { padding: 20px 10px 0; } .cd-footer { padding: 20px; justify-content: center; } 
+    }
+</style>
+
+<!-- Background Ambience -->
+<div class="bg-blob-1"></div>
+<div class="bg-blob-2"></div>
+
+<div class="container-fluid cd-page">
+    <div class="cd-card">
+        
+        <div class="cd-topbar">
+            <div>
+                <h2 class="cd-title">Canteen Directory</h2>
+                <p class="cd-subtitle">Manage campus canteens and their visibility.</p>
+            </div>
+            <div class="cd-tools">
+                <div class="cd-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="cdSearch" placeholder="Search canteens..." autocomplete="off" />
+                </div>
+                <select id="cdStatusFilter" class="form-select cd-select">
+                    <option value="">All Status</option>
+                    <option>Active</option>
+                    <option>Inactive</option>
+                </select>
+                <!-- Add New Canteen Button Link -->
+                <a asp-controller="Admin" asp-action="AddCanteens" class="btn-add-canteen">
+                    <i class="bi bi-plus-lg"></i> New Canteen
+                </a>
+            </div>
+        </div>
+
+        <div class="cd-summary">
+            <div class="cd-stat"><div class="cd-stat-icon"><i class="bi bi-shop"></i></div><div><small>Total Canteens</small><strong id="cdTotal">5</strong></div></div>
+            <div class="cd-stat"><div class="cd-stat-icon" style="background:rgba(52,199,89,0.15);color:#34c759"><i class="bi bi-broadcast"></i></div><div><small>Live on App</small><strong id="cdActive">4</strong></div></div>
+            <div class="cd-stat"><div class="cd-stat-icon" style="background:rgba(142,142,147,0.15);color:#8e8e93"><i class="bi bi-eye-slash-fill"></i></div><div><small>Hidden</small><strong id="cdInactive">1</strong></div></div>
+        </div>
+
+        <div class="cd-table-wrap">
+            <table class="cd-table" id="cdTable">
+                <thead><tr>
+                    <th>Canteen Details</th>
+                    <th>Description</th>
+                    <th>App Status</th>
+                    <th>Added On</th>
+                    <th class="text-end">Actions</th>
+                </tr></thead>
+                <tbody id="cdTableBody">
+                @foreach (var canteen in canteens)
+                {
+                    var statusClass = canteen.IsActive ? "cd-status-active" : "cd-status-inactive";
+                    var statusText = canteen.IsActive ? "Active" : "Inactive";
+                    var statusIcon = canteen.IsActive ? "bi-broadcast" : "bi-eye-slash-fill";
+
+                    <tr class="cd-row" data-id="@canteen.Id" data-name="@canteen.Name" data-location="@canteen.Location" data-status="@statusText" data-desc="@canteen.Description">
+                        <td>
+                            <div class="cd-info-container">
+                                @if(!string.IsNullOrEmpty(canteen.ImageUrl)) {
+                                    <img src="@canteen.ImageUrl" alt="@canteen.Name" class="cd-thumbnail" onerror="this.outerHTML='<div class=\'cd-thumbnail\'><i class=\'bi bi-image text-muted\'></i></div>'" />
+                                } else {
+                                    <div class="cd-thumbnail"><i class="bi bi-shop text-muted"></i></div>
+                                }
+                                <div>
+                                    <span class="cd-name">@canteen.Name</span>
+                                    <span class="cd-location"><i class="bi bi-geo-alt-fill text-danger"></i> @canteen.Location</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-muted small" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="@canteen.Description">
+                                @canteen.Description
+                            </div>
+                        </td>
+                        <td><span class="cd-badge @statusClass"><i class="bi @statusIcon"></i> @statusText</span></td>
+                        <td class="text-muted fw-medium small">@canteen.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td class="text-end">
+                            <div class="dropdown">
+                                <button class="cd-action-btn" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></button>
+                                <ul class="dropdown-menu dropdown-menu-end cd-dropdown">
+                                    <li><button class="dropdown-item" type="button"><i class="bi bi-pencil-square text-warning"></i> Edit Details</button></li>
+                                    <li><button class="dropdown-item" type="button"><i class="bi bi-egg-fried text-primary"></i> View Menu</button></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><button class="dropdown-item delete-item" type="button" data-action="delete"><i class="bi bi-trash3-fill"></i> Delete Canteen</button></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <div class="cd-empty d-none" id="cdEmpty">
+                <i class="bi bi-shop-window fs-1 d-block mb-3"></i>
+                <strong class="fs-5 text-dark">No canteens found</strong>
+                <div class="mt-1">Try a different search query or filter.</div>
+            </div>
+        </div>
+
+        <div class="cd-footer">
+            <span id="cdResultText" class="text-muted fw-medium">Showing records</span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(() => {
+    const rows = Array.from(document.querySelectorAll('.cd-row'));
+    const search = document.getElementById('cdSearch');
+    const statusFilter = document.getElementById('cdStatusFilter');
+    const empty = document.getElementById('cdEmpty');
+    const table = document.getElementById('cdTable');
+
+    function filterData() {
+        const query = search.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        let visibleCount = 0;
+        let activeCount = 0;
+        let inactiveCount = 0;
+
+        rows.forEach(row => {
+            const text = [row.dataset.name, row.dataset.location, row.dataset.desc].join(' ').toLowerCase();
+            const rowStatus = row.dataset.status;
+            
+            const matchesSearch = !query || text.includes(query);
+            const matchesStatus = !status || rowStatus === status;
+
+            if (matchesSearch && matchesStatus) {
+                row.classList.remove('d-none');
+                visibleCount++;
+                if (rowStatus === 'Active') activeCount++;
+                else inactiveCount++;
+            } else {
+                row.classList.add('d-none');
+            }
+        });
+
+        // Update Empty State
+        empty.classList.toggle('d-none', visibleCount > 0);
+        table.classList.toggle('d-none', visibleCount === 0);
+
+        // Update Stats dynamically
+        document.getElementById('cdTotal').textContent = visibleCount;
+        document.getElementById('cdActive').textContent = activeCount;
+        document.getElementById('cdInactive').textContent = inactiveCount;
+        document.getElementById('cdResultText').textContent = `Showing ${visibleCount} canteen(s)`;
+    }
+
+    [search, statusFilter].forEach(el => el.addEventListener('input', filterData));
+
+    // Delete Action with SweetAlert
+    document.getElementById('cdTableBody').addEventListener('click', event => {
+        const button = event.target.closest('[data-action="delete"]');
+        if (!button) return;
+        
+        const row = button.closest('tr');
+        const name = row.dataset.name;
+
+        Swal.fire({
+            titleText: 'Delete Canteen?',
+            text: `Are you sure you want to permanently remove ${name}? All associated menus will be deleted.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff3b30',
+            cancelButtonColor: '#8e8e93',
+            confirmButtonText: 'Yes, delete it!',
+            background: 'rgba(255, 255, 255, 0.95)',
+            customClass: { popup: 'rounded-4 shadow-lg border' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                row.remove();
+                const index = rows.indexOf(row); 
+                if (index >= 0) rows.splice(index, 1);
+                filterData();
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', titleText: 'Canteen Deleted.', showConfirmButton: false, timer: 3000, background: 'rgba(255, 255, 255, 0.95)', customClass: { popup: 'rounded-4 shadow-lg border' }});
+            }
+        });
+    });
+
+    filterData(); // Initial render
+})();
+</script>
+}

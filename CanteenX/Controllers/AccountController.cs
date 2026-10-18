@@ -117,6 +117,7 @@ namespace CanteenX.Controllers
         // GOOGLE LOGIN (Lightweight & Protected)
         // ==========================================
         [HttpGet]
+       
         public IActionResult GoogleLogin()
         {
             var properties = new AuthenticationProperties { RedirectUri = Url.Action(nameof(GoogleLoginCallback)) };
@@ -124,6 +125,7 @@ namespace CanteenX.Controllers
         }
 
         [HttpGet("google-callback")]
+      
         public async Task<IActionResult> GoogleLoginCallback()
         {
             try
@@ -271,6 +273,7 @@ namespace CanteenX.Controllers
         }
 
         [HttpGet]
+        
         public async Task<IActionResult> ResetPassword(string? email, string? token)
         {
             if (!string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(token))
@@ -344,7 +347,7 @@ namespace CanteenX.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+       
         public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["refresh_token"];

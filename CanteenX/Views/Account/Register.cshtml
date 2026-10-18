@@ -132,13 +132,14 @@
               //SECURE SERVER RESPONSES (XSS Protected)
     @if(TempData["SuccessMessage"] != null)
         {
+          var safeSuccess = TempData["SuccessMessage"]?.ToString() ?? "";
             <text>
             Swal.fire({
             toast:true,
             position: 'top-end',
             icon:'success',
             title:'Registration Successful',
-            text:@Html.Raw(Json.Serialize(TempData["SuccessMessage"])),
+            text:@Html.Raw(Json.Serialize(safeSuccess)),
             showConfirmButton:false,
             timer: 4000,
             timerProgressBar: true,
@@ -151,13 +152,14 @@
             // 1. BACKEND API ERRORS (e.g., Email already exists)
             @if (TempData["LoginError"] != null)
             {
+                var safeError = TempData["LoginError"]?.ToString() ?? "";
                 <text>
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
                     icon: 'error',
                     title: 'Registration Failed',
-                    text: @Html.Raw(Json.Serialize(TempData["LoginError"])), 
+                    text: @Html.Raw(Json.Serialize(safeError)), 
                     showConfirmButton: false,
                     timer: 5000,
                     timerProgressBar: true,
@@ -198,6 +200,14 @@
             const submitBtn = document.getElementById('registerBtn');
 
             if (!form || !nameInput || !emailInput || !phoneInput || !passwordInput || !confirmPasswordInput || !submitBtn) return;
+
+            // XSS Helper: Escapes malicious HTML tags from inputs
+            const sanitizeInput = (str) => {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
 
             // 3. SECURE PASSWORD VISIBILITY TOGGLE 
             document.querySelectorAll('.toggle-pwd-btn').forEach(btn => {
@@ -245,9 +255,9 @@
                 const emailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
                 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@@$!%*?&])[A-Za-z\d@@$!%*?&]{8,}$/;
 
-                const nameVal = nameInput.value.trim();
-                const emailVal = emailInput.value.trim();
-                const phoneVal = phoneInput.value.trim();
+                const nameVal = sanitizeInput(nameInput.value.trim());
+                const emailVal = sanitizeInput(emailInput.value.trim());
+                const phoneVal = sanitizeInput(phoneInput.value.trim());
                 const pwdVal = passwordInput.value;
                 const confirmPwdVal = confirmPasswordInput.value;
 

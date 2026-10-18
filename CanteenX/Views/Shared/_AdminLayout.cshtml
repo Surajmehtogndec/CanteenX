@@ -53,18 +53,18 @@
             </div>
 
             <a asp-controller="Admin"
-               asp-action="Students"
-               class="sidebar-link">
+               asp-action="UserDirectory"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "UserDirectory" ? "active" : "")">
 
                 <i class="bi bi-people-fill"></i>
 
-                <span>Student Directory</span>
+                <span>User Directory</span>
 
             </a>
 
             <a asp-controller="Admin"
-               asp-action="Orders"
-               class="sidebar-link">
+               asp-action="OrderHistorys"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "OrderHistorys" ? "active" : "")">
 
                 <i class="bi bi-receipt-cutoff"></i>
 
@@ -74,8 +74,8 @@
 
             
             <a asp-controller="Admin"
-               asp-action="Payments"
-               class="sidebar-link">
+               asp-action="Transactions"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Transactions" ? "active" : "")">
 
                 <i class="bi bi-wallet2"></i>
 
@@ -85,8 +85,8 @@
 
 
             <a asp-controller="Admin"
-               asp-action="AllCanteens"
-               class="sidebar-link">
+               asp-action="CanteenDirectory"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenDirectory" ? "active" : "")">
 
                 <i class="bi bi-eye"></i>
 
