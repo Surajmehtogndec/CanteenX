@@ -1,21 +1,147 @@
 ﻿@{
+    Layout = null;
     ViewData["Title"] = "Access Denied";
 }
 
-<div class="container py-5 text-center">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <!-- Yeh viewport tag page ko mobile devices par shrink hone se bachata hai aur responsive banata hai -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewData["Title"] - CanteenX</title>
+    
+    <!-- Bootstrap Icons CDN: Kyunki layout null hai, humein icons ka link khud dena hoga -->
+   <link href="~/adminassets/libs/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
 
-    <h1>403</h1>
+    <style>
+        /* =========================================
+           PREMIUM iOS ERROR PAGE STYLING (FULLY RESPONSIVE)
+           ========================================= */
+        * { box-sizing: border-box; }
+        
+        body { 
+            background: #f4f7fa; 
+            margin: 0; 
+            /* Apple system font stack for authentic iOS look */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden; /* Mobile par horizontal scroll rokne ke liye */
+        }
+        
+        /* Ambient Background Blobs (using vmin for responsive sizing on all screens) */
+        .bg-blob-error-1 { position: fixed; top: -10%; left: -10%; width: 50vmin; height: 50vmin; background: rgba(232, 40, 26, 0.06); border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0; }
+        .bg-blob-error-2 { position: fixed; bottom: -10%; right: -5%; width: 45vmin; height: 45vmin; background: rgba(255, 149, 0, 0.05); border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0; }
 
-    <h3>Access Denied</h3>
+        /* Page Container - 100vh ensures perfect vertical centering on any device */
+        .error-page-wrapper { 
+            position: relative; z-index: 1; 
+            min-height: 100vh; 
+            display: flex; align-items: center; justify-content: center; 
+            padding: 20px;
+            animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        
+        @@keyframes iosFadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    <p class="text-muted">
-        You don't have permission to access this page.
-    </p>
+        /* Glassmorphism Card */
+        .error-card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(30px) saturate(180%); 
+            -webkit-backdrop-filter: blur(30px) saturate(180%); 
+            border: 1px solid rgba(255, 255, 255, 0.8); 
+            border-radius: 32px; 
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.02); 
+            padding: 50px 40px; 
+            max-width: 440px; 
+            width: 100%;
+            text-align: center;
+        }
 
-    <a asp-controller="Home"
-       asp-action="Index"
-       class="btn btn-primary">
-        Go Home
-    </a>
+        /* Icon Styling */
+        .error-icon-wrapper { 
+            width: 84px; height: 84px; margin: 0 auto 24px;
+            background: rgba(232, 40, 26, 0.08); color: #e8281a; 
+            border-radius: 24px; display: grid; place-items: center; font-size: 2.8rem; 
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);
+        }
 
-</div>
+        /* Typography */
+        .error-code { font-size: 4.5rem; font-weight: 800; color: #1c1c1e; letter-spacing: -2px; margin: 0 0 8px; line-height: 1; }
+        .error-title { font-size: 1.6rem; font-weight: 700; color: #1c1c1e; margin: 0 0 16px; letter-spacing: -0.5px; }
+        .error-message { color: #8e8e93; font-size: 1.05rem; line-height: 1.5; margin: 0 0 36px; font-weight: 500; }
+
+        /* iOS Button Styling */
+        .btn-ios-primary { 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: #007aff; color: #fff; border: none; 
+            border-radius: 16px; font-weight: 600; padding: 16px 24px; font-size: 1.05rem;
+            text-decoration: none; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25); width: 100%;
+        }
+        .btn-ios-primary:hover { background: #005bb5; transform: translateY(-2px); color: #fff; box-shadow: 0 12px 25px rgba(0, 122, 255, 0.35); }
+        .btn-ios-primary:active { transform: scale(0.97); }
+
+        /* =========================================
+           RESPONSIVE MEDIA QUERIES
+           ========================================= */
+           
+        /* Tablet & Large Phones */
+        @@media (max-width: 768px) {
+            .error-card { padding: 40px 30px; }
+            .error-code { font-size: 4rem; }
+        }
+
+        /* Small Phones (iPhone SE, etc.) */
+        @@media (max-width: 480px) {
+            .error-page-wrapper { padding: 16px; }
+            .error-card { 
+                padding: 36px 20px; 
+                border-radius: 28px; 
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            }
+            .error-icon-wrapper { width: 72px; height: 72px; font-size: 2.4rem; margin-bottom: 20px; }
+            .error-code { font-size: 3.5rem; letter-spacing: -1px; }
+            .error-title { font-size: 1.4rem; margin-bottom: 12px; }
+            .error-message { font-size: 0.95rem; margin-bottom: 28px; }
+            .btn-ios-primary { padding: 14px 20px; font-size: 1rem; }
+        }
+        
+        /* Landscape Mode on Small Devices */
+        @@media (max-height: 500px) and (orientation: landscape) {
+            .error-page-wrapper { min-height: auto; padding: 40px 20px; }
+            .error-card { padding: 24px; }
+            .error-icon-wrapper { width: 56px; height: 56px; font-size: 2rem; margin-bottom: 16px; }
+            .error-code { font-size: 2.5rem; }
+            .error-title { font-size: 1.2rem; margin-bottom: 8px; }
+            .error-message { margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient Background -->
+    <div class="bg-blob-error-1"></div>
+    <div class="bg-blob-error-2"></div>
+
+    <div class="error-page-wrapper">
+        <div class="error-card">
+            <div class="error-icon-wrapper">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            
+            <h1 class="error-code">403</h1>
+            <h3 class="error-title">Access Denied</h3>
+            
+            <p class="error-message">
+                You don't have the necessary permissions to view this page or perform this action.
+            </p>
+
+            <a asp-controller="Home" asp-action="Index" class="btn-ios-primary">
+                <i class="bi bi-house-door-fill"></i> Return to Homepage
+            </a>
+        </div>
+    </div>
+</body>
+</html>

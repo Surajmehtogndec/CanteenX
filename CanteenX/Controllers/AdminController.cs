@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace CanteenX.Controllers
 {
@@ -25,10 +26,14 @@ namespace CanteenX.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult AdminDashboard()
         {
             return View();
         }
+
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
 
         public IActionResult UserDirectory(){
             return View();
@@ -382,6 +387,121 @@ namespace CanteenX.Controllers
             }
             return RedirectToAction("UserProfile");
         }
+
+
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUserDirectory(
+            int pageNumber = 1,
+            int pageSize = 10,
+            string? searchTerm = null,
+            string? status = null,
+            string? role = null,
+            CancellationToken cancellationToken = default)
+            
+        {
+
+            try {
+                var client = _httpClientFactory.CreateClient(ApiClientName);
+                var accessToken = User.FindFirst("AccessToken")?.Value;
+
+                if (string.IsNullOrWhiteSpace(accessToken))
+                {
+                    return Unauthorized(new
+                    {
+                        success = false,
+                        message = "Access token is missing. Please sign in again."
+                    });
+                }
+
+
+                // Build the API query string.
+                var query = new Dictionary<string, string?>
+                {
+                    ["PageNumber"] = Math.Max(1, pageNumber).ToString(),
+                    ["PageSize"] = Math.Clamp(pageSize, 1, 50).ToString(),
+                    ["SearchTerm"] = searchTerm,
+                    ["Status"] = status,
+                    ["Role"] = role
+                };
+
+
+                var queryString = string.Join("&",
+           query
+               .Where(x => !string.IsNullOrWhiteSpace(x.Value))
+               .Select(x =>
+                   $"{Uri.EscapeDataString(x.Key)}=" +
+                   $"{Uri.EscapeDataString(x.Value!)}"));
+
+                var apiUrl = $"api/admin/user-directory?{queryString}";
+
+                // Forward the user's JWT to the protected API.
+                using var request = new HttpRequestMessage(
+                    HttpMethod.Get, apiUrl);
+
+
+                request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", accessToken);
+
+                request.Headers.Accept.ParseAdd("application/json");
+
+                using var response = await client.SendAsync(
+            request,
+            HttpCompletionOption.ResponseHeadersRead,
+            cancellationToken);
+
+                var json = await response.Content.ReadAsStringAsync(
+                    cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)response.StatusCode, new
+                    {
+                        success = false,
+                        message = "The User Directory API request failed."
+                    });
+                }
+
+
+                // Forward the API's JSON response to the browser.
+                using var document = JsonDocument.Parse(json);
+
+                return Content(
+                    document.RootElement.GetRawText(),
+                    "application/json");
+
+
+
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Return a 499 (Client Closed Request) or 400 Bad Request
+                return StatusCode(499, new
+                {
+                    success = false,
+                    message = "The request was cancelled by the client."
+                });
+            }
+            catch (JsonException)
+            {
+                return StatusCode(502, new
+                {
+                    success = false,
+                    message = "The API returned invalid JSON."
+                });
+            }
+            catch (HttpRequestException)
+            {
+                return StatusCode(502, new
+                {
+                    success = false,
+                    message = "Unable to connect to the User Directory API."
+                });
+            }
+
+        }
+        
     
     }
 

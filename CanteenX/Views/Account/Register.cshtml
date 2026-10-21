@@ -130,24 +130,24 @@
 
 
               //SECURE SERVER RESPONSES (XSS Protected)
-    @if(TempData["SuccessMessage"] != null)
-        {
-          var safeSuccess = TempData["SuccessMessage"]?.ToString() ?? "";
-            <text>
-            Swal.fire({
-            toast:true,
-            position: 'top-end',
-            icon:'success',
-            title:'Registration Successful',
-            text:@Html.Raw(Json.Serialize(safeSuccess)),
-            showConfirmButton:false,
-            timer: 4000,
-            timerProgressBar: true,
-            background: 'rgba(255, 255, 255, 0.95)',
-            customClass: { popup: 'rounded-4 shadow-lg border' }
-            });
-            </text>
-        }
+    // @if(TempData["SuccessMessage"] != null)
+    //     {
+    //       var safeSuccess = TempData["SuccessMessage"]?.ToString() ?? "";
+    //         <text>
+    //         Swal.fire({
+    //         toast:true,
+    //         position: 'top-end',
+    //         icon:'success',
+    //         title:'Registration Successful',
+    //         text:@Html.Raw(Json.Serialize(safeSuccess)),
+    //         showConfirmButton:false,
+    //         timer: 4000,
+    //         timerProgressBar: true,
+    //         background: 'rgba(255, 255, 255, 0.95)',
+    //         customClass: { popup: 'rounded-4 shadow-lg border' }
+    //         });
+    //         </text>
+    //     }
 
             // 1. BACKEND API ERRORS (e.g., Email already exists)
             @if (TempData["LoginError"] != null)

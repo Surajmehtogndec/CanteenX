@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - CanteenX </title>
+    <link href="~/adminassets/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/adminassets/libs/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
+
+    <link href="~/adminassets/css/main.css" rel="stylesheet" asp-append-version="true" />
+    
+    <link rel="icon" type="image/x-icon" href="~/favicon1.ico" asp-append-version="true" />
+
+  
+</head>
+<body>
+        <!-- Mobile Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="bi bi-shop"></i>
+            </div>
+            <div class="brand-text">
+                <h5>CanteenX</h5>
+                <span>Canteen Owner Panel</span>
+            </div>
+        </div>
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-section-title">
+                ANALYTICS
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+
+                <i class="bi bi-grid-1x2-fill"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+            <div class="nav-section-title">
+                OPERATIONS
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="UserDirectory"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "UserDirectory" ? "active" : "")">
+
+                <i class="bi bi-people-fill"></i>
+
+                <span>User Directory</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="OrderHistorys"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "OrderHistorys" ? "active" : "")">
+
+                <i class="bi bi-receipt-cutoff"></i>
+
+                <span>Order History</span>
+
+            </a>
+
+            
+            <a asp-controller="Admin"
+               asp-action="Transactions"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Transactions" ? "active" : "")">
+
+                <i class="bi bi-wallet2"></i>
+
+                <span>Transactions</span>
+
+            </a>
+
+
+            <a asp-controller="Admin"
+               asp-action="CanteenDirectory"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenDirectory" ? "active" : "")">
+
+                <i class="bi bi-eye"></i>
+
+                <span>Canteen Network</span>
+
+            </a>
+
+
+           
+
+        </nav>
+
+
+    
+
+    </aside>
+
+
+    <!-- Main Area -->
+    <div class="admin-main">
+
+        <!-- Top Navbar -->
+        <header class="admin-navbar">
+
+            <div class="navbar-left">
+
+                <!-- Mobile Menu -->
+                <button type="button"
+                        class="menu-toggle"
+                        id="menuToggle">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+                <!-- Quick Actions Dropdown -->
+                <div class="dropdown ms-2">
+                    <button class="btn-quick-action dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            id="quick-actions-dropdown">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Create</span>
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-quick-action" aria-labelledby="quick-actions-dropdown">
+                        <li class="dropdown-header">Quick Action Shortcuts</li>
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="AddCanteens"><i class="bi bi-shop-window"></i> New Canteen</a></li>
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="RegisterCanteenLogin"><i class="bi bi-person-plus"></i> New User</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="navbar-right">
+
+                <!-- Notification -->
+                <button type="button"
+                        class="navbar-icon-btn">
+
+                    <i class="bi bi-bell"></i>
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+                <!-- Admin Profile Dropdown -->
+                <div class="dropdown">
+
+                    <button class="navbar-profile dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                        <div class="profile-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div class="profile-details">
+
+                            <strong>
+                                @(User.Identity?.Name ?? "Admin")
+                            </strong>
+
+                            <small>
+                                Canteen Owner
+                            </small>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- Dropdown Menu -->
+                    <ul class="dropdown-menu dropdown-menu-end admin-profile-menu">
+
+
+
+                        <!-- Profile -->
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Admin"
+                               asp-action="UserProfile">
+
+                                <i class="bi bi-person"></i>
+
+                                <span>My Profile</span>
+
+                            </a>
+                        </li>
+
+
+                        <!-- Settings -->
+                        <!-- Notifications -->
+                        <li>
+                            <a class="dropdown-item"
+                               asp-controller="Admin"
+                               asp-action="Notifications">
+
+                                <i class="bi bi-bell"></i>
+
+                                <span>Notifications</span>
+
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+
+
+                        <!-- Logout -->
+                        <li>
+                            <a class="dropdown-item logout-item"
+                               asp-controller="Admin"
+                               asp-action="Logout">
+
+                                <i class="bi bi-box-arrow-right"></i>
+
+                                <span>Logout</span>
+
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+              
+            </div>
+
+        </header>
+
+    <!-- Page Content -->
+    <main class="admin-content">
+        @RenderBody()
+    </main>
+
+     <!-- Footer -->
+        <footer class="admin-footer">
+
+            <span>
+                © @DateTime.Now.Year CanteenX
+            </span>
+
+            <span>
+                Canteen Owner Panel
+            </span>
+
+        </footer>
+
+    </div>
+    
+    <!-- SweetAlert2 CDN (Agar pehle se nahi hai) -->
+    <script src="~/adminassets/libs\sweetalert2@11.js"></script>
+
+    @if (TempData["LoginSuccess"] != null)
+    {
+        <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful!',
+                        text: '@Html.Raw(TempData["LoginSuccess"])',
+                        timer: 2500,
+                        showConfirmButton: false,
+                        background: '#ffffff',
+                        customClass: { popup: 'rounded-4 shadow-lg border-0' }
+                    });
+                });
+        </script>
+    }
+    <script src="~/adminassets/libs/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/adminassets/js/dashboard.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

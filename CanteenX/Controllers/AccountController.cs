@@ -91,10 +91,10 @@ namespace CanteenX.Controllers
                 switch (result.User.Role)
                 {
                     case "Admin":
-                        return RedirectToAction("Index", "Admin");
+                        return RedirectToAction("AdminDashboard", "Admin");
 
                     case "CanteenStaff":
-                        return RedirectToAction("Index", "CanteenOwner");
+                        return RedirectToAction("CanteenOwnerDashboard", "CanteenOwner");
 
                     case "Student":
                         return RedirectToAction("Index", "Home");

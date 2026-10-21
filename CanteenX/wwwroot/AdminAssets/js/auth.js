@@ -1,16 +1,3 @@
-/* 
-========================================================================
-   BOOTSTRAP 5 ADMIN TEMPLATE - SPARK ADMIN
-   AUTHENTICATION MODULE JAVASCRIPT
-   Developed with premium UI/UX standards
-
-   Template Name: Spark Admin
-   Version: 1.0 
-   Author: Spark Admin Team 
-   Email: hello.sparkadmin@gmail.com
-   URL: https://sparkadmin.web.id
-========================================================================
-*/
 
 document.addEventListener('DOMContentLoaded', function () {
     /**
