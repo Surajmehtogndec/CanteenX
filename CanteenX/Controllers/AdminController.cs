@@ -504,99 +504,29 @@ namespace CanteenX.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> EditUser(string id , CancellationToken cancellationToken)
+        public async Task<IActionResult> EditUser(string id , string fullName, string email, string role, bool isActive, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                return BadRequest("User ID is required.");
-            }
-
-            var accessToken = User.FindFirst("AccessToken")?.Value;
-
-            if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            try
-            {
-                var client = _httpClientFactory.CreateClient(ApiClientName);
-                using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/updateuserdirectory/{id}");
-
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                using var response = await client.SendAsync(request, cancellationToken);
-
-                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return NotFound("User not found.");
-                }
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning(
-                        "Unable to load user {UserId}. API returned {StatusCode}",
-                        id, response.StatusCode);
-
-                    TempData["ErrorMessage"] =
-                        "Unable to load user details.";
-
-                    return RedirectToAction(nameof(UserDirectory));
-                }
-
-                using var document = await JsonDocument.ParseAsync(
-                    await response.Content.ReadAsStreamAsync(cancellationToken),
-                    cancellationToken: cancellationToken);
-
-                var root = document.RootElement;
-
-
-                // Supports either { data: { ... } } or { ... }
-                if (root.TryGetProperty("data", out var data))
-                {
-                    root = data;
-                }
-
-                var model = root.Deserialize<EditUserViewModel>(
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                if (model == null)
-                {
-                    TempData["ErrorMessage"] =
-                        "The API returned invalid user details.";
-
-                    return RedirectToAction(nameof(UserDirectory));
-                }
-
-                model.Id = id;
-                LoadEditUserRoles(model.Role);
-
-                return View(model);
-
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "API connection failed while loading user {UserId}", id);
-
-                TempData["ErrorMessage"] =
-                    "Unable to connect to the API.";
-
                 return RedirectToAction(nameof(UserDirectory));
             }
-            catch (JsonException ex)
+
+            var model = new EditUserViewModel
             {
-                _logger.LogError(ex, "Invalid JSON received from API while loading user {UserId}", id);
-                TempData["ErrorMessage"] =
-                    "Received invalid data from the API.";
-                return RedirectToAction(nameof(UserDirectory));
-            }
+                Id = id,
+                FullName = fullName,
+                Email = email,
+                Role = role,
+                IsActive = isActive
+            };
+
+            LoadEditUserRoles(model.Role);
+            return View(model);
 
         }
 
         // POST: /Admin/EditUser
-        [HttpPut]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(
             EditUserViewModel model,

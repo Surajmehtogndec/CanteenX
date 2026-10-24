@@ -4,17 +4,14 @@
     "use strict";
     
 
-  console.log("UserDirectory script loaded successfully");
-
 const endpoint = window.userDirectoryConfig?.endpoint;
 
-if (!endpoint) {
-    console.error(
-        "User Directory endpoint is not configured. Check UserDirectory.cshtml."
-    );
-} else {
-    console.log("User Directory endpoint:", endpoint);
-}
+    if (!endpoint) {
+        showError(
+            "User Directory endpoint is not configured. Check UserDirectory.cshtml."
+        );
+    
+    } 
 
     const elements = {
         search: document.getElementById("udSearch"),
@@ -156,7 +153,7 @@ if (!endpoint) {
         elements.table.classList.remove("d-none");
 
         try {
-            console.log("Calling MVC endpoint:", endpoint);
+            
             const response = await fetch(`${endpoint}?${query.toString()}`, {
                 method: "GET",
                 headers: { "Accept": "application/json" },
@@ -692,8 +689,7 @@ if (!endpoint) {
         const button = event.target.closest("[data-action]");
 
         if (!button) return;
-        console.log("1. Action button clicked:", button.dataset.action);
-
+      
         const row = button.closest("tr");
         if (!row) return;
 
@@ -708,35 +704,31 @@ if (!endpoint) {
         }
         else if (button.dataset.action === "edit") {
             event.preventDefault();
+            event.stopPropagation();
+
             // Pehle userId declare karein.
             const userId = String(user.id ?? "").trim();
-            const editUrl = window.userDirectoryConfig?.editUrl;
 
-            console.log("4. Config:", window.userDirectoryConfig);
-             console.log("Edit URL:", editUrl);
-             console.log("Selected User ID:", userId);
+            const editUrl = window.userDirectoryConfig?.editUrl;
 
             if (!editUrl) {
                 showError("Edit page URL is not configured.");
-                console.error("Missing userDirectoryConfig.editUrl");
                 return;
             }
-
-        
 
             if (!userId) {
                 showError("Unable to identify the selected user.");
                 return;
             }
 
-            // URL format: /Admin/EditUser?id=USER_ID
-            const separator = editUrl.includes("?") ? "&" : "?";
-            const targetUrl =
-           `${editUrl}${separator}id=${encodeURIComponent(userId)}`;
-
-           console.log("Navigating to:", targetUrl);
-
-             window.location.href = targetUrl;
+            const params = new URLSearchParams({
+                id: String(user.id ?? ""),
+                fullName: String(user.fullName ?? ""),
+                email: String(user.email ?? ""),
+                role: String(user.role ?? ""),
+                isActive: String(Boolean(user.isActive))
+            });
+            window.location.href = `${editUrl}?${params.toString()}`;
         }
         else if (button.dataset.action === "delete") {
             showError(

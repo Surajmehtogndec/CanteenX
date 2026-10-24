@@ -40,7 +40,7 @@
 
             <a asp-controller="Admin"
                asp-action="AdminDashboard"
-               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "AdminDashboard" ? "active" : "")">
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() is "AdminDashboard" or "AddCanteens" or "RegisterCanteenLogin" or "UserProfile"? "active" : "")">
 
                 <i class="bi bi-grid-1x2-fill"></i>
 
@@ -54,7 +54,7 @@
 
             <a asp-controller="Admin"
                asp-action="UserDirectory"
-               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "UserDirectory" ? "active" : "")">
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() is "UserDirectory" or "EditUser" ? "active" : "")">
 
                 <i class="bi bi-people-fill"></i>
 

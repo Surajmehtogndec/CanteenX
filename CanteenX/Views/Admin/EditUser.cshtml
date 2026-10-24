@@ -1,29 +1,193 @@
-﻿
-@model CanteenX.Models.Admin.EditUserViewModel
+﻿@model CanteenX.Models.Admin.EditUserViewModel
 
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Edit User";
 }
 
-<div class="container-fluid px-3 px-md-4 py-4">
+<style>
+    /* =========================================
+           PREMIUM iOS EDIT USER STYLING
+           ========================================= */
+    .edit-page-wrapper {
+        position: relative;
+        z-index: 1;
+        animation: iosFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @@keyframes iosFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Ambient Background Blobs */
+    .bg-blob-edit-1 {
+        position: fixed;
+        top: -10%;
+        left: -10%;
+        width: 40vw;
+        height: 40vw;
+        background: rgba(232, 40, 26, 0.04);
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .bg-blob-edit-2 {
+        position: fixed;
+        bottom: -10%;
+        right: -5%;
+        width: 35vw;
+        height: 35vw;
+        background: rgba(0, 122, 255, 0.03);
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* Glassmorphism Card */
+    .ios-glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), 0 10px 20px rgba(0, 0, 0, 0.03);
+        border-radius: 28px !important;
+        overflow: hidden;
+    }
+
+    /* Form Inputs */
+    .ios-input {
+        background: rgba(240, 243, 246, 0.8);
+        border: 1.5px solid rgba(0, 0, 0, 0.06);
+        border-radius: 14px;
+        padding: 14px 16px;
+        font-size: 1rem;
+        color: #1c1c1e;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: none !important;
+    }
+
+        .ios-input:focus {
+            background: #ffffff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12) !important;
+            outline: none;
+        }
+
+        .ios-input[readonly] {
+            background: rgba(228, 228, 231, 0.5);
+            color: #8e8e93;
+            cursor: not-allowed;
+        }
+
+    /* iOS Native Toggle Switch */
+    .ios-switch .form-check-input {
+        width: 3.2em;
+        height: 1.7em;
+        border-radius: 2em;
+        background-color: #e9e9eb;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+        .ios-switch .form-check-input:checked {
+            background-color: #34c759; /* Apple Green */
+        }
+
+    /* Squircle Icon Box */
+    .ios-icon-box {
+        width: 54px;
+        height: 54px;
+        background: linear-gradient(135deg, rgba(232, 40, 26, 0.1), rgba(232, 40, 26, 0.05));
+        color: #e8281a;
+        border-radius: 16px; /* Squircle look */
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(232, 40, 26, 0.1);
+    }
+
+    /* Spring Physics Buttons */
+    .ios-btn-primary {
+        background: #e8281a;
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-weight: 600;
+        padding: 14px 28px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 8px 20px rgba(232, 40, 26, 0.25);
+    }
+
+        .ios-btn-primary:hover {
+            background: #d02013;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(232, 40, 26, 0.35);
+            color: white;
+        }
+
+        .ios-btn-primary:active {
+            transform: scale(0.97);
+        }
+
+    .ios-btn-secondary {
+        background: #f2f2f7;
+        color: #1c1c1e;
+        border: none;
+        border-radius: 14px;
+        font-weight: 600;
+        padding: 14px 28px;
+        transition: all 0.3s ease;
+    }
+
+        .ios-btn-secondary:hover {
+            background: #e5e5ea;
+            transform: translateY(-2px);
+            color: #1c1c1e;
+        }
+
+        .ios-btn-secondary:active {
+            transform: scale(0.97);
+        }
+
+    /* Alert Banner */
+    .ios-alert {
+        background: rgba(0, 122, 255, 0.08);
+        border: none;
+        border-radius: 16px;
+        color: #005bb5;
+        font-weight: 500;
+    }
+</style>
+
+<!-- Ambient Backgrounds -->
+<div class="bg-blob-edit-1"></div>
+<div class="bg-blob-edit-2"></div>
+
+<div class="container-fluid px-3 px-md-4 py-4 edit-page-wrapper">
 
     <!-- Page Header -->
-    <div class="d-flex flex-wrap justify-content-between
-                align-items-center gap-3 mb-4">
-
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Edit User</h2>
-            <p class="text-secondary mb-0">
+            <h2 class="fw-bold mb-1 text-dark" style="letter-spacing: -0.5px;">Edit User</h2>
+            <p class="text-secondary mb-0 fw-medium">
                 Update user information, role and account status.
             </p>
         </div>
 
-        <a asp-controller="Admin"
-           asp-action="UserDirectory"
-           class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i>
-            Back to Users
+        <a asp-controller="Admin" asp-action="UserDirectory" class="ios-btn-secondary text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i> Back to Users
         </a>
     </div>
 
@@ -31,27 +195,18 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-9 col-xxl-8">
 
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card ios-glass-card">
 
                 <!-- Card Header -->
-                <div class="card-header bg-white border-bottom p-4">
+                <div class="card-header bg-transparent border-bottom px-4 py-4">
                     <div class="d-flex align-items-center gap-3">
-
-                        <div class="rounded-3 bg-primary bg-opacity-10
-                                    text-primary d-flex align-items-center
-                                    justify-content-center"
-                             style="width:52px;height:52px;">
-
-                            <i class="bi bi-person-gear fs-3"></i>
+                        <div class="ios-icon-box">
+                            <i class="bi bi-person-gear fs-4"></i>
                         </div>
-
                         <div>
-                            <h5 class="fw-bold mb-1">
-                                User Information
-                            </h5>
-
-                            <p class="text-secondary small mb-0">
-                                Make changes to the selected account.
+                            <h5 class="fw-bold mb-1 text-dark">User Information</h5>
+                            <p class="text-secondary small mb-0 fw-medium">
+                                Make changes to the selected account securely.
                             </p>
                         </div>
                     </div>
@@ -60,153 +215,80 @@
                 <!-- Form -->
                 <div class="card-body p-4 p-md-5">
 
-                    <form asp-controller="Admin"
-                          asp-action="EditUser"
-                          method="post">
-
+                    <form asp-controller="Admin" asp-action="EditUser" method="post">
                         @Html.AntiForgeryToken()
 
-                        <div asp-validation-summary="ModelOnly"
-                             class="alert alert-danger"
-                             role="alert"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 border-0 shadow-sm" role="alert"></div>
 
                         <input asp-for="Id" type="hidden" />
 
-                        <!-- User ID -->
+                        <!-- User ID (Readonly) -->
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                User ID
-                            </label>
-
-                            <input asp-for="Id"
-                                   class="form-control bg-light"
-                                   readonly />
-
-                            <div class="form-text">
-                                The user ID cannot be changed.
+                            <label class="form-label fw-semibold text-secondary small text-uppercase" style="letter-spacing: 0.5px;">User ID</label>
+                            <input asp-for="Id" class="form-control ios-input" readonly />
+                            <div class="form-text mt-2 small text-muted">
+                                <i class="bi bi-lock-fill me-1"></i> The unique user ID cannot be changed.
                             </div>
                         </div>
 
                         <div class="row g-4">
-
                             <!-- Full Name -->
                             <div class="col-12 col-md-6">
-                                <label asp-for="FullName"
-                                       class="form-label fw-semibold">
-                                    Full Name
-                                </label>
-
-                                <input asp-for="FullName"
-                                       class="form-control"
-                                       placeholder="Enter full name"
-                                       autocomplete="name" />
-
-                                <span asp-validation-for="FullName"
-                                      class="text-danger small"></span>
+                                <label asp-for="FullName" class="form-label fw-semibold text-secondary small text-uppercase" style="letter-spacing: 0.5px;">Full Name</label>
+                                <input asp-for="FullName" class="form-control ios-input" placeholder="Enter full name" autocomplete="name" />
+                                <span asp-validation-for="FullName" class="text-danger small fw-medium mt-1 d-block"></span>
                             </div>
 
                             <!-- Email -->
                             <div class="col-12 col-md-6">
-                                <label asp-for="Email"
-                                       class="form-label fw-semibold">
-                                    Email Address
-                                </label>
-
-                                <input asp-for="Email"
-                                       type="email"
-                                       class="form-control"
-                                       placeholder="name@example.com"
-                                       autocomplete="email" />
-
-                                <span asp-validation-for="Email"
-                                      class="text-danger small"></span>
+                                <label asp-for="Email" class="form-label fw-semibold text-secondary small text-uppercase" style="letter-spacing: 0.5px;">Email Address</label>
+                                <input asp-for="Email" type="email" class="form-control ios-input" placeholder="name@example.com" autocomplete="email" />
+                                <span asp-validation-for="Email" class="text-danger small fw-medium mt-1 d-block"></span>
                             </div>
 
                             <!-- Role -->
                             <div class="col-12 col-md-6">
-                                <label asp-for="Role"
-                                       class="form-label fw-semibold">
-                                    System Role
-                                </label>
-
-                                <select asp-for="Role"
-                                        asp-items="@(ViewBag.Roles as IEnumerable<SelectListItem>)"
-                                        class="form-select">
-                                    <option value="">
-                                        Select a role
-                                    </option>
+                                <label asp-for="Role" class="form-label fw-semibold text-secondary small text-uppercase" style="letter-spacing: 0.5px;">System Role</label>
+                                <select asp-for="Role" asp-items="@(ViewBag.Roles as IEnumerable<SelectListItem>)" class="form-select ios-input">
+                                    <option value="">Select a role</option>
                                 </select>
-
-                                <span asp-validation-for="Role"
-                                      class="text-danger small"></span>
+                                <span asp-validation-for="Role" class="text-danger small fw-medium mt-1 d-block"></span>
                             </div>
 
                             <!-- Account Status -->
                             <div class="col-12 col-md-6">
-
-                                <label class="form-label fw-semibold">
-                                    Account Status
-                                </label>
-
-                                <div class="border rounded-3 p-3 h-100">
-                                    <div class="form-check form-switch">
-
-                                        <input asp-for="IsActive"
-                                               class="form-check-input"
-                                               type="checkbox"
-                                               role="switch"
-                                               id="IsActive" />
-
-                                        <label asp-for="IsActive"
-                                               class="form-check-label fw-semibold"
-                                               id="statusLabel">
+                                <label class="form-label fw-semibold text-secondary small text-uppercase" style="letter-spacing: 0.5px;">Account Status</label>
+                                <div class="ios-input d-flex flex-column justify-content-center h-100" style="padding-top: 10px; padding-bottom: 10px;">
+                                    <div class="form-check form-switch ios-switch d-flex align-items-center gap-3 mb-0">
+                                        <input asp-for="IsActive" class="form-check-input m-0" type="checkbox" role="switch" id="IsActive" />
+                                        <label asp-for="IsActive" class="form-check-label fw-bold text-dark mb-0 mt-1" id="statusLabel">
                                             Active Account
                                         </label>
-
                                     </div>
-
-                                    <small class="text-secondary d-block mt-2"
-                                           id="statusDescription">
-                                        This account is active.
-                                    </small>
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- Information Notice -->
-                        <div class="alert alert-info border-0 rounded-3 mt-4 mb-0">
-                            <i class="bi bi-info-circle me-2"></i>
-                            Review the user's details before saving.
+                        <div class="alert ios-alert mt-5 mb-0 px-4 py-3 d-flex align-items-center gap-3">
+                            <i class="bi bi-info-circle-fill fs-5"></i>
+                            <span class="small">Review the user's details carefully before saving changes to the system.</span>
                         </div>
 
                         <!-- Buttons -->
-                        <div class="d-flex flex-wrap justify-content-end
-                                    gap-2 mt-4">
-
-                            <a asp-controller="Admin"
-                               asp-action="UserDirectory"
-                               class="btn btn-light border px-4">
+                        <div class="d-flex flex-wrap justify-content-end gap-3 mt-4 pt-2">
+                            <a asp-controller="Admin" asp-action="UserDirectory" class="ios-btn-secondary text-decoration-none text-center">
                                 Cancel
                             </a>
-
-                            <button type="submit"
-                                    class="btn btn-primary px-4"
-                                    id="saveUserButton">
-
-                                <i class="bi bi-check2-circle me-1"></i>
-                                Save Changes
+                            <button type="submit" class="ios-btn-primary" id="saveUserButton">
+                                <i class="bi bi-check2-circle me-1"></i> Save Changes
                             </button>
                         </div>
-
                     </form>
                 </div>
             </div>
 
-            <p class="text-secondary small text-center mt-3">
-                <i class="bi bi-shield-check me-1"></i>
-                Changes are submitted securely through the server.
-            </p>
+            
 
         </div>
     </div>
@@ -217,27 +299,40 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Form Submit Animation
+            const form = document.querySelector('form');
+            const saveBtn = document.getElementById('saveUserButton');
 
+            if (form && saveBtn) {
+                form.addEventListener('submit', function (e) {
+                    if (form.checkValidity()) {
+                        saveBtn.style.pointerEvents = 'none';
+                        saveBtn.style.opacity = '0.85';
+                        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Saving...';
+                    }
+                });
+            }
+
+            // Status Toggle Logic
             const statusCheckbox = document.getElementById("IsActive");
             const statusLabel = document.getElementById("statusLabel");
-            const statusDescription =
-                document.getElementById("statusDescription");
 
             function updateStatusText() {
                 if (statusCheckbox.checked) {
                     statusLabel.textContent = "Active Account";
-                    statusDescription.textContent =
-                        "This account is active.";
+                    statusLabel.style.color = "#1c1c1e";
                 } else {
                     statusLabel.textContent = "Inactive Account";
-                    statusDescription.textContent =
-                        "This account is marked as inactive.";
+                    statusLabel.style.color = "#8e8e93";
                 }
             }
 
-            statusCheckbox.addEventListener("change", updateStatusText);
+            if (statusCheckbox && statusLabel) {
+                statusCheckbox.addEventListener("change", updateStatusText);
+                updateStatusText();
+            }
 
-            updateStatusText();
+           
         });
     </script>
 }
