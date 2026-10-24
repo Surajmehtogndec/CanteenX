@@ -371,6 +371,7 @@ if (!endpoint) {
                 createElement("i", "bi bi-person-vcard text-primary me-2"),
                 document.createTextNode("View Profile")
             );
+
             viewItem.appendChild(viewButton);
 
             const editItem = createElement("li");
@@ -383,7 +384,17 @@ if (!endpoint) {
             );
             editItem.appendChild(editButton);
 
-            menu.append(viewItem, editItem);
+            const deleteItem = createElement("li");
+            const deleteButton = createElement("button", "dropdown-item text-danger");
+            deleteButton.type = "button";
+            deleteButton.dataset.action = "delete";
+            deleteButton.append(
+                createElement("i", "bi bi-trash text-danger me-2"),
+                document.createTextNode("Delete User")
+            );
+            deleteItem.appendChild(deleteButton);
+
+            menu.append(viewItem, editItem, deleteItem);
             dropdown.append(menuButton, menu);
             actionCell.appendChild(dropdown);
 
@@ -675,9 +686,13 @@ if (!endpoint) {
     });
 
     // Event delegation: works for rows created after each API response.
+   
+    // Event delegation: works for rows created after each API response.
     elements.tbody.addEventListener("click", event => {
         const button = event.target.closest("[data-action]");
+
         if (!button) return;
+        console.log("1. Action button clicked:", button.dataset.action);
 
         const row = button.closest("tr");
         if (!row) return;
@@ -690,9 +705,42 @@ if (!endpoint) {
 
         if (button.dataset.action === "view") {
             showProfile(user);
-        } else if (button.dataset.action === "edit") {
+        }
+        else if (button.dataset.action === "edit") {
+            event.preventDefault();
+            // Pehle userId declare karein.
+            const userId = String(user.id ?? "").trim();
+            const editUrl = window.userDirectoryConfig?.editUrl;
+
+            console.log("4. Config:", window.userDirectoryConfig);
+             console.log("Edit URL:", editUrl);
+             console.log("Selected User ID:", userId);
+
+            if (!editUrl) {
+                showError("Edit page URL is not configured.");
+                console.error("Missing userDirectoryConfig.editUrl");
+                return;
+            }
+
+        
+
+            if (!userId) {
+                showError("Unable to identify the selected user.");
+                return;
+            }
+
+            // URL format: /Admin/EditUser?id=USER_ID
+            const separator = editUrl.includes("?") ? "&" : "?";
+            const targetUrl =
+           `${editUrl}${separator}id=${encodeURIComponent(userId)}`;
+
+           console.log("Navigating to:", targetUrl);
+
+             window.location.href = targetUrl;
+        }
+        else if (button.dataset.action === "delete") {
             showError(
-                "Edit is not connected yet. Add a protected MVC action and API endpoint before enabling account changes."
+                "Delete functionality has not been implemented yet."
             );
         }
     });

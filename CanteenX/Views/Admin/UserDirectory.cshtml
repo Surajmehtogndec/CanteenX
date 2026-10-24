@@ -167,7 +167,8 @@
 @section Scripts {
     <script>
         window.userDirectoryConfig = {
-            endpoint: '@Url.Action("GetUserDirectory", "Admin")'
+            endpoint: '@Url.Action("GetUserDirectory", "Admin")',
+            editUrl: '@Url.Action("EditUser", "Admin")'
         };
 
         console.log(

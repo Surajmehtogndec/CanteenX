@@ -501,8 +501,211 @@ namespace CanteenX.Controllers
             }
 
         }
-        
-    
+
+
+        [HttpGet]
+        public async Task<IActionResult> EditUser(string id , CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            var accessToken = User.FindFirst("AccessToken")?.Value;
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            try
+            {
+                var client = _httpClientFactory.CreateClient(ApiClientName);
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/updateuserdirectory/{id}");
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                using var response = await client.SendAsync(request, cancellationToken);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return NotFound("User not found.");
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning(
+                        "Unable to load user {UserId}. API returned {StatusCode}",
+                        id, response.StatusCode);
+
+                    TempData["ErrorMessage"] =
+                        "Unable to load user details.";
+
+                    return RedirectToAction(nameof(UserDirectory));
+                }
+
+                using var document = await JsonDocument.ParseAsync(
+                    await response.Content.ReadAsStreamAsync(cancellationToken),
+                    cancellationToken: cancellationToken);
+
+                var root = document.RootElement;
+
+
+                // Supports either { data: { ... } } or { ... }
+                if (root.TryGetProperty("data", out var data))
+                {
+                    root = data;
+                }
+
+                var model = root.Deserialize<EditUserViewModel>(
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                if (model == null)
+                {
+                    TempData["ErrorMessage"] =
+                        "The API returned invalid user details.";
+
+                    return RedirectToAction(nameof(UserDirectory));
+                }
+
+                model.Id = id;
+                LoadEditUserRoles(model.Role);
+
+                return View(model);
+
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "API connection failed while loading user {UserId}", id);
+
+                TempData["ErrorMessage"] =
+                    "Unable to connect to the API.";
+
+                return RedirectToAction(nameof(UserDirectory));
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Invalid JSON received from API while loading user {UserId}", id);
+                TempData["ErrorMessage"] =
+                    "Received invalid data from the API.";
+                return RedirectToAction(nameof(UserDirectory));
+            }
+
+        }
+
+        // POST: /Admin/EditUser
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(
+            EditUserViewModel model,
+            CancellationToken cancellationToken)
+        {
+            if (!ModelState.IsValid)
+            {
+                LoadEditUserRoles(model.Role);
+                return View(model);
+            }
+
+            var accessToken = User.FindFirst("AccessToken")?.Value;
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient(ApiClientName);
+
+                using var request = new HttpRequestMessage(
+                    HttpMethod.Put,
+                    $"api/admin/updateuserdirectory/{Uri.EscapeDataString(model.Id)}");
+
+                request.Headers.Authorization =
+                    new AuthenticationHeaderValue("Bearer", accessToken);
+
+                request.Content = JsonContent.Create(new
+                {
+                    model.FullName,
+                    model.Email,
+                    model.Role,
+                    model.IsActive
+                });
+
+                using var response = await client.SendAsync(
+                    request, cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] =
+                        "User details updated successfully.";
+
+                    return RedirectToAction(nameof(UserDirectory));
+                }
+
+                var errorBody = await response.Content.ReadAsStringAsync(
+                    cancellationToken);
+
+                _logger.LogWarning(
+                    "User update failed for {UserId}. Status: {StatusCode}. Response: {Response}",
+                    model.Id, response.StatusCode, errorBody);
+
+                if (response.StatusCode ==
+                    System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                if (response.StatusCode ==
+                    System.Net.HttpStatusCode.Forbidden)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "You are not authorized to update this user.");
+                }
+                else
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "Unable to update user details. Check the supplied information.");
+                }
+
+                LoadEditUserRoles(model.Role);
+                return View(model);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(
+                    ex, "API connection failed while updating user {UserId}",
+                    model.Id);
+
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Unable to connect to the API.");
+
+                LoadEditUserRoles(model.Role);
+                return View(model);
+            }
+        }
+
+
+
+        private void LoadEditUserRoles(string? selectedRole)
+        {
+            ViewBag.Roles = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                new[]
+                {
+                    new { Value = "Admin", Text = "Admin" },
+                    new { Value = "Student", Text = "Student" },
+                    new { Value = "CanteenStaff", Text = "Canteen Staff" }
+                },
+                "Value",
+                "Text",
+                selectedRole);
+        }
+
     }
 
     }
