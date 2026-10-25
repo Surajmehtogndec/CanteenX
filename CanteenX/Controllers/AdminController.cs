@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuestPDF.Helpers;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
@@ -634,6 +637,148 @@ namespace CanteenX.Controllers
                 "Value",
                 "Text",
                 selectedRole);
+        }
+
+
+
+        [HttpDelete("Admin/DeleteUser/{id}")]
+        public async Task<IActionResult> DeleteUser(string id, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return Json(new { success = false, message = "User ID is required." });
+            }
+
+            // Session se token nikalein (Jaisa EditUser mein kiya tha)
+            var accessToken = User.FindFirst("AccessToken")?.Value;
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                return Json(new { success = false, message = "Session expired. Please log in again." });
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient(ApiClientName);
+
+                // CanteenX.API ka actual backend endpoint (Iska route check kar lein)
+                using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/admin/deleteuserdirectory/{id}");
+
+                // API ko Bearer token bhejein
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                using var response = await client.SendAsync(request, cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "User deleted successfully." });
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return Json(new { success = false, message = "User not found." });
+                }
+                else
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
+                    _logger.LogWarning("Failed to delete user {UserId}. Response: {Error}", id, errorBody);
+                    return Json(new { success = false, message = "Failed to delete user. Ensure the user is not linked to other records." });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while deleting user {UserId}", id);
+                return Json(new { success = false, message = "Server error occurred while connecting to the API." });
+            }
+        }
+
+        public class ExportPdfDto
+        {
+            public string? FullName { get; set; }
+            public string? Email { get; set; }
+            public string? Role { get; set; }
+            public string? IsActive { get; set; }
+            public string? CreatedAt { get; set; }
+        }
+
+        [HttpPost("Admin/ExportUserPdf")]
+        public async Task<IActionResult> ExportUsersPdf([FromBody] List<ExportPdfDto> users)
+        {
+            if (users == null || !users.Any())
+            {
+                return BadRequest("No users data received.");
+            }
+
+            // QuestPDF Community License (Program.cs mein bhi likh sakte hain)
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1.5f, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(10).FontFamily(Fonts.Arial));
+
+                    // PDF Header
+                    page.Header().PaddingBottom(10).Row(row =>
+                    {
+                        row.RelativeItem().Column(col =>
+                        {
+                            col.Item().Text("CanteenX User Directory").FontSize(20).SemiBold().FontColor(Colors.Red.Medium);
+                            col.Item().Text($"Generated on: {DateTime.Now:dd MMM yyyy hh:mm tt}").FontSize(10).FontColor(Colors.Grey.Medium);
+                        });
+                    });
+
+                    // Table Content
+                    page.Content().Table(table =>
+                    {
+                        // 5 Columns
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(); // Name
+                            columns.RelativeColumn(); // Email
+                            columns.RelativeColumn(); // Role
+                            columns.RelativeColumn(); // Status
+                            columns.RelativeColumn(); // Joined
+                        });
+
+                        // Table Header
+                        table.Header(header =>
+                        {
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Name").SemiBold();
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Email").SemiBold();
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Role").SemiBold();
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Status").SemiBold();
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Joined").SemiBold();
+                        });
+
+                        // Table Data Rows
+                        foreach (var user in users)
+                        {
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.FullName);
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Email);
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Role);
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.IsActive);
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.CreatedAt);
+                        }
+                    });
+
+                    // Footer (Page Numbers)
+                    page.Footer().AlignCenter().Text(x =>
+                    {
+                        x.Span("Page ");
+                        x.CurrentPageNumber();
+                        x.Span(" of ");
+                        x.TotalPages();
+                    });
+                });
+            });
+
+            // Generate PDF aur Return as File
+            byte[] pdfBytes = document.GeneratePdf();
+            return File(pdfBytes, "application/pdf", "CanteenX_Selected_Users.pdf");
+
         }
 
     }

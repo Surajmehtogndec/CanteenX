@@ -1,17 +1,7 @@
-﻿
-
-(() => {
+﻿(() => {
     "use strict";
-    
 
-const endpoint = window.userDirectoryConfig?.endpoint;
-
-    if (!endpoint) {
-        showError(
-            "User Directory endpoint is not configured. Check UserDirectory.cshtml."
-        );
-    
-    } 
+    const endpoint = window.userDirectoryConfig?.endpoint;
 
     const elements = {
         search: document.getElementById("udSearch"),
@@ -38,7 +28,7 @@ const endpoint = window.userDirectoryConfig?.endpoint;
 
     const state = {
         pageNumber: 1,
-        pageSize: Number(elements.pageSize.value),
+        pageSize: Number(elements.pageSize?.value) || 10,
         searchTerm: "",
         status: "",
         role: "",
@@ -58,11 +48,10 @@ const endpoint = window.userDirectoryConfig?.endpoint;
     };
 
     function normalizeRole(role) {
-        return roleLabels[role] ? role : (role || "Unknown");
+        return roleLabels[role] ? roleLabels[role] : (role || "Unknown");
     }
 
     function getStatus(user) {
-        // API DTO supplies IsActive; Pending is not inferred.
         return user.isActive === true ? "Active" : "Inactive";
     }
 
@@ -97,12 +86,41 @@ const endpoint = window.userDirectoryConfig?.endpoint;
     }
 
     function showError(message) {
+        if (!elements.errorMessage || !elements.error) return;
         elements.errorMessage.textContent = message;
         elements.error.classList.remove("d-none");
     }
 
     function hideError() {
+        if (!elements.error) return;
         elements.error.classList.add("d-none");
+    }
+
+    // Shared helper to navigate to Edit page with all user query params
+    function navigateToEditUser(user) {
+        const userId = String(user?.id ?? "").trim();
+        const editUrl = window.userDirectoryConfig?.editUrl;
+
+        if (!editUrl) {
+            showError("Edit page URL is not configured.");
+            return;
+        }
+
+        if (!userId) {
+            showError("Unable to identify the selected user.");
+            return;
+        }
+
+        const params = new URLSearchParams({
+            id: userId,
+            fullName: String(user.fullName ?? ""),
+            email: String(user.email ?? ""),
+            role: String(user.role ?? ""),
+            isActive: String(Boolean(user.isActive))
+        });
+
+        const separator = editUrl.includes("?") ? "&" : "?";
+        window.location.href = `${editUrl}${separator}${params.toString()}`;
     }
 
     function showLoading() {
@@ -126,7 +144,11 @@ const endpoint = window.userDirectoryConfig?.endpoint;
     }
 
     async function loadUsers(pageNumber = state.pageNumber) {
-      console.log("loadUsers() started");
+        if (!endpoint) {
+            showError("User Directory endpoint is not configured. Check UserDirectory.cshtml.");
+            return;
+        }
+
         state.pageNumber = Math.max(1, pageNumber);
 
         if (state.requestController) {
@@ -153,7 +175,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
         elements.table.classList.remove("d-none");
 
         try {
-            
             const response = await fetch(`${endpoint}?${query.toString()}`, {
                 method: "GET",
                 headers: { "Accept": "application/json" },
@@ -177,9 +198,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
 
             const responseData = await response.json();
 
-            // Support both response shapes:
-            // 1) API envelope: { success, message, data: { items, pageNumber, ... } }
-            // 2) Direct MVC response: { items, pageNumber, ... }
             if (responseData?.success === false) {
                 throw new Error(responseData.message || "Unable to retrieve users.");
             }
@@ -203,7 +221,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
 
             elements.pageSize.value = String(state.pageSize);
 
-            // Remove selections for records that are no longer on this page.
             const visibleIds = new Set(state.items.map(user => String(user.id)));
 
             for (const id of state.selectedIds) {
@@ -256,7 +273,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
             const name = String(user.fullName || "Unnamed user");
             const email = String(user.email || "—");
             const role = String(user.role || "Unknown");
-           
             const status = getStatus(user);
 
             const row = createElement("tr", "ud-row");
@@ -265,7 +281,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
             row.dataset.email = email;
             row.dataset.role = role;
             row.dataset.status = status;
-          
             row.dataset.createdAt = formatDate(user.createdAt);
 
             // Selection checkbox
@@ -331,18 +346,9 @@ const endpoint = window.userDirectoryConfig?.endpoint;
             statusBadge.append(statusIcon, document.createTextNode(status));
             statusCell.appendChild(statusBadge);
 
-           
-            // Last Active isn't provided by the current directory DTO.
-
             // Joined Date
             const joinedDate = formatDate(user.createdAt);
-
-            const joinedDateCell = createElement(
-                "td",
-                "ud-lastactive",
-                joinedDate
-            );
-
+            const joinedDateCell = createElement("td", "ud-lastactive", joinedDate);
             joinedDateCell.title = user.createdAt
                 ? `Joined: ${user.createdAt}`
                 : "Joined date is not available.";
@@ -368,7 +374,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
                 createElement("i", "bi bi-person-vcard text-primary me-2"),
                 document.createTextNode("View Profile")
             );
-
             viewItem.appendChild(viewButton);
 
             const editItem = createElement("li");
@@ -508,15 +513,12 @@ const endpoint = window.userDirectoryConfig?.endpoint;
 
         elements.selectedCount.textContent = String(state.selectedIds.size);
         elements.bulkbar.hidden = state.selectedIds.size === 0;
-
-        // Only current-page selections are exported by this view.
         elements.exportSelected.disabled = selectedVisible.length === 0;
     }
 
     function csvEscape(value) {
         let text = String(value ?? "");
 
-        // Reduce CSV formula injection risks in spreadsheet applications.
         if (/^[\s]*[=+\-@]/.test(text)) {
             text = "'" + text;
         }
@@ -532,7 +534,7 @@ const endpoint = window.userDirectoryConfig?.endpoint;
 
         const header = [
             "User ID", "Name", "Email", "Role",
-            "Status",  "Last Active", "Joined Date"
+            "Status", "Last Active", "Joined Date"
         ];
 
         const lines = [
@@ -543,8 +545,7 @@ const endpoint = window.userDirectoryConfig?.endpoint;
                 user.email,
                 normalizeRole(user.role),
                 getStatus(user),
-               
-                "", // Last Active is not supplied by the API DTO.
+                "",
                 formatDate(user.createdAt)
             ])
         ];
@@ -565,54 +566,163 @@ const endpoint = window.userDirectoryConfig?.endpoint;
         link.click();
         link.remove();
 
-        // Delay revocation for compatibility with browser download handling.
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    function appendDetail(container, label, value) {
-        const column = createElement("div", "col-12 col-sm-6");
-        column.appendChild(createElement("small", "text-muted fw-bold text-uppercase", label));
-        column.appendChild(createElement("div", "p-2 bg-light rounded-3 border mt-1", value || "—"));
-        container.appendChild(column);
+    // =========================================================
+    // PREMIUM iOS USER PROFILE MODAL (Contact Card Style)
+    // =========================================================
+    function appendIosRow(list, iconClass, iconBg, label, value, isLast = false) {
+        const item = createElement(
+            "div",
+            `d-flex align-items-center justify-content-between py-3 px-3 ${isLast ? "" : "border-bottom"}`
+        );
+        item.style.borderColor = "rgba(60, 60, 67, 0.08)";
+
+        const left = createElement("div", "d-flex align-items-center gap-3");
+        const iconBox = createElement(
+            "div",
+            "d-flex align-items-center justify-content-center rounded-3",
+            ""
+        );
+        iconBox.style.width = "34px";
+        iconBox.style.height = "34px";
+        iconBox.style.background = iconBg;
+        iconBox.appendChild(createElement("i", `${iconClass} fs-6`));
+
+        const labelEl = createElement("span", "fw-medium text-secondary small", label);
+        left.append(iconBox, labelEl);
+
+        const right = createElement(
+            "span",
+            "fw-semibold text-dark small text-end text-break ms-3",
+            value || "—"
+        );
+
+        item.append(left, right);
+        list.appendChild(item);
     }
 
     function showProfile(user) {
-        elements.modalTitle.textContent = "User Profile";
+        elements.modalTitle.textContent = "Contact Card";
         elements.modalBody.replaceChildren();
 
-        const top = createElement("div", "d-flex align-items-center gap-3 mb-4");
-        top.appendChild(
-            createElement(
-                "div",
-                "ud-avatar",
-                String(user.fullName || "?").trim().charAt(0).toUpperCase()
-            )
+        const name = String(user.fullName || "Unnamed user");
+        const initial = name.trim().charAt(0).toUpperCase() || "?";
+        const roleLabel = normalizeRole(user.role);
+        const status = getStatus(user);
+        const isActive = status === "Active";
+
+        // 1. iOS Hero Header
+        const hero = createElement("div", "text-center pb-4 pt-2");
+
+        const avatarWrap = createElement("div", "position-relative d-inline-block mb-3");
+        const avatar = createElement(
+            "div",
+            "d-flex align-items-center justify-content-center fw-bold text-white shadow",
+            initial
+        );
+        avatar.style.width = "76px";
+        avatar.style.height = "76px";
+        avatar.style.fontSize = "1.85rem";
+        avatar.style.borderRadius = "24px";
+        avatar.style.background = "linear-gradient(135deg, #e8281a 0%, #ff6b5b 100%)";
+        avatar.style.boxShadow = "0 12px 24px rgba(232, 40, 26, 0.25)";
+
+        const statusDot = createElement("span", "position-absolute");
+        statusDot.style.width = "16px";
+        statusDot.style.height = "16px";
+        statusDot.style.borderRadius = "50%";
+        statusDot.style.bottom = "2px";
+        statusDot.style.right = "2px";
+        statusDot.style.border = "2.5px solid #ffffff";
+        statusDot.style.backgroundColor = isActive ? "#34c759" : "#8e8e93";
+
+        avatarWrap.append(avatar, statusDot);
+
+        const titleEl = createElement("h4", "fw-bold text-dark mb-1", name);
+        titleEl.style.letterSpacing = "-0.4px";
+
+        const badgeRow = createElement("div", "d-flex justify-content-center align-items-center gap-2 mt-2");
+
+        const roleBadge = createElement("span", "badge rounded-pill px-3 py-1 fw-semibold", roleLabel);
+        roleBadge.style.background = "rgba(0, 122, 255, 0.1)";
+        roleBadge.style.color = "#007aff";
+        roleBadge.style.fontSize = "0.75rem";
+
+        const statusBadge = createElement("span", "badge rounded-pill px-3 py-1 fw-semibold", status);
+        statusBadge.style.background = isActive ? "rgba(52, 199, 89, 0.12)" : "rgba(142, 142, 147, 0.14)";
+        statusBadge.style.color = isActive ? "#248a3d" : "#636366";
+        statusBadge.style.fontSize = "0.75rem";
+
+        badgeRow.append(roleBadge, statusBadge);
+        hero.append(avatarWrap, titleEl, badgeRow);
+
+        // 2. iOS Grouped Inset List
+        const groupBox = createElement("div", "rounded-4 overflow-hidden border");
+        groupBox.style.background = "rgba(242, 242, 247, 0.65)";
+        groupBox.style.borderColor = "rgba(60, 60, 67, 0.08)";
+
+        appendIosRow(
+            groupBox,
+            "bi bi-envelope-fill text-primary",
+            "rgba(0, 122, 255, 0.12)",
+            "Email",
+            user.email
+        );
+        appendIosRow(
+            groupBox,
+            "bi bi-shield-lock-fill text-warning",
+            "rgba(255, 149, 0, 0.14)",
+            "System Role",
+            roleLabel
+        );
+        appendIosRow(
+            groupBox,
+            "bi bi-calendar-check-fill text-success",
+            "rgba(52, 199, 89, 0.12)",
+            "Joined Date",
+            formatDate(user.createdAt)
+        );
+        appendIosRow(
+            groupBox,
+            "bi bi-fingerprint text-secondary",
+            "rgba(142, 142, 147, 0.14)",
+            "Account ID",
+            String(user.id || "—"),
+            true
         );
 
-        const identity = createElement("div");
-        identity.appendChild(
-            createElement("h4", "mb-1 fw-bold text-dark", user.fullName || "Unnamed user")
+        // 3. Quick Edit Action Button (Uses your exact URLSearchParams logic)
+        const actionWrap = createElement("div", "mt-4");
+        const editBtn = createElement(
+            "button",
+            "btn w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2",
+            ""
         );
-        identity.appendChild(
-            createElement("div", "text-muted small", `Account ID: ${user.id}`)
+        editBtn.type = "button";
+        editBtn.style.background = "rgba(232, 40, 26, 0.1)";
+        editBtn.style.color = "#e8281a";
+        editBtn.style.borderRadius = "14px";
+        editBtn.style.padding = "12px";
+
+        editBtn.append(
+            createElement("i", "bi bi-pencil-square"),
+            document.createTextNode("Edit User Details")
         );
 
-        top.appendChild(identity);
+        editBtn.addEventListener("click", () => {
+            navigateToEditUser(user);
+        });
 
-        const details = createElement("div", "row g-3");
+        actionWrap.appendChild(editBtn);
 
-        appendDetail(details, "Email", user.email);
-        
-        appendDetail(details, "System Role", normalizeRole(user.role));
-        appendDetail(details, "Status", getStatus(user));
-        appendDetail(details, "Joined", formatDate(user.createdAt));
-
-        elements.modalBody.append(top, details);
+        elements.modalBody.append(hero, groupBox, actionWrap);
 
         bootstrap.Modal.getOrCreateInstance(elements.modal).show();
     }
 
-    // Search debounce prevents a request for every keystroke.
+    // Event Listeners
     elements.search.addEventListener("input", () => {
         clearTimeout(state.searchTimer);
 
@@ -641,7 +751,6 @@ const endpoint = window.userDirectoryConfig?.endpoint;
     elements.pageSize.addEventListener("change", () => {
         const requestedSize = Number(elements.pageSize.value);
 
-        // Keep client requests within the API's expected page-size limit.
         state.pageSize = [5, 10, 25, 50].includes(requestedSize)
             ? requestedSize
             : 10;
@@ -666,8 +775,67 @@ const endpoint = window.userDirectoryConfig?.endpoint;
         updateBulkbar();
     });
 
-    elements.export.addEventListener("click", () => {
-        exportRows(state.items, "canteenx-users-current-page.csv");
+    elements.export.addEventListener("click",async () => {
+        // 1. Sirf checked/selected users ko filter karein
+        const selectedUsers = state.items
+            .filter(user => state.selectedIds.has(String(user.id)))
+            .map(user => ({
+                FullName: String(user.fullName || "—"),
+                Email: String(user.email || "—"),
+                Role: normalizeRole(user.role),
+                Status: getStatus(user),
+                JoinedDate: formatDate(user.createdAt)
+            }));
+        if (selectedUsers.length === 0) {
+            showError("Please select at least one user to export.");
+            return;
+        }
+
+        // Button state change to Loading
+        const originalText = elements.exportSelected.innerHTML;
+        elements.exportSelected.disabled = true;
+        elements.exportSelected.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Generating PDF...';
+
+       try{
+           // 2. Data Backend C# Controller ko bhejein
+           const response = await fetch('/Admin/ExportUserPdf', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json',
+                   'Accept': 'application/pdf'
+               },
+               body: JSON.stringify(selectedUsers)
+           });
+
+           if (!response.ok) {
+               throw new Error("Failed to generate PDF from server.");
+           }
+           // 3. Response se PDF blob le kar download trigger karein
+           const blob = await response.blob();
+           const downloadUrl = window.URL.createObjectURL(blob);
+
+           const link = document.createElement('a');
+           link.href = downloadUrl;
+           link.download = "CanteenX_Selected_Users.pdf";
+           document.body.appendChild(link);
+           link.click();
+           link.remove();
+
+           // Cleanup
+           setTimeout(() => window.URL.revokeObjectURL(downloadUrl), 1000);
+
+        }
+
+
+       catch (error) {
+           Swal.fire('Export Failed', error.message, 'error');
+       } finally {
+           // Button state restore karein
+           elements.exportSelected.innerHTML = originalText;
+           elements.exportSelected.disabled = false;
+       }
+
+       
     });
 
     elements.exportSelected.addEventListener("click", () => {
@@ -682,14 +850,11 @@ const endpoint = window.userDirectoryConfig?.endpoint;
         loadUsers(state.pageNumber);
     });
 
-    // Event delegation: works for rows created after each API response.
-   
-    // Event delegation: works for rows created after each API response.
+    // Event delegation for View / Edit / Delete actions
     elements.tbody.addEventListener("click", event => {
         const button = event.target.closest("[data-action]");
-
         if (!button) return;
-      
+
         const row = button.closest("tr");
         if (!row) return;
 
@@ -701,42 +866,62 @@ const endpoint = window.userDirectoryConfig?.endpoint;
 
         if (button.dataset.action === "view") {
             showProfile(user);
-        }
-        else if (button.dataset.action === "edit") {
+        } else if (button.dataset.action === "edit") {
             event.preventDefault();
             event.stopPropagation();
-
-            // Pehle userId declare karein.
+            navigateToEditUser(user);
+        } else if (button.dataset.action === "delete") {
             const userId = String(user.id ?? "").trim();
+            const userName = String(user.fullName || "this user");
 
-            const editUrl = window.userDirectoryConfig?.editUrl;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to delete ${userName}. This action cannot be undone!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e8281a',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                customClass: { popup: 'rounded-4 shadow-lg border' }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        // Ensure base API path matches your controller route
+                        const response = await fetch(`/Admin/DeleteUser/${userId}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Accept": "application/json",
+                                // "Authorization": `Bearer ${token}` // Agar JWT token chahiye toh yahan pass karein
+                            }
+                        });
 
-            if (!editUrl) {
-                showError("Edit page URL is not configured.");
-                return;
-            }
+                        const data = await response.json().catch(() => null);
 
-            if (!userId) {
-                showError("Unable to identify the selected user.");
-                return;
-            }
+                        if (!response.ok) {
+                            throw new Error(data?.message || `Failed to delete user.`);
+                        }
 
-            const params = new URLSearchParams({
-                id: String(user.id ?? ""),
-                fullName: String(user.fullName ?? ""),
-                email: String(user.email ?? ""),
-                role: String(user.role ?? ""),
-                isActive: String(Boolean(user.isActive))
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'User has been deleted successfully.',
+                            icon: 'success',
+                            confirmButtonColor: '#34c759',
+                            timer: 2000,
+                            customClass: { popup: 'rounded-4 shadow-lg border' }
+                        });
+
+                        loadUsers(state.pageNumber); // Table refresh
+                    } catch (error) {
+                        Swal.fire('Error!', error.message, 'error');
+                    }
+
+                }
             });
-            window.location.href = `${editUrl}?${params.toString()}`;
         }
-        else if (button.dataset.action === "delete") {
-            showError(
-                "Delete functionality has not been implemented yet."
-            );
-        }
-    });
 
-    // Initial request
-    loadUsers(1);
+            });
+
+            // Initial request
+            loadUsers(1);
+        
 })();

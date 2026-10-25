@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace CanteenX.Controllers
@@ -409,5 +410,7 @@ namespace CanteenX.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
             HttpContext.Session.SetString(SessionAccessToken, result.AccessToken);
         }
+
+
     }
 }
