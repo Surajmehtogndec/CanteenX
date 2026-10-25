@@ -696,8 +696,8 @@ namespace CanteenX.Controllers
             public string? FullName { get; set; }
             public string? Email { get; set; }
             public string? Role { get; set; }
-            public string? IsActive { get; set; }
-            public string? CreatedAt { get; set; }
+            public string? Status { get; set; }
+            public string? JoinedDate { get; set; }
         }
 
         [HttpPost("Admin/ExportUserPdf")]
@@ -707,6 +707,10 @@ namespace CanteenX.Controllers
             {
                 return BadRequest("No users data received.");
             }
+            try
+            {
+
+            
 
             // QuestPDF Community License (Program.cs mein bhi likh sakte hain)
             QuestPDF.Settings.License = LicenseType.Community;
@@ -718,7 +722,7 @@ namespace CanteenX.Controllers
                     page.Size(PageSizes.A4);
                     page.Margin(1.5f, Unit.Centimetre);
                     page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(10).FontFamily(Fonts.Arial));
+                    page.DefaultTextStyle(x => x.FontSize(10));
 
                     // PDF Header
                     page.Header().PaddingBottom(10).Row(row =>
@@ -749,18 +753,18 @@ namespace CanteenX.Controllers
                             header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Name").SemiBold();
                             header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Email").SemiBold();
                             header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Role").SemiBold();
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Status").SemiBold();
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Joined").SemiBold();
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("IsActive").SemiBold();
+                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("CreatedAt").SemiBold();
                         });
 
                         // Table Data Rows
                         foreach (var user in users)
                         {
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.FullName);
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Email);
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Role);
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.IsActive);
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.CreatedAt);
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.FullName ?? "_");
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Email ?? "_");
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Role ?? "_");
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Status ?? "_");
+                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.JoinedDate ?? "_");
                         }
                     });
 
@@ -778,7 +782,12 @@ namespace CanteenX.Controllers
             // Generate PDF aur Return as File
             byte[] pdfBytes = document.GeneratePdf();
             return File(pdfBytes, "application/pdf", "CanteenX_Selected_Users.pdf");
-
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("QUESTPDF ERROR: " + ex.ToString());
+                return StatusCode(500, new { message = "PDF Generation Error: " + ex.Message });
+            }
         }
 
     }
