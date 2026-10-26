@@ -9,11 +9,42 @@
     <link href="~/lib/boostrap/css/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/Admin/main.css" rel="stylesheet" asp-append-version="true" />
     <link rel="icon" type="image/png" href="~/favicon.png" asp-append-version="true" />
+    <style>
+        /* Loader ka CSS */
+        .global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff; /* White background */
+            z-index: 99999; /* Sabse upar dikhane ke liye */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+        }
 
+        /* Jab page load ho jaye toh is class se loader hide hoga */
+        .global-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+    </style>
   
 </head>
 
 <body>
+    
+    <!-- Global Logo Loading Screen Start -->
+    <div id="canteenx-loader" class="global-loader">
+        <!-- Logo Image (Path apne hisaab se check kar lein) -->
+        <img src="~/img/CanteenXLogo.png" alt="CanteenX Logo" class="loader-logo" />
+        
+    </div>
+    <!-- Global Logo Loading Screen End -->
+
 
     <!-- Mobile Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -278,8 +309,27 @@
                         customClass: { popup: 'rounded-4 shadow-lg border-0' }
                     });
                 });
+
+
         </script>
     }
+    <script>
+        // 1. Jab page puri tarah se load ho jaye, toh loader hide kar do
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('canteenx-loader');
+            if (loader) {
+                loader.classList.add('hidden');
+            }
+        });
+
+        // 2. Jab user kisi link par click kare ya form submit kare (naya page load ho raha ho), toh loader wapas show kar do
+        window.addEventListener('beforeunload', function () {
+            const loader = document.getElementById('canteenx-loader');
+            if (loader) {
+                loader.classList.remove('hidden');
+            }
+        });
+    </script>
     <script src="~/lib/boostrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/js/dashboard.js" asp-append-version="true"></script>
 

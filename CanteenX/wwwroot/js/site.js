@@ -58,6 +58,16 @@
         });
     });
 
+
+    // 2. Jab user kisi link par click kare ya form submit kare (naya page load ho raha ho), toh loader wapas show kar do
+            window.addEventListener('beforeunload', function () {
+                const loader = document.getElementById('canteenx-loader');
+                if (loader) {
+                    loader.classList.remove('hidden');
+                }
+            });
+
+
     /* =========================================
        3. SMOOTH SCROLL & MOBILE NAV CLOSE
        ========================================= */

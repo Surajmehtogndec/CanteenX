@@ -342,10 +342,20 @@
                 border: none;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             }
+
     </style>
 </head>
 
 <body>
+
+    <!-- Global Logo Loading Screen Start -->
+    <div id="canteenx-loader" class="global-loader">
+        <!-- Logo Image (Path apne hisaab se check kar lein) -->
+        <img src="~/img/CanteenXLogo.png" alt="CanteenX Logo" class="loader-logo" />
+        
+    </div>
+    <!-- Global Logo Loading Screen End -->
+
     <!-- ============================================================
          HEADER & iOS FROSTED GLASS RESPONSIVE NAVBAR
          ============================================================ -->
@@ -563,6 +573,16 @@
                 if (closeBtn) closeBtn.addEventListener("click", closeMenu);
                 if (backdrop) backdrop.addEventListener("click", closeMenu);
             });
+                // 1. Jab page puri tarah se load ho jaye, toh loader hide kar do
+            window.addEventListener('load', function () {
+                const loader = document.getElementById('canteenx-loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                }
+            });
+
+            
+
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

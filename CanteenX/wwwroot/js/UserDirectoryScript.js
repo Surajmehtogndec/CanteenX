@@ -115,6 +115,7 @@
             id: userId,
             fullName: String(user.fullName ?? ""),
             email: String(user.email ?? ""),
+            phoneNumber: String(user.phoneNumber ?? ""),
             role: String(user.role ?? ""),
             isActive: String(Boolean(user.isActive))
         });
@@ -311,7 +312,8 @@
 
             const identity = createElement("div");
             identity.appendChild(createElement("span", "ud-user-name", name));
-            identity.appendChild(createElement("span", "ud-user-id", `ID: ${id}`));
+            const phoneText = user.phoneNumber ? `Phone: ${user.phoneNumber}` : "Phone: Not Provided";
+            identity.appendChild(createElement("span", "ud-user-id", phoneText));
 
             userContainer.append(avatar, identity);
             userCell.appendChild(userContainer);
@@ -672,6 +674,13 @@
         );
         appendIosRow(
             groupBox,
+            "bi bi-telephone-fill text-success",
+            "rgba(52, 199, 89, 0.12)",
+            "Phone Number",
+            user.phoneNumber || "Not Provided"
+        );
+        appendIosRow(
+            groupBox,
             "bi bi-shield-lock-fill text-warning",
             "rgba(255, 149, 0, 0.14)",
             "System Role",
@@ -792,11 +801,13 @@
         }
 
         // Button state change to Loading
-        const originalText = elements.exportSelected.innerHTML;
-        elements.exportSelected.disabled = true;
-        elements.exportSelected.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Generating PDF...';
-
+        const originalText = elements.export.innerHTML;
+       
        try{
+            elements.export.disabled = true;
+            elements.export.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Generating PDF...';
+
+
            // 2. Data Backend C# Controller ko bhejein
            const response = await fetch('/Admin/ExportUserPdf', {
                method: 'POST',
@@ -831,8 +842,8 @@
            Swal.fire('Export Failed', error.message, 'error');
        } finally {
            // Button state restore karein
-           elements.exportSelected.innerHTML = originalText;
-           elements.exportSelected.disabled = false;
+           elements.export.innerHTML = originalText;
+           elements.export.disabled = false;
        }
 
        
