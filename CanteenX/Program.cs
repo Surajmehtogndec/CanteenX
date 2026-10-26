@@ -1,3 +1,5 @@
+using CanteenX.Service.Interface;
+using CanteenX.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
@@ -71,7 +73,7 @@ builder.Services
     );
 
 builder.Services.AddDistributedMemoryCache();
-
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(10);

@@ -4,13 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - CanteenX Admin</title>
-    <link href="~/adminassets/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/adminassets/libs/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
-
-    <link href="~/adminassets/css/main.css" rel="stylesheet" asp-append-version="true" />
-    
-    <link rel="icon" type="image/x-icon" href="~/favicon1.ico" asp-append-version="true" />
+    <title>@ViewData["Title"] - CanteenX </title>
+    <link href="~/lib/boostrap/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/boostrap/css/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/Admin/main.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="icon" type="image/png" href="~/favicon.png" asp-append-version="true" />
 
   
 </head>
@@ -264,7 +262,7 @@
     </div>
 
     <!-- SweetAlert2 CDN (Agar pehle se nahi hai) -->
-    <script src="~/adminassets/libs\sweetalert2@11.js"></script>
+   <script src="~/lib\sweetalert2@11.js"> </script>
 
     @if (TempData["LoginSuccess"] != null)
     {
@@ -282,8 +280,8 @@
                 });
         </script>
     }
-    <script src="~/adminassets/libs/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <script src="~/adminassets/js/dashboard.js" asp-append-version="true"></script>
+    <script src="~/lib/boostrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

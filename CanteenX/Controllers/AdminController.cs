@@ -1,14 +1,11 @@
 ﻿using CanteenX.Models.Admin;
 using CanteenX.Models.Auth;
+using CanteenX.Service.Interface;
+using CanteenX.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using QuestPDF.Helpers;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -17,227 +14,78 @@ namespace CanteenX.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IAdminService _adminService;
         private readonly ILogger<AdminController> _logger;
 
-        private const string ApiClientName = "CanteenX.Api";
-
-        public AdminController(IHttpClientFactory httpClientFactory, ILogger<AdminController> logger)
+        public AdminController(IAdminService adminService, ILogger<AdminController> logger)
         {
-            _httpClientFactory = httpClientFactory;
+            _adminService = adminService;
             _logger = logger;
         }
 
-        public IActionResult AdminDashboard()
-        {
-            return View();
-        }
-
-
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-
-        public IActionResult UserDirectory(){
-            return View();
-        }
-        public IActionResult Transactions()
-        {
-            return View();
-        }
-
-        public IActionResult OrderHistorys()
-        {
-            return View();
-        }
-
-        public IActionResult CanteenDirectory()
-        {
-            return View();
-        }
-
-
+        public IActionResult AdminDashboard() => View();
+        public IActionResult UserDirectory() => View();
+        public IActionResult Transactions() => View();
+        public IActionResult OrderHistorys() => View();
+        public IActionResult CanteenDirectory() => View();
+        public IActionResult RegisterCanteenLogin() => View();
 
         [HttpGet]
         public async Task<IActionResult> UserProfile()
         {
-            // 1. Logged-in user ki ID nikalein (Testing ke liye default id fallback add hai)
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "test-admin-id";
+            var profileData = await _adminService.GetProfileDataAsync(userId);
 
-            // 2. Apne production-ready method ko call karein
-            var profileData = await LoadProfileDataAsync(userId);
-
-            // 3. Agar API fail ho jaye ya data na mile, toh empty model banayein taaki page crash na ho
             if (profileData == null)
             {
                 TempData["ErrorMessage"] = "Could not load profile data from the server.";
-                profileData = new UserProfileDto(); // Khali form dikhane ke liye fallback
+                profileData = new UserProfileDto();
             }
 
-            // 4. Data bhara hua model View ko pass kar dein
             return View(profileData);
-        }
-
-        public IActionResult RegisterCanteenLogin()
-        {
-            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterCanteenLogin(RegisterCanteensDto model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            if (!ModelState.IsValid) return View(model);
 
-            var client = _httpClientFactory.CreateClient(ApiClientName);
-            var response = await client.PostAsJsonAsync("api/admin/CanteenStaffRegister",
-                new
-                {
-                    FullName = model.FullName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    Password = model.Password,
-                    ConfirmPassword = model.ConfirmPassword
-                });
-
-            var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            var result = await _adminService.RegisterCanteenStaffAsync(model);
 
             if (result == null || !result.Success)
             {
-                TempData["ErrorMessage"] = result?.Message ?? "An error occurred while registering the canteen ";
+                TempData["ErrorMessage"] = result?.Message ?? "An error occurred while registering the canteen.";
                 return View(model);
             }
-            ModelState.Clear();
 
-            // Success message set karein
+            ModelState.Clear();
             TempData["SuccessMessage"] = "Canteen staff account created successfully!";
             return View(new RegisterCanteensDto());
         }
 
-
-
-
         [HttpGet]
-        
         public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["refresh_token"];
             if (!string.IsNullOrEmpty(refreshToken))
             {
-                try
-                {
-                    var client = _httpClientFactory.CreateClient(ApiClientName);
-                    await client.PostAsJsonAsync("api/Auth/revoke-token", new { Token = refreshToken });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "API Error: Could not revoke token during logout.");
-                }
+                await _adminService.RevokeTokenAsync(refreshToken);
             }
-            await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme
-                );
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
             Response.Cookies.Delete("jwt_token");
             Response.Cookies.Delete("refresh_token");
             return RedirectToAction("Index", "Home");
         }
 
-
-
-
-
         [HttpGet]
         public async Task<IActionResult> AddCanteens()
         {
-            await LoadCanteenStaffAsync();
-
+            ViewBag.CanteenStaff = await _adminService.GetCanteenStaffAsync();
             return View(new AddCanteens());
         }
-
-
-
-
-
-
-        private async Task LoadCanteenStaffAsync()
-        {
-            var client =
-                _httpClientFactory.CreateClient(ApiClientName);
-
-            var response =
-                await client.GetAsync(
-                    "api/admin/canteen-staff");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ViewBag.CanteenStaff =
-                    new List<CanteenStaffDto>();
-
-                return;
-            }
-
-            var result =
-                await response.Content
-                    .ReadFromJsonAsync<CanteenStaffResponseDto>();
-
-            ViewBag.CanteenStaff =
-                result?.Data ??
-                new List<CanteenStaffDto>();
-        }
-
-
-
-        private async Task<UserProfileDto?> LoadProfileDataAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            // 1. Validate Input
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                _logger.LogWarning("LoadProfileDataAsync called with empty userId.");
-                return null;
-            }
-
-            try
-            {
-                var client = _httpClientFactory.CreateClient(ApiClientName);
-
-                // 2. String interpolation ($) use karein taaki {userId} dynamically URL mein pass ho
-                var requestUrl = $"api/admin/loadprofiledata/{userId}";
-
-                var response = await client.GetAsync(requestUrl, cancellationToken);
-
-                // 3. Status check karein
-                if (response.IsSuccessStatusCode)
-                {
-                    // 4. Lightweight JSON Deserialization (System.Text.Json)
-                    var apiResponse = await response.Content.ReadFromJsonAsync<ApiAdminResponseDto<UserProfileDto>>(cancellationToken: cancellationToken);
-
-                    return apiResponse?.Data;
-                }
-                else
-                {
-                    // API ne error return kiya (e.g., 404 Not Found, 500 Internal Server Error)
-                    _logger.LogWarning("API Error: {StatusCode} while fetching profile for user {UserId}", response.StatusCode, userId);
-                    return null;
-                }
-            }
-            catch (HttpRequestException httpEx)
-            {
-                // Network errors ya API down hone par handle karein
-                _logger.LogError(httpEx, "Network error while connecting to API.");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                // Unexpected errors catch karein taaki app crash na ho
-                _logger.LogError(ex, "Unexpected error in LoadProfileDataAsync.");
-                return null;
-            }
-        }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -245,81 +93,24 @@ namespace CanteenX.Controllers
         {
             if (!ModelState.IsValid)
             {
-                await LoadCanteenStaffAsync();
+                ViewBag.CanteenStaff = await _adminService.GetCanteenStaffAsync();
                 return View(dto);
             }
 
-            var client = _httpClientFactory.CreateClient(ApiClientName);
+            var result = await _adminService.AddCanteenAsync(dto);
 
-            using var formdata = new MultipartFormDataContent();
-
-            formdata.Add(
-                new StringContent(dto.UserId),
-                "UserId");
-
-            formdata.Add(
-              new StringContent(dto.Location ?? ""),
-              "Location");
-
-            formdata.Add(
-             new StringContent(dto.Description ?? ""),
-             "Description");
-
-            formdata.Add(
-               new StringContent(dto.IsActive.ToString()),
-               "IsActive");
-
-
-
-            // images
-
-            if (dto.ImageUrl != null)
+            if (result == null || !result.Success)
             {
-                var streamContent =
-                    new StreamContent(dto.ImageUrl.OpenReadStream());
-
-
-
-                streamContent.Headers.ContentType =
-                    new System.Net.Http.Headers.MediaTypeHeaderValue(
-                      dto.ImageUrl.ContentType);
-
-
-
-                formdata.Add(
-                 streamContent,
-                "ImageUrl", dto.ImageUrl.FileName);
-            }
-
-
-
-            var response = await client.PostAsync("api/admin/canteen", formdata);
-
-            var result = await response.Content.ReadFromJsonAsync<ApiResponseDto>();
-
-            if (!response.IsSuccessStatusCode || result == null || !result.Success)
-            {
-                await LoadCanteenStaffAsync();
-
-                // Fix 2: Agar API ne koi blank error bheja hai, toh hum apna custom error dikhayenge taaki dabba khali na rahe
-                string errorMessage = (result != null && !string.IsNullOrWhiteSpace(result.Message))
-                                      ? result.Message
-                                      : $"API Request Failed (Status: {(int)response.StatusCode}). Please check your data or ensure the image is attached.";
-
-                ModelState.AddModelError("", errorMessage);
+                ViewBag.CanteenStaff = await _adminService.GetCanteenStaffAsync();
+                ModelState.AddModelError("", result?.Message ?? "API Request Failed. Please check your data.");
                 return View(dto);
             }
 
             ModelState.Clear();
-
-            // Dropdown list ko dobara load karein taaki page crash na ho
-            await LoadCanteenStaffAsync();
-
+            ViewBag.CanteenStaff = await _adminService.GetCanteenStaffAsync();
             ViewBag.SuccessMessage = "Canteen added successfully.";
-
             return View(new AddCanteens());
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -331,95 +122,44 @@ namespace CanteenX.Controllers
                 return RedirectToAction("UserProfile");
             }
 
-            // Login cookie se access token lena
             var accessToken = User.FindFirst("AccessToken")?.Value;
-            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(userId))
-            {
                 return RedirectToAction("Login", "Account");
-            }
 
-            var client = _httpClientFactory.CreateClient(ApiClientName);
+            var response = await _adminService.UpdateProfileAsync(userId, model, accessToken);
 
-            // API request create krna 
-            var requestUrl = $"api/admin/updateprofiledata/{userId}";
-            using var request = new HttpRequestMessage(HttpMethod.Put, requestUrl);
-
-            // JWT token API ko bhejna
-            request.Headers.Authorization =
-                new AuthenticationHeaderValue("Bearer", accessToken);
-
-            request.Content = JsonContent.Create(new
-            {
-                FullName = model.FullName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                IsActive = model.IsActive
-            });
-            using var response = await client.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 TempData["ProfileSuccess"] = "Profile updated successfully!";
-                if(User.Identity is ClaimsIdentity identity)
+                if (User.Identity is ClaimsIdentity identity)
                 {
-                    var nameClaimType = identity.NameClaimType;
-                    var existingClaim = identity.FindFirst(nameClaimType) ?? identity.FindFirst("FullName");
-                    if (existingClaim != null)
-                    {
-                        identity.RemoveClaim(existingClaim);
-                    }
-
-                    identity.AddClaim(new Claim(existingClaim?.Type ?? ClaimTypes.Name, model.FullName));
-                    await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme, // Ya aapka custom scheme name
-            new ClaimsPrincipal(identity)
-        );
+                    var existingClaim = identity.FindFirst(identity.NameClaimType) ?? identity.FindFirst("FullName");
+                    if (existingClaim != null) identity.RemoveClaim(existingClaim);
+                    identity.AddClaim(new Claim(existingClaim?.Type ?? ClaimTypes.Name, model.FullName!));
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                 }
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-             response.StatusCode == System.Net.HttpStatusCode.Forbidden)
-            {
-                TempData["ProfileError"] =
-                    "Your session may have expired or you are not authorized.";
             }
             else
             {
-                TempData["ProfileError"] =
-                    "Unable to update profile. Please check your details and try again.";
+                TempData["ProfileError"] = response.StatusCode == System.Net.HttpStatusCode.Unauthorized
+                    ? "Your session may have expired."
+                    : "Unable to update profile.";
             }
+
             return RedirectToAction("UserProfile");
         }
 
-
-
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUserDirectory(
-            int pageNumber = 1,
-            int pageSize = 10,
-            string? searchTerm = null,
-            string? status = null,
-            string? role = null,
-            CancellationToken cancellationToken = default)
-            
+        public async Task<IActionResult> GetUserDirectory(int pageNumber = 1, int pageSize = 10, string? searchTerm = null, string? status = null, string? role = null, CancellationToken cancellationToken = default)
         {
-
-            try {
-                var client = _httpClientFactory.CreateClient(ApiClientName);
+            try
+            {
                 var accessToken = User.FindFirst("AccessToken")?.Value;
-
                 if (string.IsNullOrWhiteSpace(accessToken))
-                {
-                    return Unauthorized(new
-                    {
-                        success = false,
-                        message = "Access token is missing. Please sign in again."
-                    });
-                }
+                    return Unauthorized(new { success = false, message = "Access token is missing." });
 
-
-                // Build the API query string.
                 var query = new Dictionary<string, string?>
                 {
                     ["PageNumber"] = Math.Max(1, pageNumber).ToString(),
@@ -429,111 +169,32 @@ namespace CanteenX.Controllers
                     ["Role"] = role
                 };
 
+                var queryString = string.Join("&", query.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => $"{Uri.EscapeDataString(x.Key)}={Uri.EscapeDataString(x.Value!)}"));
 
-                var queryString = string.Join("&",
-           query
-               .Where(x => !string.IsNullOrWhiteSpace(x.Value))
-               .Select(x =>
-                   $"{Uri.EscapeDataString(x.Key)}=" +
-                   $"{Uri.EscapeDataString(x.Value!)}"));
-
-                var apiUrl = $"api/admin/user-directory?{queryString}";
-
-                // Forward the user's JWT to the protected API.
-                using var request = new HttpRequestMessage(
-                    HttpMethod.Get, apiUrl);
-
-
-                request.Headers.Authorization =
-            new AuthenticationHeaderValue("Bearer", accessToken);
-
-                request.Headers.Accept.ParseAdd("application/json");
-
-                using var response = await client.SendAsync(
-            request,
-            HttpCompletionOption.ResponseHeadersRead,
-            cancellationToken);
-
-                var json = await response.Content.ReadAsStringAsync(
-                    cancellationToken);
+                var response = await _adminService.GetUserDirectoryAsync(queryString, accessToken, cancellationToken);
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
-                {
-                    return StatusCode((int)response.StatusCode, new
-                    {
-                        success = false,
-                        message = "The User Directory API request failed."
-                    });
-                }
+                    return StatusCode((int)response.StatusCode, new { success = false, message = "API request failed." });
 
-
-                // Forward the API's JSON response to the browser.
                 using var document = JsonDocument.Parse(json);
-
-                return Content(
-                    document.RootElement.GetRawText(),
-                    "application/json");
-
-
-
+                return Content(document.RootElement.GetRawText(), "application/json");
             }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                // Return a 499 (Client Closed Request) or 400 Bad Request
-                return StatusCode(499, new
-                {
-                    success = false,
-                    message = "The request was cancelled by the client."
-                });
-            }
-            catch (JsonException)
-            {
-                return StatusCode(502, new
-                {
-                    success = false,
-                    message = "The API returned invalid JSON."
-                });
-            }
-            catch (HttpRequestException)
-            {
-                return StatusCode(502, new
-                {
-                    success = false,
-                    message = "Unable to connect to the User Directory API."
-                });
-            }
-
+            catch (OperationCanceledException) { return StatusCode(499, new { success = false, message = "Request cancelled." }); }
+            catch (Exception) { return StatusCode(502, new { success = false, message = "Unable to connect." }); }
         }
-
 
         [HttpGet]
-        public async Task<IActionResult> EditUser(string id , string fullName, string email, string role, bool isActive, CancellationToken cancellationToken)
+        public IActionResult EditUser(string id, string fullName, string email, string role, bool isActive)
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return RedirectToAction(nameof(UserDirectory));
-            }
-
-            var model = new EditUserViewModel
-            {
-                Id = id,
-                FullName = fullName,
-                Email = email,
-                Role = role,
-                IsActive = isActive
-            };
-
-            LoadEditUserRoles(model.Role);
-            return View(model);
-
+            if (string.IsNullOrWhiteSpace(id)) return RedirectToAction(nameof(UserDirectory));
+            LoadEditUserRoles(role);
+            return View(new EditUserViewModel { Id = id, FullName = fullName, Email = email, Role = role, IsActive = isActive });
         }
 
-        // POST: /Admin/EditUser
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditUser(
-            EditUserViewModel model,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> EditUser(EditUserViewModel model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -542,254 +203,73 @@ namespace CanteenX.Controllers
             }
 
             var accessToken = User.FindFirst("AccessToken")?.Value;
-
-            if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            if (string.IsNullOrWhiteSpace(accessToken)) return RedirectToAction("Login", "Account");
 
             try
             {
-                var client = _httpClientFactory.CreateClient(ApiClientName);
-
-                using var request = new HttpRequestMessage(
-                    HttpMethod.Put,
-                    $"api/admin/updateuserdirectory/{Uri.EscapeDataString(model.Id)}");
-
-                request.Headers.Authorization =
-                    new AuthenticationHeaderValue("Bearer", accessToken);
-
-                request.Content = JsonContent.Create(new
-                {
-                    model.FullName,
-                    model.Email,
-                    model.Role,
-                    model.IsActive
-                });
-
-                using var response = await client.SendAsync(
-                    request, cancellationToken);
+                var response = await _adminService.UpdateUserAsync(model.Id!, model, accessToken, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SuccessMessage"] =
-                        "User details updated successfully.";
-
+                    ViewBag.SuccessMessage = "User details updated successfully.";
                     return RedirectToAction(nameof(UserDirectory));
                 }
 
-                var errorBody = await response.Content.ReadAsStringAsync(
-                    cancellationToken);
-
-                _logger.LogWarning(
-                    "User update failed for {UserId}. Status: {StatusCode}. Response: {Response}",
-                    model.Id, response.StatusCode, errorBody);
-
-                if (response.StatusCode ==
-                    System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return RedirectToAction("Login", "Account");
-                }
-
-                if (response.StatusCode ==
-                    System.Net.HttpStatusCode.Forbidden)
-                {
-                    ModelState.AddModelError(
-                        string.Empty,
-                        "You are not authorized to update this user.");
-                }
-                else
-                {
-                    ModelState.AddModelError(
-                        string.Empty,
-                        "Unable to update user details. Check the supplied information.");
-                }
-
-                LoadEditUserRoles(model.Role);
-                return View(model);
+                ModelState.AddModelError(string.Empty, response.StatusCode == System.Net.HttpStatusCode.Forbidden
+                    ? "You are not authorized."
+                    : "Unable to update user details.");
             }
-            catch (HttpRequestException ex)
+            catch (Exception)
             {
-                _logger.LogError(
-                    ex, "API connection failed while updating user {UserId}",
-                    model.Id);
-
-                ModelState.AddModelError(
-                    string.Empty,
-                    "Unable to connect to the API.");
-
-                LoadEditUserRoles(model.Role);
-                return View(model);
+                ModelState.AddModelError(string.Empty, "Unable to connect to the API.");
             }
+
+            LoadEditUserRoles(model.Role);
+            return View(model);
         }
-
-
-
-        private void LoadEditUserRoles(string? selectedRole)
-        {
-            ViewBag.Roles = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
-                new[]
-                {
-                    new { Value = "Admin", Text = "Admin" },
-                    new { Value = "Student", Text = "Student" },
-                    new { Value = "CanteenStaff", Text = "Canteen Staff" }
-                },
-                "Value",
-                "Text",
-                selectedRole);
-        }
-
-
 
         [HttpDelete("Admin/DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(string id, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return Json(new { success = false, message = "User ID is required." });
-            }
+            if (string.IsNullOrWhiteSpace(id)) return Json(new { success = false, message = "User ID is required." });
 
-            // Session se token nikalein (Jaisa EditUser mein kiya tha)
             var accessToken = User.FindFirst("AccessToken")?.Value;
-
-            if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                return Json(new { success = false, message = "Session expired. Please log in again." });
-            }
+            if (string.IsNullOrWhiteSpace(accessToken)) return Json(new { success = false, message = "Session expired." });
 
             try
             {
-                var client = _httpClientFactory.CreateClient(ApiClientName);
+                var response = await _adminService.DeleteUserAsync(id, accessToken, cancellationToken);
 
-                // CanteenX.API ka actual backend endpoint (Iska route check kar lein)
-                using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/admin/deleteuserdirectory/{id}");
+                if (response.IsSuccessStatusCode) return Json(new { success = true, message = "User deleted successfully." });
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return Json(new { success = false, message = "User not found." });
 
-                // API ko Bearer token bhejein
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                using var response = await client.SendAsync(request, cancellationToken);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return Json(new { success = true, message = "User deleted successfully." });
-                }
-                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    return Json(new { success = false, message = "User not found." });
-                }
-                else
-                {
-                    var errorBody = await response.Content.ReadAsStringAsync(cancellationToken);
-                    _logger.LogWarning("Failed to delete user {UserId}. Response: {Error}", id, errorBody);
-                    return Json(new { success = false, message = "Failed to delete user. Ensure the user is not linked to other records." });
-                }
+                return Json(new { success = false, message = "Failed to delete user." });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while deleting user {UserId}", id);
-                return Json(new { success = false, message = "Server error occurred while connecting to the API." });
-            }
-        }
-
-        public class ExportPdfDto
-        {
-            public string? FullName { get; set; }
-            public string? Email { get; set; }
-            public string? Role { get; set; }
-            public string? Status { get; set; }
-            public string? JoinedDate { get; set; }
+            catch (Exception) { return Json(new { success = false, message = "Server error occurred." }); }
         }
 
         [HttpPost("Admin/ExportUserPdf")]
-        public async Task<IActionResult> ExportUsersPdf([FromBody] List<ExportPdfDto> users)
+        public IActionResult ExportUsersPdf([FromBody] List<ExportPdfDto> users)
         {
-            if (users == null || !users.Any())
-            {
-                return BadRequest("No users data received.");
-            }
+            if (users == null || !users.Any()) return BadRequest(new { message = "No users data received." });
+
             try
             {
-
-            
-
-            // QuestPDF Community License (Program.cs mein bhi likh sakte hain)
-            QuestPDF.Settings.License = LicenseType.Community;
-
-            var document = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(1.5f, Unit.Centimetre);
-                    page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(10));
-
-                    // PDF Header
-                    page.Header().PaddingBottom(10).Row(row =>
-                    {
-                        row.RelativeItem().Column(col =>
-                        {
-                            col.Item().Text("CanteenX User Directory").FontSize(20).SemiBold().FontColor(Colors.Red.Medium);
-                            col.Item().Text($"Generated on: {DateTime.Now:dd MMM yyyy hh:mm tt}").FontSize(10).FontColor(Colors.Grey.Medium);
-                        });
-                    });
-
-                    // Table Content
-                    page.Content().Table(table =>
-                    {
-                        // 5 Columns
-                        table.ColumnsDefinition(columns =>
-                        {
-                            columns.RelativeColumn(); // Name
-                            columns.RelativeColumn(); // Email
-                            columns.RelativeColumn(); // Role
-                            columns.RelativeColumn(); // Status
-                            columns.RelativeColumn(); // Joined
-                        });
-
-                        // Table Header
-                        table.Header(header =>
-                        {
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Name").SemiBold();
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Email").SemiBold();
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("Role").SemiBold();
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("IsActive").SemiBold();
-                            header.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text("CreatedAt").SemiBold();
-                        });
-
-                        // Table Data Rows
-                        foreach (var user in users)
-                        {
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.FullName ?? "_");
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Email ?? "_");
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Role ?? "_");
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.Status ?? "_");
-                            table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).Text(user.JoinedDate ?? "_");
-                        }
-                    });
-
-                    // Footer (Page Numbers)
-                    page.Footer().AlignCenter().Text(x =>
-                    {
-                        x.Span("Page ");
-                        x.CurrentPageNumber();
-                        x.Span(" of ");
-                        x.TotalPages();
-                    });
-                });
-            });
-
-            // Generate PDF aur Return as File
-            byte[] pdfBytes = document.GeneratePdf();
-            return File(pdfBytes, "application/pdf", "CanteenX_Selected_Users.pdf");
+                byte[] pdfBytes = _adminService.GenerateUsersPdf(users);
+                return File(pdfBytes, "application/pdf", "CanteenX_Selected_Users.pdf");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("QUESTPDF ERROR: " + ex.ToString());
+                _logger.LogError(ex, "QUESTPDF ERROR");
                 return StatusCode(500, new { message = "PDF Generation Error: " + ex.Message });
             }
         }
 
+        private void LoadEditUserRoles(string? selectedRole)
+        {
+            ViewBag.Roles = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                new[] { new { Value = "Admin", Text = "Admin" }, new { Value = "Student", Text = "Student" }, new { Value = "CanteenStaff", Text = "Canteen Staff" } },
+                "Value", "Text", selectedRole);
+        }
     }
-
-    }
+}
