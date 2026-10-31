@@ -271,5 +271,35 @@ namespace CanteenX.Controllers
                 new[] { new { Value = "Admin", Text = "Admin" }, new { Value = "Student", Text = "Student" }, new { Value = "CanteenStaff", Text = "Canteen Staff" } },
                 "Value", "Text", selectedRole);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetCanteenDirectory(int pageNumber = 1, int pageSize = 10, string? searchTerm = null, string? status = null,CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var accessToken = User.FindFirst("AccessToken")?.Value;
+                if (string.IsNullOrWhiteSpace(accessToken))
+                    return Unauthorized(new { success = false, message = "Access token is missing." });
+
+                var query = new Dictionary<string, string?>
+                {
+                    ["PageNumber"] = Math.Max(1, pageNumber).ToString(),
+                    ["PageSize"] = Math.Clamp(pageSize, 1, 50).ToString(),
+                    ["SearchTerm"] = searchTerm,
+                    ["Status"] = status,
+                };
+                var queryString = string.Join("&", query.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => $"{Uri.EscapeDataString(x.Key)}={Uri.EscapeDataString(x.Value!)}"));
+                var response = await _adminService.GetCanteensDirectoryAsync(queryString, accessToken, cancellationToken);
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                    return StatusCode((int)response.StatusCode, new { success = false, message = "API request failed." });
+
+                using var document = JsonDocument.Parse(json);
+                return Content(document.RootElement.GetRawText(), "application/json");
+            }
+            catch (OperationCanceledException) { return StatusCode(499, new { success = false, message = "Request cancelled." }); }
+            catch (Exception) { return StatusCode(502, new { success = false, message = "Unable to connect." }); }
+        }
     }
 }

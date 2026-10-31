@@ -1,55 +1,238 @@
 ﻿@{
     ViewData["Title"] = "Home";
 }
+<link href="~/css/HomeView.css" rel="stylesheet" asp-append-version="true" />
+<!-- Google Font for Handwritten Text -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+<!-- CANTEENX OFFERS CAROUSEL -->
+<div class="container mt-5 mb-5">
+    <div id="canteenOffersCarousel" class="carousel slide canteen-carousel shadow-lg" data-bs-ride="carousel" data-bs-interval="4000">
+        
+        <!-- Custom Indicators -->
+        <div class="carousel-indicators custom-indicators">
+            <button type="button" data-bs-target="#canteenOffersCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#canteenOffersCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#canteenOffersCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <!-- Carousel Inner -->
+        <div class="carousel-inner h-100">
+            
+            <!-- Slide 1: Hot Deal -->
+            <div class="carousel-item active h-100">
+                <div class="carousel-img-wrap h-100 w-100">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100 carousel-img" alt="Food Offer">
+                    <div class="carousel-gradient-overlay"></div>
+                </div>
+                <div class="carousel-caption d-flex align-items-center justify-content-start">
+                    <div class="glass-card text-start">
+                        <span class="badge bg-canteen-red mb-3 px-3 py-2 rounded-pill fw-bold fs-6">
+                            <i class="fa-solid fa-fire me-1"></i> Hot Deal
+                        </span>
+                        <h2 class="fw-black text-white display-5 mb-3 lh-1">Mega Combo<br>Festival</h2>
+                        <p class="text-white-50 fs-5 mb-4">Get up to 40% off on all student combos today from Canteen A!</p>
+                        <a href="#" class="btn btn-light btn-lg rounded-pill fw-bold px-4 text-dark-blue hover-scale">
+                            Grab Now <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Slide 2: New Arrival -->
+            <div class="carousel-item h-100">
+                <div class="carousel-img-wrap h-100 w-100">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100 carousel-img" alt="Pizza">
+                    <div class="carousel-gradient-overlay"></div>
+                </div>
+                <div class="carousel-caption d-flex align-items-center justify-content-start">
+                    <div class="glass-card text-start">
+                        <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold fs-6">
+                            <i class="fa-solid fa-star me-1"></i> New Menu
+                        </span>
+                        <h2 class="fw-black text-white display-5 mb-3 lh-1">Cheesy Italian<br>Delight</h2>
+                        <p class="text-white-50 fs-5 mb-4">Try our newly launched wood-fired pizzas at Canteen B.</p>
+                        <a href="#" class="btn btn-canteen-red btn-lg rounded-pill fw-bold px-4 text-white hover-scale">
+                            Order Pizza <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Healthy Options -->
+            <div class="carousel-item h-100">
+                <div class="carousel-img-wrap h-100 w-100">
+                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="d-block w-100 carousel-img" alt="Healthy Food">
+                    <div class="carousel-gradient-overlay"></div>
+                </div>
+                <div class="carousel-caption d-flex align-items-center justify-content-start">
+                    <div class="glass-card text-start">
+                        <span class="badge bg-success mb-3 px-3 py-2 rounded-pill fw-bold fs-6">
+                            <i class="fa-solid fa-leaf me-1"></i> Healthy Bites
+                        </span>
+                        <h2 class="fw-black text-white display-5 mb-3 lh-1">Fresh Salads &<br>Smoothies</h2>
+                        <p class="text-white-50 fs-5 mb-4">Stay fit this semester with Canteen C's fresh organic meals.</p>
+                        <a href="#" class="btn btn-light btn-lg rounded-pill fw-bold px-4 text-success hover-scale">
+                            View Menu <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Custom Navigation Controls -->
+        <button class="carousel-control-prev custom-control" type="button" data-bs-target="#canteenOffersCarousel" data-bs-slide="prev">
+            <span class="control-icon-glass"><i class="fa-solid fa-chevron-left"></i></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next custom-control" type="button" data-bs-target="#canteenOffersCarousel" data-bs-slide="next">
+            <span class="control-icon-glass"><i class="fa-solid fa-chevron-right"></i></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </div>
+<div class="container mt-5">
+    <div class="row g-4">
+        
+        <!-- Card 1: Low Crowd (Green Theme) -->
+        <div class="col-lg-4 col-md-6">
+            <div class="student-canteen-card theme-green">
+                <div class="card-hero" style="background-image: url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80');">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="canteen-icon bg-green">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        </div>
+                        <div class="canteen-title-wrap">
+                            <h4 class="canteen-name">Canteen A</h4>
+                            <span class="canteen-category">Fast Food Corner</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-details">
+                    <div class="stats-grid border-bottom pb-3 mb-3">
+                        <div class="stat-item">
+                            <span class="status-dot dot-green"></span>
+                            <span class="stat-text fw-bold text-dark">Low Crowd</span>
+                        </div>
+                        <div class="stat-item text-end border-start ps-3">
+                            <div class="wait-time text-green fw-bold">
+                               <i class="fa-solid fa-person-walking"></i> 5-7 min
+                            </div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
+                        </div>
+                    </div>
+                    
+                    <div class="action-flex">
+                        <div class="rating-box">
+                            <div class="fw-bold text-dark fs-5"><i class="fa-solid fa-star text-warning fs-6 me-1"></i>4.3</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">(328 reviews)</small>
+                        </div>
+                        <button class="btn btn-theme-outline px-4 fw-semibold">View Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <!-- Card 2: Medium Crowd (Orange Theme) -->
+        <div class="col-lg-4 col-md-6">
+            <div class="student-canteen-card theme-orange">
+                <div class="card-hero" style="background-image: url('https://images.unsplash.com/photo-1615719413546-198b25453f85?auto=format&fit=crop&w=600&q=80');">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="canteen-icon bg-orange">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <div class="canteen-title-wrap">
+                            <h4 class="canteen-name">Canteen B</h4>
+                            <span class="canteen-category">South Indian Express</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-details">
+                    <div class="stats-grid border-bottom pb-3 mb-3">
+                        <div class="stat-item">
+                            <span class="status-dot dot-orange"></span>
+                            <span class="stat-text fw-bold text-dark">Medium Crowd</span>
+                        </div>
+                        <div class="stat-item text-end border-start ps-3">
+                            <div class="wait-time text-orange fw-bold">
+                                <i class="fa-solid fa-person-walking"></i> 12-15 min
+                            </div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
+                        </div>
+                    </div>
+                    
+                    <div class="action-flex">
+                        <div class="rating-box">
+                            <div class="fw-bold text-dark fs-5"><i class="fa-solid fa-star text-warning fs-6 me-1"></i></i>4.6</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">(412 reviews)</small>
+                        </div>
+                        <button class="btn btn-theme-outline px-4 fw-semibold">View Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Card 3: High Crowd (Red Theme) -->
+        <div class="col-lg-4 col-md-6">
+            <div class="student-canteen-card theme-red">
+                <div class="card-hero" style="background-image: url('https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80');">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="canteen-icon bg-red">
+                       <i class="fa-solid fa-bowl-food"></i>
+                        </div>
+                        <div class="canteen-title-wrap">
+                            <h4 class="canteen-name">Canteen C</h4>
+                            <span class="canteen-category">Main Canteen</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-details">
+                    <div class="stats-grid border-bottom pb-3 mb-3">
+                        <div class="stat-item">
+                            <span class="status-dot dot-red"></span>
+                            <span class="stat-text fw-bold text-dark">High Crowd</span>
+                        </div>
+                        <div class="stat-item text-end border-start ps-3">
+                            <div class="wait-time text-red fw-bold">
+                                <i class="fa-solid fa-person-walking"></i> 20-25 min
+                            </div>
+                            <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
+                        </div>
+                    </div>
+                    
+                    <div class="action-flex">
+                        <div class="rating-box">
+                            <div class="fw-bold text-dark fs-5"><i class="fa-solid fa-star text-warning fs-6 me-1"></i>4.1</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">(287 reviews)</small>
+                        </div>
+                        <button class="btn btn-theme-outline px-4 fw-semibold">View Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Carousel element ko select karein
+            var myCarouselElement = document.querySelector('#canteenOffersCarousel');
+            
+            // Bootstrap Carousel ko initialize karein
+            var canteenCarousel = new bootstrap.Carousel(myCarouselElement, {
+                interval: 3000,      // 3000 milliseconds = 3 seconds (Aap ise apne hisaab se kam/zyada kar sakte hain)
+                ride: 'carousel',    // Page load hote hi auto-slide shuru kar dega
+                pause: 'hover'       // Jab user mouse upar rakhega toh ruk jayega (agar aap chahte hain ki kabhi na ruke toh isey false kar dein)
+            });
+        });
+    </script>
+}
 
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-</div>
-
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-</div>
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-</div>
-
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-</div>
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-</div>
-
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-</div>

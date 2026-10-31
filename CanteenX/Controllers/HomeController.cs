@@ -15,22 +15,22 @@ namespace CanteenX.Controllers
 
         public IActionResult Index()
         {
-            //if(User.Identity != null && User.Identity.IsAuthenticated)
-            //{
-            //    if (User.IsInRole("Admin"))
-            //    {
-            //        return RedirectToAction("Index", "Admin");
-            //    }
-            //    else if (User.IsInRole("CanteenStaff"))
-            //    {
-            //        return RedirectToAction("Index", "CanteenOwner");
-            //    }
-            //   else if (User.IsInRole("Student"))
-            //    {
-            //        return RedirectToAction("Index", "Home");
-            //    }
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("AdminDashboard", "Admin");
+                }
+                else if (User.IsInRole("CanteenStaff"))
+                {
+                    return RedirectToAction("CanteenOwnerDashboard", "CanteenOwner");
+                }
+                else if (User.IsInRole("Student"))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
 
-            //}
+            }
             return View();
         }
 

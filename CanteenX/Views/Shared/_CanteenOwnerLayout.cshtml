@@ -34,9 +34,9 @@
                 ANALYTICS
             </div>
 
-            <a asp-controller="Admin"
-               asp-action="Index"
-               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+            <a asp-controller="CanteenOwner"
+               asp-action="CanteenOwnerDashboard"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerDashboard" ? "active" : "")">
 
                 <i class="bi bi-grid-1x2-fill"></i>
 
@@ -48,17 +48,17 @@
                 OPERATIONS
             </div>
 
-            <a asp-controller="Admin"
-               asp-action="UserDirectory"
-               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "UserDirectory" ? "active" : "")">
+            <a asp-controller="CanteenOwner"
+               asp-action="CanteenOwnerAccounts"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" ? "active" : "")">
 
-                <i class="bi bi-people-fill"></i>
+            <i class="bi bi-bank2"></i>
 
-                <span>User Directory</span>
+                <span>Accounts</span>
 
             </a>
 
-            <a asp-controller="Admin"
+            <a asp-controller="CanteenOwner"
                asp-action="OrderHistorys"
                class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "OrderHistorys" ? "active" : "")">
 
@@ -216,7 +216,7 @@
                         <!-- Logout -->
                         <li>
                             <a class="dropdown-item logout-item"
-                               asp-controller="Admin"
+                               asp-controller="CanteenOwner"
                                asp-action="Logout">
 
                                 <i class="bi bi-box-arrow-right"></i>
@@ -256,7 +256,7 @@
     </div>
     
     <!-- SweetAlert2 CDN (Agar pehle se nahi hai) -->
-    <script src="~/adminassets/libs\sweetalert2@11.js"></script>
+    <script src="~/lib\sweetalert2@11.js"> </script>
 
     @if (TempData["LoginSuccess"] != null)
     {
@@ -274,8 +274,8 @@
                 });
         </script>
     }
-    <script src="~/adminassets/libs/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    <script src="~/adminassets/js/dashboard.js" asp-append-version="true"></script>
+    <script src="~/lib/boostrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

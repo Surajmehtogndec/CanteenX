@@ -19,6 +19,7 @@
         error: document.getElementById("udError"),
         errorMessage: document.getElementById("udErrorMessage"),
         retry: document.getElementById("udRetry"),
+
         export: document.getElementById("udExport"),
         exportSelected: document.getElementById("udExportSelected"),
         modal: document.getElementById("udUserModal"),
@@ -55,6 +56,7 @@
         return user.isActive === true ? "Active" : "Inactive";
     }
 
+    // --- Helper Functions ---
     function formatDate(value) {
         if (!value) return "—";
 

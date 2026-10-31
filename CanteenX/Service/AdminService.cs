@@ -228,5 +228,15 @@ namespace CanteenX.Services
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return await client.SendAsync(request, cancellationToken);
         }
+
+
+        public async Task<HttpResponseMessage> GetCanteensDirectoryAsync(string queryString, string token, CancellationToken cancellationToken)
+        {
+            var client = _httpClientFactory.CreateClient(ApiClientName);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/admin/canteen-directory?{queryString}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            request.Headers.Accept.ParseAdd("application/json");
+            return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        }
     }
 }
