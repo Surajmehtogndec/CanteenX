@@ -9,7 +9,74 @@
     <link href="~/lib/boostrap/css/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/Admin/main.css" rel="stylesheet" asp-append-version="true" />
     <link rel="icon" type="image/png" href="~/favicon.png" asp-append-version="true" />
+    <style>
+        /* Premium iOS Dark Mode Sidebar Styles */
+.ios-menu-toggle {
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #e5e5ea; /* Text ke liye soft white */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+}
 
+.ios-menu-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.08); /* Subtle glass hover */
+}
+
+/* Active Dropdown (Soft Tint) */
+.ios-menu-toggle.active {
+    background-color: rgba(10, 132, 255, 0.15); /* iOS Dark Mode Blue ki soft transparency */
+    color: #0a84ff; /* Vibrant iOS System Blue */
+}
+
+.ios-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 1.2rem;
+}
+
+/* Smooth Chevron */
+.ios-menu-toggle .ios-chevron {
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 0.85rem;
+    color: inherit;
+    opacity: 0.7;
+}
+
+.ios-menu-toggle[aria-expanded="true"] .ios-chevron {
+    transform: rotate(180deg);
+}
+
+/* Submenu Links */
+.ios-submenu-list {
+    padding-left: 20px;
+    margin-left: 14px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1); /* Dark sidebar ke liye subtle border */
+}
+
+.ios-sub-link {
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: #98989d; /* iOS System Gray */
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.ios-sub-link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #e5e5ea;
+}
+
+/* Submenu Active Item */
+.ios-sub-link.ios-active {
+    background-color: rgba(10, 132, 255, 0.1);
+    color: #0a84ff;
+    font-weight: 600;
+}
+    </style>
   
 </head>
 <body>
@@ -48,15 +115,46 @@
                 OPERATIONS
             </div>
 
-            <a asp-controller="CanteenOwner"
-               asp-action="CanteenOwnerAccounts"
-               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" ? "active" : "")">
+        <!-- Main Dropdown Toggle Link -->
+           <a href="#menuManagementDropdown" 
+              data-bs-toggle="collapse" 
+              role="button" 
+              aria-expanded="false" 
+              aria-controls="menuManagementDropdown"
+              class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" || ViewContext.RouteData.Values["Action"]?.ToString() == "AddNewMenu" ? "active" : "")">
+   
+       <div class="d-flex align-items-center w-100">
+              <i class="bi bi-shop"></i>
+              <span class="ms-2">Menu Management</span>
+              <!-- Dropdown arrow icon (right side) -->
+            <i class="bi bi-chevron-down ms-auto"></i> 
+        </div>
+      </a>
 
-            <i class="bi bi-bank2"></i>
-
-                <span>Accounts</span>
-
+       <!-- Dropdown Options (Collapsible Div) -->
+     <div class="collapse @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" || ViewContext.RouteData.Values["Action"]?.ToString() == "AddNewMenu" ? "show" : "")" id="menuManagementDropdown">
+       <ul class="nav flex-column ms-4 mt-2">
+        
+        <!-- Option 1 -->
+        <li class="nav-item mb-1">
+            <a asp-controller="CanteenOwner" 
+               asp-action="CanteenOwnerAccounts" 
+               class="sidebar-link text-decoration-none @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" ? "text-primary fw-bold" : "text-muted")">
+             <i class="bi bi-journal-text"></i> All Menu Items
             </a>
+        </li>
+
+        <!-- Option 2 -->
+        <li class="nav-item mb-1">
+            <a asp-controller="CanteenOwner" 
+               asp-action="AddNewMenu" 
+               class="sidebar-link text-decoration-none @(ViewContext.RouteData.Values["Action"]?.ToString() == "AddNewMenu" ? "text-primary fw-bold" : "text-muted")">
+             <i class="bi bi-plus-lg"></i> Add New Item
+            </a>
+        </li>
+
+       </ul>
+     </div>
 
             <a asp-controller="CanteenOwner"
                asp-action="OrderHistorys"

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<CanteenX.Models.Home.CanteenCardDto>
+@{
     ViewData["Title"] = "Home";
 }
 <link href="~/css/HomeView.css" rel="stylesheet" asp-append-version="true" />
@@ -93,129 +94,75 @@
 </div>
 <div class="container mt-5">
     <div class="row g-4">
-        
-        <!-- Card 1: Low Crowd (Green Theme) -->
-        <div class="col-lg-4 col-md-6">
-            <div class="student-canteen-card theme-green">
-                <div class="card-hero" style="background-image: url('https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=600&q=80');">
-                    <div class="hero-overlay"></div>
-                    <div class="hero-content">
-                        <div class="canteen-icon bg-green">
-                        <i class="fa-solid fa-mug-hot"></i>
-                        </div>
-                        <div class="canteen-title-wrap">
-                            <h4 class="canteen-name">Canteen A</h4>
-                            <span class="canteen-category">Fast Food Corner</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-details">
-                    <div class="stats-grid border-bottom pb-3 mb-3">
-                        <div class="stat-item">
-                            <span class="status-dot dot-green"></span>
-                            <span class="stat-text fw-bold text-dark">Low Crowd</span>
-                        </div>
-                        <div class="stat-item text-end border-start ps-3">
-                            <div class="wait-time text-green fw-bold">
-                               <i class="fa-solid fa-person-walking"></i> 5-7 min
-                            </div>
-                            <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
-                        </div>
-                    </div>
-                    
-                    <div class="action-flex">
-                        <div class="rating-box">
-                            <div class="fw-bold text-dark fs-5"><i class="fa-solid fa-star text-warning fs-6 me-1"></i>4.3</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">(328 reviews)</small>
-                        </div>
-                        <button class="btn btn-theme-outline px-4 fw-semibold">View Menu</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Card 2: Medium Crowd (Orange Theme) -->
-        <div class="col-lg-4 col-md-6">
-            <div class="student-canteen-card theme-orange">
-                <div class="card-hero" style="background-image: url('https://images.unsplash.com/photo-1615719413546-198b25453f85?auto=format&fit=crop&w=600&q=80');">
-                    <div class="hero-overlay"></div>
-                    <div class="hero-content">
-                        <div class="canteen-icon bg-orange">
-                            <i class="fa-solid fa-utensils"></i>
-                        </div>
-                        <div class="canteen-title-wrap">
-                            <h4 class="canteen-name">Canteen B</h4>
-                            <span class="canteen-category">South Indian Express</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-details">
-                    <div class="stats-grid border-bottom pb-3 mb-3">
-                        <div class="stat-item">
-                            <span class="status-dot dot-orange"></span>
-                            <span class="stat-text fw-bold text-dark">Medium Crowd</span>
-                        </div>
-                        <div class="stat-item text-end border-start ps-3">
-                            <div class="wait-time text-orange fw-bold">
-                                <i class="fa-solid fa-person-walking"></i> 12-15 min
-                            </div>
-                            <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
-                        </div>
-                    </div>
-                    
-                    <div class="action-flex">
-                        <div class="rating-box">
-                            <div class="fw-bold text-dark fs-5"><i class="fa-solid fa-star text-warning fs-6 me-1"></i></i>4.6</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">(412 reviews)</small>
-                        </div>
-                        <button class="btn btn-theme-outline px-4 fw-semibold">View Menu</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var canteen in Model)
+            {
+                // Dynamic Theme Logic: Crowd Status ke basis par rang decide karna
+                string themeColor = "green"; // Default Low Crowd ke liye
+                string status = canteen.CrowdStatus?.ToLower() ?? "";
 
-        <!-- Card 3: High Crowd (Red Theme) -->
-        <div class="col-lg-4 col-md-6">
-            <div class="student-canteen-card theme-red">
-                <div class="card-hero" style="background-image: url('https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80');">
-                    <div class="hero-overlay"></div>
-                    <div class="hero-content">
-                        <div class="canteen-icon bg-red">
-                       <i class="fa-solid fa-bowl-food"></i>
-                        </div>
-                        <div class="canteen-title-wrap">
-                            <h4 class="canteen-name">Canteen C</h4>
-                            <span class="canteen-category">Main Canteen</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-details">
-                    <div class="stats-grid border-bottom pb-3 mb-3">
-                        <div class="stat-item">
-                            <span class="status-dot dot-red"></span>
-                            <span class="stat-text fw-bold text-dark">High Crowd</span>
-                        </div>
-                        <div class="stat-item text-end border-start ps-3">
-                            <div class="wait-time text-red fw-bold">
-                                <i class="fa-solid fa-person-walking"></i> 20-25 min
+                if (status.Contains("high"))
+                {
+                    themeColor = "red";
+                }
+                else if (status.Contains("medium"))
+                {
+                    themeColor = "orange";
+                }
+
+                <!-- Dynamic Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="student-canteen-card theme-@themeColor">
+                        <div class="card-hero" style="background-image: url('https://localhost:7150@(canteen.ImageUrl)');">
+                            <div class="hero-overlay"></div>
+                            <div class="hero-content">
+                                <div class="canteen-icon bg-@themeColor">
+                                    <i class="fa-solid fa-utensils"></i>
+                                </div>
+                                <div class="canteen-title-wrap">
+                                    <h4 class="canteen-name">@canteen.CanteenName</h4>
+                                    <span class="canteen-category">@canteen.Description</span>
+                                </div>
                             </div>
-                            <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
                         </div>
-                    </div>
-                    
-                    <div class="action-flex">
-                        <div class="rating-box">
-                            <div class="fw-bold text-dark fs-5"><i class="fa-solid fa-star text-warning fs-6 me-1"></i>4.1</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">(287 reviews)</small>
+
+                        <div class="card-details">
+                            <div class="stats-grid border-bottom pb-3 mb-3">
+                                <div class="stat-item">
+                                    <span class="status-dot dot-@themeColor"></span>
+                                    <span class="stat-text fw-bold text-dark">@canteen.CrowdStatus</span>
+                                </div>
+                                <div class="stat-item text-end border-start ps-3">
+                                    <div class="wait-time text-@themeColor fw-bold">
+                                        <i class="fa-solid fa-person-walking"></i> @canteen.EstimatedWaitTime
+                                    </div>
+                                    <small class="text-muted" style="font-size: 0.7rem;">Estimated Wait Time</small>
+                                </div>
+                            </div>
+
+                            <div class="action-flex">
+                                <div class="rating-box">
+                                    <div class="fw-bold text-dark fs-5">
+                                        <i class="fa-solid fa-star text-warning fs-6 me-1"></i>@canteen.Rating
+                                    </div>
+                                    <small class="text-muted" style="font-size: 0.75rem;">(@canteen.ReviewCount reviews)</small>
+                                </div>
+                                <!-- Button ko Anchor tag banaya taaki aage menu page par route kar sakein -->
+                                <a href="/Canteen/Menu/@canteen.CanteenId" class="btn btn-theme-outline px-4 fw-semibold">View Menu</a>
+                            </div>
                         </div>
-                        <button class="btn btn-theme-outline px-4 fw-semibold">View Menu</button>
                     </div>
                 </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">No active canteens found right now. Please check back later.</p>
             </div>
-        </div>
+        }
 
     </div>
 </div>

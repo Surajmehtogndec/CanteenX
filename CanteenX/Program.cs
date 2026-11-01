@@ -1,4 +1,5 @@
 using CanteenX.Service.CanteenOwner;
+using CanteenX.Service.Home;
 using CanteenX.Service.Interface;
 using CanteenX.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -74,6 +75,7 @@ builder.Services
     );
 
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICanteenOwnerService, CanteenOwnerService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddSession(options =>

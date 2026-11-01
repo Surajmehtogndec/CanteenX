@@ -1,4 +1,5 @@
 using CanteenX.Models;
+using CanteenX.Service.Home;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,13 +8,15 @@ namespace CanteenX.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IHomeService _homeService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHomeService homeService)
         {
             _logger = logger;
+            _homeService = homeService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
@@ -31,7 +34,10 @@ namespace CanteenX.Controllers
                 }
 
             }
-            return View();
+
+
+            var canteens = await _homeService.GetActiveCanteensAsync(cancellationToken);
+            return View(canteens);
         }
 
         public IActionResult Login()

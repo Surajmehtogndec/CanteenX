@@ -56,6 +56,7 @@ namespace CanteenX.Controllers
             dto.UserId = userId;
             if (!ModelState.IsValid)    
             {
+                
                 return RedirectToAction("CanteenOwnerDashboard");
             }
             var result = await _canteenOwnerService.LinkBankAccountAsync(dto, cancellationToken);

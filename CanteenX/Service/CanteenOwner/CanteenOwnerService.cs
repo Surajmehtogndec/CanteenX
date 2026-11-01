@@ -9,6 +9,7 @@ namespace CanteenX.Service.CanteenOwner
         private readonly ILogger<CanteenOwnerService> _logger;
         private const string ApiClientName = "CanteenX.Api";
 
+
         public CanteenOwnerService(IHttpClientFactory httpClientFactory, ILogger<CanteenOwnerService> logger)
         {
             _httpClientFactory = httpClientFactory;
