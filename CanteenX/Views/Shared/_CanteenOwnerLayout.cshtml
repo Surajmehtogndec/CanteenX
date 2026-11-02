@@ -115,46 +115,16 @@
                 OPERATIONS
             </div>
 
-        <!-- Main Dropdown Toggle Link -->
-           <a href="#menuManagementDropdown" 
-              data-bs-toggle="collapse" 
-              role="button" 
-              aria-expanded="false" 
-              aria-controls="menuManagementDropdown"
-              class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" || ViewContext.RouteData.Values["Action"]?.ToString() == "AddNewMenu" ? "active" : "")">
-   
-       <div class="d-flex align-items-center w-100">
-              <i class="bi bi-shop"></i>
-              <span class="ms-2">Menu Management</span>
-              <!-- Dropdown arrow icon (right side) -->
-            <i class="bi bi-chevron-down ms-auto"></i> 
-        </div>
-      </a>
+            <a asp-controller="Admin"
+               asp-action="UserDirectory"
+               class="sidebar-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "UserDirectory" ? "active" : "")">
 
-       <!-- Dropdown Options (Collapsible Div) -->
-     <div class="collapse @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" || ViewContext.RouteData.Values["Action"]?.ToString() == "AddNewMenu" ? "show" : "")" id="menuManagementDropdown">
-       <ul class="nav flex-column ms-4 mt-2">
-        
-        <!-- Option 1 -->
-        <li class="nav-item mb-1">
-            <a asp-controller="CanteenOwner" 
-               asp-action="CanteenOwnerAccounts" 
-               class="sidebar-link text-decoration-none @(ViewContext.RouteData.Values["Action"]?.ToString() == "CanteenOwnerAccounts" ? "text-primary fw-bold" : "text-muted")">
-             <i class="bi bi-journal-text"></i> All Menu Items
+                <i class="bi bi-journal-text"></i>
+
+                <span>All Menu Items</span>
+
             </a>
-        </li>
 
-        <!-- Option 2 -->
-        <li class="nav-item mb-1">
-            <a asp-controller="CanteenOwner" 
-               asp-action="AddNewMenu" 
-               class="sidebar-link text-decoration-none @(ViewContext.RouteData.Values["Action"]?.ToString() == "AddNewMenu" ? "text-primary fw-bold" : "text-muted")">
-             <i class="bi bi-plus-lg"></i> Add New Item
-            </a>
-        </li>
-
-       </ul>
-     </div>
 
             <a asp-controller="CanteenOwner"
                asp-action="OrderHistorys"
@@ -225,8 +195,7 @@
 
                     <ul class="dropdown-menu dropdown-menu-quick-action" aria-labelledby="quick-actions-dropdown">
                         <li class="dropdown-header">Quick Action Shortcuts</li>
-                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="AddCanteens"><i class="bi bi-shop-window"></i> New Canteen</a></li>
-                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="RegisterCanteenLogin"><i class="bi bi-person-plus"></i> New User</a></li>
+                        <li><a class="dropdown-item" asp-controller="CanteenOwner" asp-action="AddMenuItem"><i class="bi bi-person-plus"></i> New Food Item</a></li>
 
                     </ul>
                 </div>

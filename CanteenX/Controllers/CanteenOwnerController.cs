@@ -21,7 +21,7 @@ namespace CanteenX.Controllers
         }
         public IActionResult CanteenOwnerDashboard() => View();
         public IActionResult CanteenOwnerAccounts() => View();
-
+        public IActionResult AddMenuItem() => View();
 
         [HttpGet]
         public async Task<IActionResult> Logout()
@@ -40,38 +40,6 @@ namespace CanteenX.Controllers
 
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LinkBankAccount(CanteenAccountDetailsDto dto,CancellationToken cancellationToken)
-        {
-            // 1. Logged-in user ki Identity ID get karna
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                TempData["Error"] = "Session expired or invalid user. Please login again.";
-                return RedirectToAction("Login", "Account"); // Apna Login route check kar lein
-            }
-            // 2. DTO mein UserId assign karna
-            dto.UserId = userId;
-            if (!ModelState.IsValid)    
-            {
-                
-                return RedirectToAction("CanteenOwnerDashboard");
-            }
-            var result = await _canteenOwnerService.LinkBankAccountAsync(dto, cancellationToken);
-
-            if (result.IsSuccess)
-            {
-                TempData["Success"] = result.Message;
-                // Success ke baad owner ko dashboard par bhej dein
-                return RedirectToAction("CanteenOwnerDashboard");
-            }
-
-            // Error aane par form wapas dikhayein aur error message display karein
-            TempData["Error"] = result.Message;
-            return RedirectToAction("CanteenOwnerDashboard");
-        }
 
     }
 }

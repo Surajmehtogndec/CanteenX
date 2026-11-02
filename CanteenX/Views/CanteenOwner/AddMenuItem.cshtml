@@ -1,0 +1,287 @@
+﻿@model CanteenX.Models.CanteenOwner.AddMenuItems
+@{
+    ViewData["Title"] = "Add Menu Item";
+    Layout = "_CanteenOwnerLayout";
+}
+<style>
+/* Premium iOS Card Style */
+.ios-card {
+    background: #ffffff;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+/* iOS Icon Box (Apple Settings Style) */
+.ios-icon-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* iOS Inputs & Selects */
+.ios-input, .ios-select {
+    background-color: #f2f2f7; /* iOS System Light Gray */
+    border: 1px solid transparent;
+    border-radius: 12px !important;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: #1c1c1e;
+    transition: all 0.25s ease;
+}
+
+.ios-input:focus, .ios-select:focus {
+    background-color: #ffffff;
+    border-color: #007aff; /* iOS System Blue */
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+    outline: none;
+}
+
+/* Custom Input Group for Price */
+.ios-input-group {
+    background-color: #f2f2f7;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: all 0.25s ease;
+}
+
+.ios-input-group:focus-within {
+    background-color: #ffffff;
+    border-color: #007aff;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+}
+
+.ios-input-group .input-group-text {
+    background: transparent;
+    border: none;
+    color: #8e8e93;
+    font-weight: 600;
+    padding-left: 16px;
+    padding-right: 8px;
+}
+
+.ios-input-group .ios-input {
+    background: transparent;
+    padding-left: 0;
+}
+
+/* Fix for overlapping double focus ring in Price input */
+.ios-input-group .ios-input:focus {
+    box-shadow: none !important;
+    border-color: transparent !important;
+    background-color: transparent !important;
+    outline: none !important;
+}
+/* Image Upload Area */
+.ios-upload-area {
+    background-color: #fcfcfd;
+    border: 2px dashed #d1d1d6 !important;
+    border-radius: 16px !important;
+    transition: all 0.2s ease;
+}
+
+.ios-upload-area:hover {
+    border-color: #007aff !important;
+    background-color: #f4f9ff;
+}
+
+/* iOS Springy Buttons */
+.ios-btn-primary {
+    background-color: #ff3b30; /* Apple System Red */
+    color: white;
+    border-radius: 14px;
+    font-weight: 600;
+    border: none;
+    transition: transform 0.1s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s;
+}
+
+.ios-btn-primary:active {
+    transform: scale(0.96);
+    opacity: 0.8;
+}
+
+.ios-btn-secondary {
+    background-color: #e5e5ea;
+    color: #1c1c1e;
+    border-radius: 14px;
+    font-weight: 600;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.ios-btn-secondary:hover {
+    background-color: #d1d1d6;
+}
+</style>
+<div class="container-fluid py-4 px-3 px-lg-4">
+
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="letter-spacing: -0.5px;">Add Menu Item</h2>
+            <p class="text-muted mb-0" style="color: #8e8e93 !important;">Add a new food item to your canteen menu.</p>
+        </div>
+
+        <a asp-controller="Owner"
+           asp-action="MenuItems"
+           class="btn btn-outline-secondary rounded-pill px-4 fw-medium">
+            <i class="bi bi-arrow-left me-2"></i>Back
+        </a>
+    </div>
+
+    <form id="addMenuItemForm" enctype="multipart/form-data" asp-controller="CanteenOwner" asp-action="AddMenuItem">
+    @Html.AntiForgeryToken()
+
+        <div class="row justify-content-center g-4">
+            <div class="col-12">
+
+                <!-- Basic Information Card -->
+                <div class="card ios-card mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="ios-icon-box bg-danger bg-opacity-10 text-danger flex-shrink-0">
+                                <i class="bi bi-egg-fried fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Basic Information</h5>
+                                <p class="small mb-0" style="color: #8e8e93;">Enter the details of your food item.</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label  asp-for="ItemName" class="form-label fw-semibold text-dark">
+                                Item Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control ios-input w-100"
+                                   id="ItemName"
+                                   asp-for="ItemName"
+                                   placeholder="e.g. Veg Burger"
+                                   >
+                             <span asp-validation-for="ItemName" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Pricing and Availability Card -->
+                <div class="card ios-card mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="ios-icon-box bg-success bg-opacity-10 text-success flex-shrink-0">
+                                <i class="bi bi-currency-rupee fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Pricing & Availability</h5>
+                                <p class="small mb-0" style="color: #8e8e93;">Set the selling price and availability.</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-12 col-sm-6">
+                                <label asp-for="Price" class="form-label fw-semibold text-dark">
+                                    Selling Price <span class="text-danger">*</span>
+                                </label>
+                                <div class="ios-input-group w-100">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number"
+                                           class="form-control ios-input"
+                                           id="Price"
+                                           asp-for="Price"
+                                           min="0.01"
+                                           max="99999999.99"
+                                           step="0.01"
+                                           placeholder="50.00"
+                                           >
+                                  <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6">
+                                <label  asp-for="IsAvailable"  class="form-label fw-semibold text-dark">
+                                    Availability
+                                </label>
+                                <select class="form-select ios-select w-100"
+                                        id="IsAvailable"
+                                        asp-for="IsAvailable">
+                                    <option value="true" selected>Available</option>
+                                    <option value="false">Unavailable</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Upload Card -->
+                <div class="card ios-card mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="ios-icon-box bg-warning bg-opacity-10 text-warning flex-shrink-0">
+                                <i class="bi bi-image fs-5"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Food Image</h5>
+                                <p class="small mb-0" style="color: #8e8e93;">Upload a clear image of your food item.</p>
+                            </div>
+                        </div>
+
+                        <label asp-for="ImageFile"
+                               id="imageUploadArea"
+                               class="ios-upload-area p-4 p-md-5 text-center d-block w-100"
+                               style="cursor: pointer;">
+
+                            <div id="uploadPlaceholder">
+                                <div class="bg-white rounded-circle d-inline-flex p-4 mb-3 shadow-sm border">
+                                    <i class="bi bi-cloud-arrow-up fs-2" style="color: #007aff;"></i>
+                                </div>
+                                <h6 class="fw-bold text-wrap text-dark">Click to upload food image</h6>
+                                <p class="small mb-3" style="color: #8e8e93;">JPG, PNG or WEBP</p>
+                            </div>
+
+                            <img id="imagePreview"
+                                 src=""
+                                 alt="Food item preview"
+                                 class="img-fluid rounded-4 d-none mx-auto shadow-sm"
+                                 style="max-height: 240px; object-fit: cover;">
+                        </label>
+
+                        <input type="file" id="ImageFile"   asp-for="ImageFile" class="d-none" accept="image/jpeg,image/png,image/webp">
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" id="removeImageBtn" class="btn btn-sm btn-light text-danger rounded-pill fw-medium d-none px-3">
+                                <i class="bi bi-trash me-1"></i>Remove Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card ios-card mb-4" style="background: transparent; box-shadow: none !important; border: none;">
+                    <div class="card-body p-0 d-flex flex-column flex-sm-row justify-content-end gap-3">
+                        <button type="reset" id="resetFormBtn" class="btn ios-btn-secondary px-4 py-3 w-100 w-sm-auto">
+                            Reset Fields
+                        </button>
+                        <button type="submit" id="submitBtn" class="btn ios-btn-primary px-5 py-3 w-100 w-sm-auto">
+                            Add Menu Item
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+
+    function previewImage(event){
+
+}
+
+}
