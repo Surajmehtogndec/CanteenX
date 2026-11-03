@@ -4,120 +4,133 @@
     Layout = "_CanteenOwnerLayout";
 }
 <style>
-/* Premium iOS Card Style */
-.ios-card {
-    background: #ffffff;
-    border-radius: 20px !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
-    border: 1px solid rgba(0, 0, 0, 0.02);
-}
+    /* Premium iOS Card Style */
+    .ios-card {
+        background: #ffffff;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid rgba(0, 0, 0, 0.02);
+    }
 
-/* iOS Icon Box (Apple Settings Style) */
-.ios-icon-box {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    /* iOS Icon Box */
+    .ios-icon-box {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-/* iOS Inputs & Selects */
-.ios-input, .ios-select {
-    background-color: #f2f2f7; /* iOS System Light Gray */
-    border: 1px solid transparent;
-    border-radius: 12px !important;
-    padding: 14px 16px;
-    font-size: 1rem;
-    color: #1c1c1e;
-    transition: all 0.25s ease;
-}
+    /* iOS Inputs & Selects */
+    .ios-input, .ios-select {
+        background-color: #f2f2f7;
+        border: 1px solid transparent;
+        border-radius: 12px !important;
+        padding: 14px 16px;
+        font-size: 1rem;
+        color: #1c1c1e;
+        transition: all 0.25s ease;
+    }
 
-.ios-input:focus, .ios-select:focus {
-    background-color: #ffffff;
-    border-color: #007aff; /* iOS System Blue */
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
-    outline: none;
-}
+        .ios-input:focus, .ios-select:focus {
+            background-color: #ffffff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+            outline: none;
+        }
 
-/* Custom Input Group for Price */
-.ios-input-group {
-    background-color: #f2f2f7;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    border: 1px solid transparent;
-    transition: all 0.25s ease;
-}
+    /* Custom Input Group for Price */
+    .ios-input-group {
+        background-color: #f2f2f7;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        border: 1px solid transparent;
+        transition: all 0.25s ease;
+    }
 
-.ios-input-group:focus-within {
-    background-color: #ffffff;
-    border-color: #007aff;
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
-}
+        .ios-input-group:focus-within {
+            background-color: #ffffff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+        }
 
-.ios-input-group .input-group-text {
-    background: transparent;
-    border: none;
-    color: #8e8e93;
-    font-weight: 600;
-    padding-left: 16px;
-    padding-right: 8px;
-}
+        .ios-input-group .input-group-text {
+            background: transparent;
+            border: none;
+            color: #8e8e93;
+            font-weight: 600;
+            padding-left: 16px;
+            padding-right: 8px;
+        }
 
-.ios-input-group .ios-input {
-    background: transparent;
-    padding-left: 0;
-}
+        .ios-input-group .ios-input {
+            background: transparent;
+            padding-left: 0;
+        }
 
-/* Fix for overlapping double focus ring in Price input */
-.ios-input-group .ios-input:focus {
-    box-shadow: none !important;
-    border-color: transparent !important;
-    background-color: transparent !important;
-    outline: none !important;
-}
-/* Image Upload Area */
-.ios-upload-area {
-    background-color: #fcfcfd;
-    border: 2px dashed #d1d1d6 !important;
-    border-radius: 16px !important;
-    transition: all 0.2s ease;
-}
+            .ios-input-group .ios-input:focus {
+                box-shadow: none !important;
+                border-color: transparent !important;
+                background-color: transparent !important;
+                outline: none !important;
+            }
 
-.ios-upload-area:hover {
-    border-color: #007aff !important;
-    background-color: #f4f9ff;
-}
+    /* Image Upload Area */
+    .ios-upload-area {
+        background-color: #fcfcfd;
+        border: 2px dashed #d1d1d6 !important;
+        border-radius: 16px !important;
+        transition: all 0.2s ease;
+    }
 
-/* iOS Springy Buttons */
-.ios-btn-primary {
-    background-color: #ff3b30; /* Apple System Red */
-    color: white;
-    border-radius: 14px;
-    font-weight: 600;
-    border: none;
-    transition: transform 0.1s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s;
-}
+        .ios-upload-area:hover {
+            border-color: #007aff !important;
+            background-color: #f4f9ff;
+        }
 
-.ios-btn-primary:active {
-    transform: scale(0.96);
-    opacity: 0.8;
-}
+    /* iOS Springy Buttons */
+    .ios-btn-primary {
+        background-color: #ff3b30;
+        color: white;
+        border-radius: 14px;
+        font-weight: 600;
+        border: none;
+        transition: transform 0.1s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.2s;
+    }
 
-.ios-btn-secondary {
-    background-color: #e5e5ea;
-    color: #1c1c1e;
-    border-radius: 14px;
-    font-weight: 600;
-    border: none;
-    transition: background-color 0.2s;
-}
+        .ios-btn-primary:active {
+            transform: scale(0.96);
+            opacity: 0.8;
+        }
 
-.ios-btn-secondary:hover {
-    background-color: #d1d1d6;
-}
+    .ios-btn-secondary {
+        background-color: #e5e5ea;
+        color: #1c1c1e;
+        border-radius: 14px;
+        font-weight: 600;
+        border: none;
+        transition: background-color 0.2s;
+    }
+
+        .ios-btn-secondary:hover {
+            background-color: #d1d1d6;
+        }
+
+    /* Sticky Preview Card */
+    .preview-sticky {
+        position: sticky;
+        top: 20px;
+    }
+
+    .ios-btn-primary:hover {
+        background-color: #e6352b !important; /* Thoda darker red hover ke liye */
+        color: #ffffff !important; /* Text hamesha white rahega */
+        opacity: 0.95;
+    }
 </style>
+
 <div class="container-fluid py-4 px-3 px-lg-4">
 
     <!-- Page Header -->
@@ -135,10 +148,15 @@
     </div>
 
     <form id="addMenuItemForm" enctype="multipart/form-data" asp-controller="CanteenOwner" asp-action="AddMenuItem">
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-        <div class="row justify-content-center g-4">
-            <div class="col-12">
+        <!-- Yeh hidden field zaroori hai -->
+        <input type="hidden" asp-for="CanteenId" />
+       
+        <div class="row g-4">
+
+            <!-- LEFT COLUMN: FORM -->
+            <div class="col-12 col-lg-8">
 
                 <!-- Basic Information Card -->
                 <div class="card ios-card mb-4">
@@ -154,7 +172,7 @@
                         </div>
 
                         <div class="mb-2">
-                            <label  asp-for="ItemName" class="form-label fw-semibold text-dark">
+                            <label asp-for="ItemName" class="form-label fw-semibold text-dark">
                                 Item Name <span class="text-danger">*</span>
                             </label>
                             <input type="text"
@@ -162,10 +180,9 @@
                                    id="ItemName"
                                    asp-for="ItemName"
                                    placeholder="e.g. Veg Burger"
-                                   >
-                             <span asp-validation-for="ItemName" class="text-danger small mt-1 d-block"></span>
+                                   oninput="updatePreview()">
+                            <span asp-validation-for="ItemName" class="text-danger small mt-1 d-block"></span>
                         </div>
-
                     </div>
                 </div>
 
@@ -189,30 +206,27 @@
                                 </label>
                                 <div class="ios-input-group w-100">
                                     <span class="input-group-text">₹</span>
-                                    <input type="number"
+                                    <input type="text"
                                            class="form-control ios-input"
                                            id="Price"
                                            asp-for="Price"
-                                           min="0.01"
-                                           max="99999999.99"
-                                           step="0.01"
-                                           placeholder="50.00"
-                                           >
-                                  <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+                                         
+                                           oninput="updatePreview()">
                                 </div>
+                                <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
                             </div>
 
                             <div class="col-12 col-sm-6">
-                                <label  asp-for="IsAvailable"  class="form-label fw-semibold text-dark">
+                                <label asp-for="IsAvailable" class="form-label fw-semibold text-dark">
                                     Availability
                                 </label>
                                 <select class="form-select ios-select w-100"
                                         id="IsAvailable"
-                                        asp-for="IsAvailable">
+                                        asp-for="IsAvailable"
+                                        onchange="updatePreview()">
                                     <option value="true" selected>Available</option>
                                     <option value="false">Unavailable</option>
                                 </select>
-
                             </div>
                         </div>
                     </div>
@@ -231,7 +245,7 @@
                             </div>
                         </div>
 
-                        <label asp-for="ImageFile"
+                        <label for="ImageFile"
                                id="imageUploadArea"
                                class="ios-upload-area p-4 p-md-5 text-center d-block w-100"
                                style="cursor: pointer;">
@@ -244,17 +258,18 @@
                                 <p class="small mb-3" style="color: #8e8e93;">JPG, PNG or WEBP</p>
                             </div>
 
-                            <img id="imagePreview"
+                            <img id="inlineImagePreview"
                                  src=""
-                                 alt="Food item preview"
+                                 alt="Food preview"
                                  class="img-fluid rounded-4 d-none mx-auto shadow-sm"
                                  style="max-height: 240px; object-fit: cover;">
                         </label>
 
-                        <input type="file" id="ImageFile"   asp-for="ImageFile" class="d-none" accept="image/jpeg,image/png,image/webp">
+                        <input type="file" id="ImageFile" asp-for="ImageUrl" class="d-none" accept="image/jpeg,image/png,image/webp" onchange="previewImage(event)">
+                        <span asp-validation-for="ImageUrl" class="text-danger small mt-1 d-block"></span>
 
                         <div class="d-flex justify-content-end mt-3">
-                            <button type="button" id="removeImageBtn" class="btn btn-sm btn-light text-danger rounded-pill fw-medium d-none px-3">
+                            <button type="button" id="removeImageBtn" class="btn btn-sm btn-light text-danger rounded-pill fw-medium d-none px-3" onclick="removeImage()">
                                 <i class="bi bi-trash me-1"></i>Remove Image
                             </button>
                         </div>
@@ -264,24 +279,159 @@
                 <!-- Action Buttons -->
                 <div class="card ios-card mb-4" style="background: transparent; box-shadow: none !important; border: none;">
                     <div class="card-body p-0 d-flex flex-column flex-sm-row justify-content-end gap-3">
-                        <button type="reset" id="resetFormBtn" class="btn ios-btn-secondary px-4 py-3 w-100 w-sm-auto">
+                        <button type="reset" class="btn ios-btn-secondary px-4 py-3 w-100 w-sm-auto" onclick="setTimeout(updatePreview, 10); removeImage();">
                             Reset Fields
                         </button>
-                        <button type="submit" id="submitBtn" class="btn ios-btn-primary px-5 py-3 w-100 w-sm-auto">
+                        <button type="submit" class="btn ios-btn-primary px-5 py-3 w-100 w-sm-auto">
                             Add Menu Item
                         </button>
                     </div>
                 </div>
 
             </div>
+
+            <!-- RIGHT COLUMN: LIVE PREVIEW CARD -->
+            <div class="col-12 col-lg-4">
+                <div class="preview-sticky">
+                    <h6 class="fw-bold mb-3 text-muted text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">Live Preview</h6>
+
+                    <div class="card ios-card overflow-hidden">
+                        <!-- Preview Image -->
+                        <div id="cardImagePlaceholder" class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-image text-secondary opacity-25" style="font-size: 4rem;"></i>
+                        </div>
+                        <img id="cardImagePreview" src="" class="d-none w-100" style="height: 200px; object-fit: cover;" alt="Preview" />
+
+                        <div class="card-body p-4">
+                            <!-- Preview Title -->
+                            <h5 class="fw-bold text-dark mb-2" id="previewTitle">Item Name</h5>
+
+                            <!-- Preview Price & Status -->
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                <div class="fw-bold fs-5 text-primary" id="previewPrice">₹0.00</div>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2" id="previewStatus">Available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </form>
 </div>
-@section Scripts{
+
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    function previewImage(event){
+    <script>
+        // 1. SECURE SERVER RESPONSE HANDLING (SweetAlert)
+            @if (TempData["SuccessMessage"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Registration Successful!',
+                            text: @Html.Raw(Json.Serialize(TempData["SuccessMessage"])),
+                            showConfirmButton: false,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            customClass: { popup: 'rounded-4 shadow-lg border' }
+                        });
+                    </text>
+            }
+                        @if (TempData["ErrorMessage"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'An Error Occurred!',
+                            text: @Html.Raw(Json.Serialize(TempData["ErrorMessage"])),
+                            showConfirmButton: false,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            background: 'rgba(255, 255, 255, 0.95)',
+                            customClass: { popup: 'rounded-4 shadow-lg border' }
+                        });
+                    </text>
+            }
 
-}
 
+        // Image Preview Logic
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const inlinePreview = document.getElementById('inlineImagePreview');
+            const cardPreview = document.getElementById('cardImagePreview');
+            const placeholder = document.getElementById('uploadPlaceholder');
+            const cardPlaceholder = document.getElementById('cardImagePlaceholder');
+            const removeBtn = document.getElementById('removeImageBtn');
+
+            if (file) {
+                const objectUrl = URL.createObjectURL(file);
+
+                // Update Inline Preview
+                inlinePreview.src = objectUrl;
+                inlinePreview.classList.remove('d-none');
+                placeholder.classList.add('d-none');
+
+                // Update Card Preview
+                cardPreview.src = objectUrl;
+                cardPreview.classList.remove('d-none');
+                cardPlaceholder.classList.add('d-none');
+
+                removeBtn.classList.remove('d-none');
+            }
+        }
+
+        // Remove Image Logic
+        function removeImage() {
+            document.getElementById('ImageFile').value = '';
+
+            const inlinePreview = document.getElementById('inlineImagePreview');
+            const cardPreview = document.getElementById('cardImagePreview');
+
+            inlinePreview.src = '';
+            inlinePreview.classList.add('d-none');
+            document.getElementById('uploadPlaceholder').classList.remove('d-none');
+
+            cardPreview.src = '';
+            cardPreview.classList.add('d-none');
+            document.getElementById('cardImagePlaceholder').classList.remove('d-none');
+
+            document.getElementById('removeImageBtn').classList.add('d-none');
+        }
+
+        // Real-time Text Preview Logic
+        function updatePreview() {
+            const nameInput = document.getElementById('ItemName').value;
+            const priceInput = document.getElementById('Price').value;
+            const statusInput = document.getElementById('IsAvailable').value;
+
+            // Update Name
+            document.getElementById('previewTitle').innerText = nameInput ? nameInput : 'Item Name';
+
+            // Update Price
+            const numericPrice = parseFloat(priceInput);
+            document.getElementById('previewPrice').innerText = !isNaN(numericPrice) ? '₹' + numericPrice.toFixed(2) : '₹0.00';
+
+            // Update Status
+            const statusBadge = document.getElementById('previewStatus');
+            if (statusInput === 'true') {
+                statusBadge.innerText = 'Available';
+                statusBadge.className = 'badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2';
+            } else {
+                statusBadge.innerText = 'Unavailable';
+                statusBadge.className = 'badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2';
+            }
+        }
+
+        // Initialize preview on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreview();
+        });
+    </script>
 }

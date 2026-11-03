@@ -4,7 +4,8 @@ namespace CanteenX.Service.CanteenOwner
 {
     public interface ICanteenOwnerService
     {
-        Task<ApiResponseDto?> AddMenuItemAsync(AddMenuItems dto,CancellationToken cancellationToken);
+        Task<int> GetCanteenIdByUserIdAsync(string userId, string token);
+        Task<ApiResponseDto?> AddMenuItemAsync(AddMenuItems dto, CancellationToken cancellationToken);
         Task RevokeTokenAsync(string refreshToken);
     }
 }

@@ -11,9 +11,8 @@ namespace CanteenX.Models.CanteenOwner
         public string ItemName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Price is required.")]
-        [Range(0.01, 999999.99, ErrorMessage = "Price must be a valid amount greater than 0.")]
-        [DataType(DataType.Currency)]
-        public decimal Price { get; set; }
+      
+        public string Price { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "image is required.")]
         public IFormFile? ImageUrl { get; set; }
