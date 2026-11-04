@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CanteenX.Models.Home.CanteenCardDto>
+﻿@model CanteenX.Models.Home.HomePageViewModel
 @{
     ViewData["Title"] = "Home";
 }
@@ -95,9 +95,9 @@
 <div class="container mt-5">
     <div class="row g-4">
 
-        @if (Model != null && Model.Any())
+        @if (Model != null && Model.ActiveCanteens != null && Model.ActiveCanteens.Any())
         {
-            foreach (var canteen in Model)
+            foreach (var canteen in Model.ActiveCanteens)
             {
                 // Dynamic Theme Logic: Crowd Status ke basis par rang decide karna
                 string themeColor = "green"; // Default Low Crowd ke liye
@@ -166,19 +166,103 @@
 
     </div>
 </div>
+<!-- DYNAMIC POPULAR ITEMS SECTION -->
+<div class="container mt-5 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">Popular Right Now <i class="bi bi-fire text-danger"></i></h5>
+        <a href="#" class="text-danger text-decoration-none fw-medium small">View All</a>
+    </div>
+
+    <div class="horizontal-scroll-container">
+        @if (Model != null && Model.PopularItems != null && Model.PopularItems.Any())
+        {
+            foreach (var availableMenuItems in Model.PopularItems)
+            {
+                <div class="popular-item-card flex-shrink-0">
+                    <div class="position-relative">
+                        <!-- Dynamic Image -->
+                        <img src="https://localhost:7150@(string.IsNullOrEmpty(availableMenuItems.ImageUrl) ? "/uploads/items/default-food.png" : availableMenuItems.ImageUrl)"
+                             alt="@availableMenuItems.ItemName"
+                             class="w-100"
+                             onerror="this.src='/images/default-food.png';">
+                        <button class="fav-btn shadow-sm">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-bold mb-1 text-truncate text-dark" style="font-size: 0.95rem;">@availableMenuItems.ItemName</h6>
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted text-truncate" style="font-size: 0.75rem; max-width: 65%;">@availableMenuItems.CanteenName</small>
+                           
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-1">
+                            <span class="text-success fw-bold fs-6">₹@availableMenuItems.Price</span>
+                            <button class="add-to-cart-btn" onclick="addToCart(@availableMenuItems.MenuItemId)">ADD <i class="bi bi-plus-lg ms-1" style="font-size: 0.7rem;"></i></button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-light text-center w-100 text-muted border" role="alert">
+                <i class="bi bi-emoji-frown fs-4 d-block mb-2"></i> No popular items available right now.
+            </div>
+        }
+    </div>
+</div>
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Carousel element ko select karein
+            // Carousel Code (Aapka pehle se likha hua)
             var myCarouselElement = document.querySelector('#canteenOffersCarousel');
-            
-            // Bootstrap Carousel ko initialize karein
-            var canteenCarousel = new bootstrap.Carousel(myCarouselElement, {
-                interval: 3000,      // 3000 milliseconds = 3 seconds (Aap ise apne hisaab se kam/zyada kar sakte hain)
-                ride: 'carousel',    // Page load hote hi auto-slide shuru kar dega
-                pause: 'hover'       // Jab user mouse upar rakhega toh ruk jayega (agar aap chahte hain ki kabhi na ruke toh isey false kar dein)
-            });
+            if(myCarouselElement){
+                new bootstrap.Carousel(myCarouselElement, {
+                    interval: 3000,
+                    ride: 'carousel',
+                    pause: 'hover'
+                });
+            }
+
+            // --- NAYA CODE: Drag to Scroll (Swipe) ---
+            const slider = document.querySelector('.horizontal-scroll-container');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            if(slider) {
+                slider.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    slider.classList.add('active-drag');
+                    startX = e.pageX - slider.offsetLeft;
+                    scrollLeft = slider.scrollLeft;
+                });
+
+                slider.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    slider.classList.remove('active-drag');
+                });
+
+                slider.addEventListener('mouseup', () => {
+                    isDown = false;
+                    slider.classList.remove('active-drag');
+                });
+
+                slider.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault(); // Default behavior rokein
+                    const x = e.pageX - slider.offsetLeft;
+                    const walk = (x - startX) * 1.5; // 1.5 speed multiplier hai, zyada fast chahiye toh 2 kar dein
+                    slider.scrollLeft = scrollLeft - walk;
+                });
+            }
         });
+
+        function addToCart(itemId) {
+            console.log("Add to cart clicked for item: " + itemId);
+        }
     </script>
 }
 

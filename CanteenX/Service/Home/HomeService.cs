@@ -32,6 +32,26 @@ namespace CanteenX.Service.Home
             return Enumerable.Empty<CanteenCardDto>();
 
         }
+        public async Task<IEnumerable<MenuItemResponseDto>> GetAvailableMenuItemsAsync(CancellationToken cancellationToken = default)
+        {
+            var client = _httpClientFactory.CreateClient(ApiClientName);
+            try
+            {
+                var response = await client.GetAsync("api/home/available-items", cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    // Agar API sidha list bhejti hai:
+                    return await response.Content.ReadFromJsonAsync<IEnumerable<MenuItemResponseDto>>(cancellationToken: cancellationToken)
+                           ?? Enumerable.Empty<MenuItemResponseDto>();
+                }
+                return Enumerable.Empty<MenuItemResponseDto>();
+            }
+            catch (Exception)
+            {
+                return Enumerable.Empty<MenuItemResponseDto>();
+            }
+
+        }
 
     }
 }

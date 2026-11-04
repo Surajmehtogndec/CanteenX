@@ -1,4 +1,5 @@
 using CanteenX.Models;
+using CanteenX.Models.Home;
 using CanteenX.Service.Home;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -16,29 +17,30 @@ namespace CanteenX.Controllers
             _homeService = homeService;
         }
 
-        public async Task<IActionResult> Index(CancellationToken cancellationToken)
-        {
-            if (User.Identity != null && User.Identity.IsAuthenticated)
+            public async Task<IActionResult> Index(CancellationToken cancellationToken)
             {
-                if (User.IsInRole("Admin"))
+                if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                    return RedirectToAction("AdminDashboard", "Admin");
-                }
-                else if (User.IsInRole("CanteenStaff"))
-                {
-                    return RedirectToAction("CanteenOwnerDashboard", "CanteenOwner");
-                }
-                else if (User.IsInRole("Student"))
-                {
-                    return RedirectToAction("Index", "Home");
+                    if (User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("AdminDashboard", "Admin");
+                    }
+                    else if (User.IsInRole("CanteenStaff"))
+                    {
+                        return RedirectToAction("CanteenOwnerDashboard", "CanteenOwner");
+                    }
                 }
 
+
+                var canteens = await _homeService.GetActiveCanteensAsync(cancellationToken);
+                var availableMenuItems = await _homeService.GetAvailableMenuItemsAsync(cancellationToken);
+                var model = new HomePageViewModel
+                {
+                ActiveCanteens = canteens,
+                PopularItems = availableMenuItems
+                };
+                return View(model);
             }
-
-
-            var canteens = await _homeService.GetActiveCanteensAsync(cancellationToken);
-            return View(canteens);
-        }
 
         public IActionResult Login()
         {

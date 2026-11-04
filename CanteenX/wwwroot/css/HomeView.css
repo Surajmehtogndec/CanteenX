@@ -468,3 +468,95 @@ img {
         display: none;
     }
 }
+
+/* Horizontal Scroll Container */
+.horizontal-scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 15px; /* Shadow katne se bachane ke liye */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Mobile me smooth scroll ke liye */
+}
+
+    /* Hide scrollbar for clean look */
+    .horizontal-scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+
+.horizontal-scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    cursor: grab;
+}
+
+/* Popular Item Card Style */
+.popular-item-card {
+    min-width: 160px;
+    max-width: 160px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+    .popular-item-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .popular-item-card img {
+        height: 120px;
+        object-fit: cover;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+
+/* Heart Button */
+.fav-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    transition: all 0.2s ease;
+}
+
+    .fav-btn:hover, .fav-btn.active {
+        color: #ff3b30;
+        background: #ffffff;
+    }
+/* Add Button Style */
+.add-to-cart-btn {
+    background-color: #fff0f0;
+    color: #ff3b30;
+    border: 1px solid #ff3b30;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+    .add-to-cart-btn:hover, .add-to-cart-btn:active {
+        background-color: #ff3b30;
+        color: #ffffff;
+        transform: scale(0.95);
+    }
+
+.horizontal-scroll-container.active-drag {
+    cursor: grabbing;
+}
