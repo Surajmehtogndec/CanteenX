@@ -1,0 +1,171 @@
+﻿@model IEnumerable<CanteenX.Models.Home.MenuItemResponseDto>
+@{
+    ViewData["Title"] = "All Menu";
+    int delayIndex = 0; // Animation delay ke liye variable
+}
+<link href="~/css/HomeView.css" rel="stylesheet" asp-append-version="true" />
+
+<div class="container mt-5 mb-5">
+    
+    <!-- Hero & Search Section -->
+    <div class="text-center mb-5 animate-fade-up" style="animation-delay: 0s;">
+        <h2 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif; font-size: 2.5rem;">Explore Our Menu</h2>
+        <p class="text-muted mb-4 fs-5">Find your favorite food from all canteens across the campus.</p>
+        
+        <div class="menu-search-wrapper">
+            <i class="bi bi-search search-icon-float" id="searchIcon"></i>
+
+            <!-- Loading Spinner (Hidden by default) -->
+           <div class="spinner-border spinner-border-sm text-danger search-loader d-none" id="searchLoader" role="status">
+           <span class="visually-hidden">Loading...</span>
+           </div>
+            <input type="text" id="searchInput" class="premium-search-input" placeholder="Search for Burger, Momos, Oreo Shake...">
+            <i class="bi bi-x-circle-fill clear-search-icon d-none" id="clearSearchBtn" title="Clear Search"></i>
+        </div>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="row g-4" id="menuGrid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                // Har card ko 0.05 second ka extra delay milega, taaki wo wave ki tarah aayen
+                double delay = 0.1 + (delayIndex * 0.05); 
+                
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 menu-item-container animate-fade-up" style="animation-delay: @(delay)s;">
+                    <div class="premium-menu-card">
+                        <div class="card-img-wrapper">
+                            <img src="https://localhost:7150@(string.IsNullOrEmpty(item.ImageUrl) ? "/uploads/items/default-food.png" : item.ImageUrl)" 
+                                 alt="@item.ItemName" 
+                                 loading="lazy"
+                                 onerror="this.src='/images/default-food.png';">
+                            <button class="fav-btn shadow-sm" style="top: 20px; right: 20px;">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                            <div>
+                                <h6 class="fw-bold mb-1 text-truncate text-dark item-name-text" style="font-size: 1rem;">@item.ItemName</h6>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <small class="text-muted text-truncate canteen-name-text" style="font-size: 0.8rem;"><i class="bi bi-shop me-1"></i>@item.CanteenName</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-auto">
+                                <span class="text-success fw-bold fs-5">₹@item.Price</span>
+                                <button class="btn-premium-add"
+                                onclick="addToCart(this)"
+                                data-id="@item.MenuItemId" 
+                                data-name="@item.ItemName" 
+                                data-price="@item.Price"
+                                data-canteen="@item.CanteenName">
+                                    ADD <i class="bi bi-plus-lg ms-1" style="font-size: 0.7rem;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                delayIndex++;
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5 animate-fade-up" id="noDataMessage" style="animation-delay: 0.2s;">
+                <div class="alert alert-light text-muted border inline-block px-5 py-4 rounded-4" role="alert">
+                    <i class="bi bi-emoji-frown fs-1 d-block mb-3 text-secondary"></i> 
+                    <h5 class="fw-bold">No items found</h5>
+                    <p class="mb-0">Please check back later.</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- No Results Found Message (Search ke waqt) -->
+    <div class="col-12 text-center py-5 d-none" id="noResultsMessage">
+        <div class="alert alert-light text-muted border inline-block px-5 py-4 rounded-4" role="alert">
+            <i class="bi bi-search fs-1 d-block mb-3 text-secondary"></i> 
+            <h5 class="fw-bold">Oops! Nothing matched</h5>
+            <p class="mb-0">Try searching for something else.</p>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        
+    const searchInput = document.getElementById("searchInput");
+    const searchIcon = document.getElementById("searchIcon");
+    const searchLoader = document.getElementById("searchLoader");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    const menuItems = document.querySelectorAll(".menu-item-container");
+    const noResultsMessage = document.getElementById("noResultsMessage");
+    const menuGrid = document.getElementById("menuGrid");
+
+    let debounceTimer;
+
+    // Type karte waqt Event
+    searchInput.addEventListener("input", function () {
+        const query = searchInput.value.toLowerCase().trim();
+
+        // 1. Clear Button Show/Hide
+        if (query.length > 0) {
+            clearSearchBtn.classList.remove("d-none");
+        } else {
+            clearSearchBtn.classList.add("d-none");
+        }
+
+        // 2. Show Spinner, Hide Search Icon
+        searchIcon.classList.add("d-none");
+        searchLoader.classList.remove("d-none");
+
+        // 3. Clear Previous Timer (Debouncing magic)
+        clearTimeout(debounceTimer);
+
+        // 4. Start new timer (300ms ka wait karega)
+        debounceTimer = setTimeout(function () {
+            
+            let visibleCount = 0;
+
+            menuItems.forEach(function (card) {
+                const itemName = card.querySelector(".item-name-text").innerText.toLowerCase();
+                const canteenName = card.querySelector(".canteen-name-text").innerText.toLowerCase();
+
+                // Match check
+                if (itemName.includes(query) || canteenName.includes(query)) {
+                    card.classList.remove("d-none");
+                    card.style.animation = "none"; 
+                    card.style.opacity = "1";
+                    visibleCount++;
+                } else {
+                    card.classList.add("d-none");
+                }
+            });
+
+            // No Results Logic
+            if (visibleCount === 0 && menuItems.length > 0) {
+                noResultsMessage.classList.remove("d-none");
+            } else {
+                noResultsMessage.classList.add("d-none");
+            }
+
+            // 5. Hide Spinner, Show Search Icon back
+            searchLoader.classList.add("d-none");
+            searchIcon.classList.remove("d-none");
+
+        }, 300); // 300 milliseconds ka premium delay
+    });
+
+    // Clear (X) Button Click Event
+    clearSearchBtn.addEventListener("click", function () {
+        searchInput.value = "";
+        searchInput.focus(); // Cursor wapas input me le aao
+        searchInput.dispatchEvent(new Event('input')); // Search reset trigger karo
+    });
+});
+
+
+    </script>
+}

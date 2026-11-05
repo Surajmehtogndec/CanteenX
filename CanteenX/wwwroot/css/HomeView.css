@@ -560,3 +560,146 @@ img {
 .horizontal-scroll-container.active-drag {
     cursor: grabbing;
 }
+
+/* =========================================
+   PREMIUM MENU UI & ANIMATIONS
+========================================== */
+
+/* 1. Staggered Fade-Up Animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; /* Load hone se pehle hide rahega */
+}
+
+/* 2. Floating Search Bar */
+.menu-search-wrapper {
+    max-width: 650px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.premium-search-input {
+    width: 100%;
+    padding: 18px 24px 18px 60px;
+    border-radius: 50px;
+    border: 1px solid rgba(0,0,0,0.06);
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+    .premium-search-input:focus {
+        outline: none;
+        border-color: rgba(255, 59, 48, 0.5);
+        box-shadow: 0 15px 35px rgba(255, 59, 48, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .premium-search-input::placeholder {
+        color: #adb5bd;
+        font-weight: 400;
+    }
+
+.search-icon-float {
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    color: #ff3b30;
+}
+
+/* 3. Premium Menu Cards */
+.premium-menu-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.03);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+    .premium-menu-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+/* Inset image style for modern look */
+.card-img-wrapper {
+    position: relative;
+    padding: 12px 12px 0 12px;
+}
+
+    .card-img-wrapper img {
+        border-radius: 14px;
+        height: 170px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+/* Custom Add Button */
+.btn-premium-add {
+    background: rgba(255, 59, 48, 0.08);
+    color: #ff3b30;
+    border: 1px solid rgba(255, 59, 48, 0.2);
+    border-radius: 8px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+    .btn-premium-add:hover {
+        background: #ff3b30;
+        color: #ffffff;
+        transform: scale(0.95);
+    }
+
+/* Spinner Position */
+.search-loader {
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    margin-top: -8px; /* Perfectly center karne ke liye */
+}
+
+/* Clear (X) Button Position */
+.clear-search-icon {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    z-index: 15;
+}
+
+    .clear-search-icon:hover {
+        color: #ff3b30;
+    }
+
+/* Input padding update taaki text (X) button ke piche na chhupe */
+.premium-search-input {
+    padding-right: 55px;
+}

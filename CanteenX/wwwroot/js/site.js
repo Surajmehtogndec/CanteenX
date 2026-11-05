@@ -1,6 +1,6 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     'use strict';
-
+   
     /* =========================================
        1. VENDOR INITIALIZATIONS (AOS, Swiper, Magnific)
        ========================================= */
@@ -91,59 +91,9 @@
         });
     });
 
-    /* =========================================
-       4. SEARCH OVERLAY
-       ========================================= */
-    const searchOv = document.getElementById('searchOv');
-    const navSearchBtn = document.getElementById('navSearchBtn');
-    const searchCloseBtn = document.getElementById('searchClose');
-    const searchInput = document.getElementById('searchInput');
 
-    function closeSearch() {
-        if (searchOv) {
-            searchOv.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-    }
 
-    if (navSearchBtn && searchOv) {
-        navSearchBtn.addEventListener('click', function () {
-            searchOv.classList.add('open');
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => { if (searchInput) searchInput.focus(); }, 220);
-        });
-    }
 
-    if (searchCloseBtn) searchCloseBtn.addEventListener('click', closeSearch);
-    if (searchOv) {
-        searchOv.addEventListener('click', function (e) {
-            if (e.target === searchOv) closeSearch();
-        });
-    }
-
-    // Search Category & Trending Tags
-    document.querySelectorAll('.sovcat').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            document.querySelectorAll('.sovcat').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            var f = this.getAttribute('data-cat');
-            closeSearch();
-            setTimeout(function () {
-                filterMenu(f);
-                const menuSec = document.getElementById('menu');
-                if (menuSec) menuSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
-        });
-    });
-
-    document.querySelectorAll('.sovtrend .ttag').forEach(function (t) {
-        t.addEventListener('click', function () {
-            if (searchInput) {
-                searchInput.value = this.textContent.trim();
-                searchInput.focus();
-            }
-        });
-    });
 
     /* =========================================
        5. MENU FILTERING
@@ -453,5 +403,6 @@
             });
         }
     });
+
 
 });

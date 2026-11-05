@@ -16,8 +16,10 @@ namespace CanteenX.Controllers
             _logger = logger;
             _homeService = homeService;
         }
+        public IActionResult Cart() => View();
+        public IActionResult Login() => View();
 
-            public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
             {
                 if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
@@ -34,23 +36,25 @@ namespace CanteenX.Controllers
 
                 var canteens = await _homeService.GetActiveCanteensAsync(cancellationToken);
                 var availableMenuItems = await _homeService.GetAvailableMenuItemsAsync(cancellationToken);
-                var model = new HomePageViewModel
+               
+            var model = new HomePageViewModel
                 {
                 ActiveCanteens = canteens,
-                PopularItems = availableMenuItems
+                PopularItems = availableMenuItems,
+               
                 };
                 return View(model);
-            }
-
-        public IActionResult Login()
+        }
+        public async Task<IActionResult> Menus(CancellationToken cancellationToken)
         {
-            return View();
+            var menuItems = await _homeService.GetMenuItemsAsync(cancellationToken);
+            return View(menuItems);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        
+      
+
+     
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
