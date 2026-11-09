@@ -238,5 +238,14 @@ namespace CanteenX.Services
             request.Headers.Accept.ParseAdd("application/json");
             return await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
         }
+
+        public async Task<HttpResponseMessage> DeleteCanteenAsync(int canteenId, string token, CancellationToken cancellationToken)
+        {
+            var client = _httpClientFactory.CreateClient(ApiClientName);
+            using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/admin/deletecanteen/{canteenId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return await client.SendAsync(request, cancellationToken);
+        }
+
     }
 }

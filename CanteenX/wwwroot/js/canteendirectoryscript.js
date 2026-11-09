@@ -2,6 +2,7 @@
     "use strict";
 
     const endpoint = window.canteenDirectoryConfig?.endpoint;
+    const editUrl = window.canteenDirectoryConfig?.editUrl;
 
     // DOM Elements
     const elements = {
@@ -55,7 +56,6 @@
         if (text !== undefined) el.textContent = text;
         return el;
     }
-
 
     function showError(message) {
         if (elements.errorMessage) {
@@ -134,7 +134,7 @@
             elements.pageSize.value = String(state.pageSize);
 
             // Maintain Selection state across pages
-            const visibleIds = new Set(state.items.map(c => String(c.id)));
+            const visibleIds = new Set(state.items.map(c => String(c.canteenId || c.CanteenId)));
             for (const id of state.selectedIds) {
                 if (!visibleIds.has(id)) {
                     state.selectedIds.delete(id);
@@ -179,10 +179,9 @@
         const fragment = document.createDocumentFragment();
 
         for (const canteen of state.items) {
-            // Using CanteenName as per new DTO
-            const name = String(canteen.canteenName || "Unnamed Canteen"); 
+            const name = String(canteen.canteenName || canteen.CanteenName || "Unnamed Canteen"); 
             const location = String(canteen.location || "N/A");
-            const id = String(canteen.CanteenId || "");
+            const id = String(canteen.canteenId || canteen.CanteenId || "");
 
             const row = createElement("tr", "cd-row");
             row.dataset.id = id;
@@ -250,23 +249,24 @@
 
             // 4. App Status
             const statusCell = createElement("td");
-            const isActive = canteen.isActive === true;
+            const isActive = canteen.isActive === true || canteen.IsActive === true;
             const statusBadge = createElement("span", `cd-badge ${isActive ? "cd-status-active" : "cd-status-inactive"}`);
             statusBadge.innerHTML = `<i class="bi ${isActive ? "bi-broadcast" : "bi-eye-slash-fill"}"></i> ${isActive ? "Active" : "Inactive"}`;
             statusCell.appendChild(statusBadge);
 
             // 5. Added On
-            const dateCell = createElement("td", "text-muted fw-medium small", formatDate(canteen.createdAt));
+            const createdAt = canteen.createdAt || canteen.CreatedAt;
+            const dateCell = createElement("td", "text-muted fw-medium small", formatDate(createdAt));
 
-            // 6. Actions Dropdown
+            // 6. Actions Dropdown (FIXED: data-action="view" and properly closed tags)
             const actionCell = createElement("td", "text-end");
             actionCell.innerHTML = `
                 <div class="dropdown">
                     <button class="cd-action-btn" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></button>
                     <ul class="dropdown-menu dropdown-menu-end cd-dropdown">
-                        <li><button class="dropdown-item" type="button" data-action="menu"><i class="bi bi-egg-fried text-primary"></i> View </button></li>
+                        <li><button class="dropdown-item" type="button" data-action="view"><i class="bi bi-egg-fried text-primary"></i> View </button></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><button class="dropdown-item delete-item" type="button" data-action="delete"><i class="bi bi-trash3-fill"></i> Delete Canteen</button></li>
+                        <li><button class="dropdown-item delete-item text-danger" type="button" data-action="delete"><i class="bi bi-trash3-fill"></i> Delete</button></li>
                     </ul>
                 </div>
             `;
@@ -304,7 +304,7 @@
         // Previous
         elements.pagination.appendChild(createPageBtn("Prev", state.pageNumber - 1, state.pageNumber <= 1));
 
-        // Pages (Simplified logic for brevity)
+        // Pages
         for (let i = 1; i <= state.totalPages; i++) {
             if (i === 1 || i === state.totalPages || (i >= state.pageNumber - 1 && i <= state.pageNumber + 1)) {
                 elements.pagination.appendChild(createPageBtn(String(i), i, false, i === state.pageNumber));
@@ -323,6 +323,7 @@
         elements.selectAll.checked = checkboxes.length > 0 && checkboxes.every(cb => cb.checked);
         elements.selectAll.indeterminate = checkboxes.some(cb => cb.checked) && !checkboxes.every(cb => cb.checked);
     }
+
     // =========================================================
     // PREMIUM iOS CANTEEN PROFILE MODAL
     // =========================================================
@@ -347,11 +348,11 @@
         elements.modalTitle.textContent = "Canteen Details";
         elements.modalBody.replaceChildren();
 
-        const name = String(canteen.canteenName || "Unnamed Canteen");
+        const name = String(canteen.canteenName || canteen.CanteenName || "Unnamed Canteen");
         const location = String(canteen.location || "N/A");
-        const isActive = canteen.isActive === true;
+        const isActive = canteen.isActive === true || canteen.IsActive === true;
         const status = isActive ? "Active" : "Inactive";
-        const apiBaseUrl = "https://localhost:7150"; // Update with your actual API Port if changed
+        const apiBaseUrl = "https://localhost:7150";
 
         // 1. iOS Hero Header
         const hero = createElement("div", "text-center pb-4 pt-2");
@@ -396,22 +397,20 @@
         hero.append(avatarWrap, titleEl, statusBadge);
 
         // 2. iOS Grouped Inset List
-        const groupBox = createElement("div", "rounded-4 overflow-hidden border");
+        const groupBox = createElement("div", "rounded-4 overflow-hidden border mb-3");
         groupBox.style.background = "rgba(242, 242, 247, 0.65)";
         groupBox.style.borderColor = "rgba(60, 60, 67, 0.08)";
 
+        const createdAt = canteen.createdAt || canteen.CreatedAt;
+
         appendIosRow(groupBox, "bi bi-geo-alt-fill text-danger", "rgba(255, 59, 48, 0.12)", "Location", location);
         appendIosRow(groupBox, "bi bi-card-text text-primary", "rgba(0, 122, 255, 0.12)", "Description", canteen.description);
-        appendIosRow(groupBox, "bi bi-calendar-check-fill text-success", "rgba(52, 199, 89, 0.12)", "Added On", formatDate(canteen.createdAt));
+        appendIosRow(groupBox, "bi bi-calendar-check-fill text-success", "rgba(52, 199, 89, 0.12)", "Added On", formatDate(createdAt), true);
      
-
-        elements.modalBody.append(hero, groupBox, actionWrap);
+        // FIXED: Removed undefined 'actionWrap'
+        elements.modalBody.append(hero, groupBox);
         bootstrap.Modal.getOrCreateInstance(elements.modal).show();
     }
-
-
-
-
 
     // --- Event Listeners ---
     elements.search?.addEventListener("input", () => {
@@ -437,7 +436,7 @@
 
     elements.selectAll?.addEventListener("change", () => {
         for (const canteen of state.items) {
-            const id = String(canteen.CanteenId);
+            const id = String(canteen.canteenId || canteen.CanteenId);
             if (elements.selectAll.checked) state.selectedIds.add(id);
             else state.selectedIds.delete(id);
         }
@@ -447,26 +446,35 @@
     if (elements.retryBtn) {
         elements.retryBtn.addEventListener("click", () => loadCanteens(state.pageNumber));
     }
-    // Action Delegation (View, Edit, Delete)
+
+    // --- FIXED Action Delegation (View, Edit, Delete) ---
     elements.tbody.addEventListener("click", event => {
-        const button = event.target.closest("buttpn[data-action]");
+        // FIXED: Typo "buttpn" to "button"
+        const button = event.target.closest("button[data-action]");
         if (!button) return;
 
         const row = button.closest("tr");
         if (!row) return;
 
-        // Table ki ID se us poore Canteen data ko array mein dhundein
-        const canteen = state.items.find(item => String(item.canteenId) === row.dataset.id);
+        // FIXED: Handle both camelCase and PascalCase for DTOs
+        const canteen = state.items.find(item => String(item.canteenId || item.CanteenId) === row.dataset.id);
         if (!canteen) return;
 
-        const name = String(canteen.canteenName || "Unnamed Canteen");
+        const name = String(canteen.canteenName || canteen.CanteenName || "Unnamed Canteen");
+        const idToUse = canteen.canteenId || canteen.CanteenId;
 
         if (button.dataset.action === "view") {
-            console.log("view button clicked");
             showCanteenProfile(canteen); 
-        } else if (button.dataset.action === "edit") {
-            window.location.href = `${config.editUrl}?id=${canteen.id}`;
-        } else if (button.dataset.action === "delete") {
+        } 
+        else if (button.dataset.action === "edit") {
+            // FIXED: Using correct editUrl variable
+            if (editUrl) {
+                window.location.href = `${editUrl}?id=${idToUse}`;
+            } else {
+                console.error("Edit URL is not configured.");
+            }
+        } 
+        else if (button.dataset.action === "delete") {
             Swal.fire({
                 titleText: 'Delete Canteen?',
                 text: `Are you sure you want to permanently remove ${name}? All associated menus will be deleted.`,
@@ -480,7 +488,8 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`/Admin/DeleteCanteen/${canteen.id}`, { method: "DELETE" });
+                        // FIXED: Replaced canteen.id with idToUse
+                        const response = await fetch(`/Admin/DeleteCanteen/${idToUse}`, { method: "DELETE" });
                         if (!response.ok) throw new Error("Failed to delete canteen.");
                         
                         Swal.fire({ toast: true, position: 'top-end', icon: 'success', titleText: 'Canteen Deleted.', showConfirmButton: false, timer: 3000 });
@@ -492,6 +501,7 @@
             });
         }
     });
+
     // Initial Load
     loadCanteens(1);
 })();

@@ -19,6 +19,7 @@ namespace CanteenX.Service.Interface
         Task<HttpResponseMessage> UpdateUserAsync(string id, EditUserViewModel model, string token, CancellationToken cancellationToken);
         Task<HttpResponseMessage> DeleteUserAsync(string id, string token, CancellationToken cancellationToken);
         Task<HttpResponseMessage> GetCanteensDirectoryAsync(string queryString, string token, CancellationToken cancellationToken);
+        Task<HttpResponseMessage> DeleteCanteenAsync(int canteenId, string token, CancellationToken cancellationToken);
 
     }
 }

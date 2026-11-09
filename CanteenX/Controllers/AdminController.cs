@@ -301,5 +301,28 @@ namespace CanteenX.Controllers
             catch (OperationCanceledException) { return StatusCode(499, new { success = false, message = "Request cancelled." }); }
             catch (Exception) { return StatusCode(502, new { success = false, message = "Unable to connect." }); }
         }
+
+
+        [HttpDelete("Admin/DeleteCanteen/{canteenId}")]
+        public async Task<IActionResult> DeleteCanteen(int canteenId, CancellationToken cancellationToken)
+        {
+            if (canteenId <= 0) return Json(new { success = false, message = "Invalid canteen ID." });
+
+            var accessToken = User.FindFirst("AccessToken")?.Value;
+
+            if (string.IsNullOrWhiteSpace(accessToken)) return Json(new { success = false, message = "Session expired." });
+
+            try
+            {
+
+                var response = await _adminService.DeleteCanteenAsync(canteenId, accessToken, cancellationToken);
+                if (response.IsSuccessStatusCode) return Json(new { success = true, message = "Canteen deleted successfully." });
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return Json(new { success = false, message = "Canteen not found." });
+                return Json(new { success = false, message = "Failed to delete canteen." });
+            }
+            catch (Exception) {
+                return Json(new { success = false, message = "Server error occurred." });
+            }
+        }
     }
 }
