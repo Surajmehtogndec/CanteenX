@@ -89,5 +89,19 @@ namespace CanteenX.Controllers
             return RedirectToAction("AddMenuItem");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CanteenProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var cancellationToken = HttpContext.RequestAborted;
+            var canteenProfile = await _canteenOwnerService.GetCanteenProfileDataAsync(userId, cancellationToken);
+            if (canteenProfile == null)
+            {
+                TempData["ErrorMessage"] = "Could not retrieve your canteen profile.";
+                return View(new CanteenProfileDto());
+            }
+            return View(canteenProfile);
+        }
+
     }
 }

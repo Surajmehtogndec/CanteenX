@@ -79,5 +79,17 @@ namespace CanteenX.Service.CanteenOwner
             return await response.Content.ReadFromJsonAsync<ApiResponseDto>();
         }
 
+        public async Task<CanteenProfileDto?> GetCanteenProfileDataAsync(string userId, string token, CancellationToken cancellationToken)
+        {
+            var client = _httpClientFactory.CreateClient(ApiClientName);
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            var response = await client.GetAsync($"api/CanteenStaff/canteen-profile", cancellationToken);
+            if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<CanteenProfileDto>(cancellationToken: cancellationToken);
+        }
+
     }
 }
